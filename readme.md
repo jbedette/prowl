@@ -1,9 +1,15 @@
-# Prowl
-### The PROcedural WorLd Generator
+# Prowl: PROcedural WorLd generator
 
 Prowl is a general-purpose procedural generation library that provides several
 useful utilities to facilitate the generation and continued simulation of a
 virtual world.
+
+## Design
+
+Prowl uses a system of generated Actors (Agents?) that have stats and desires.
+These stats and desires are random, but influence how the Actor acts during
+every simulation step. Actors try and maximize their progress toward their
+goals, and with enough actors.
 
 ## Resources
 
