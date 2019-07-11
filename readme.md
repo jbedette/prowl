@@ -10,13 +10,17 @@ virtual world.
 ### Papers
 
 [Story Guided Procedural Generation of Complex Connected Worlds and Levels for Role Play Games](https://www.firespark.de/resources/downloads/MA_Beyer.pdf)
+
 [Curating Simulated Storyworlds](https://escholarship.org/uc/item/1340j5h2)
 
 ### Conference Talks
 
 [Practical Procedural Generation for Everyone](https://www.youtube.com/watch?v=WumyfLEa6bU)
+
 [Dwarf Fortress, Moon Hunters, and Practices in Procedural Generation](https://www.youtube.com/watch?v=v8zwPdPvN10)
+
 [Best Practices for Procedural Narrative Generation](https://youtu.be/k2rgzZ2WXKo)
+
 [Villains in Dwarf Fortress](https://www.youtube.com/watch?v=4-7TtPX5uhg&t=7s)
 
 ### Websites
