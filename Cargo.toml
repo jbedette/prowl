@@ -7,3 +7,4 @@ edition = "2018"
 [dependencies]
 specs = "0.14.0"
 specs-derive = "0.4.0"
+termion = "*"

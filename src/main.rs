@@ -20,7 +20,12 @@ use components::{
     Money
 };
 
+mod renderer;
+use renderer::TermionRenderer;
+
 fn main() {
+    TermionRenderer::render();
+    return;
     // create a world
     let mut world = World::new();
 
@@ -35,7 +40,7 @@ fn main() {
         .build();
     dispatcher.setup(&mut world.res);
 
-    // register all the components (setup isn't working?)
+    // register all the components (setup isn't working correctly?)
     world.register::<Named>();
     world.register::<Rivals>();
     world.register::<Health>();
