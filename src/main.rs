@@ -85,9 +85,11 @@ fn main() {
     let mut dispatcher = specs::DispatcherBuilder::new()
         .with(RivalSystem, "rival_system", &[])
         .with(PrintStatsSystem, "print_stats_system", &[])
-        .with(DeathSystem, "death_system", &[])
+        .with(DeathSystem, "death_system", &["rival_system"])
+        .with(PrintEntitySystem, "print_entity_system", &["death_system"])
         .build();
-    // dispatcher.setup(&mut world.res);
+    dispatcher.setup(&mut world.res);
+
     world.register::<Named>();
     world.register::<Rivals>();
     world.register::<Health>();
@@ -155,15 +157,15 @@ impl<'a> specs::System<'a> for RivalSystem {
                 // hurt each rival
                 for rival_entity in &rivals.entities {
                     let rival_health = healths.get_mut(*rival_entity);
-                    let rival_name = names.get(*rival_entity).unwrap();
+                    let rival_name = names.get(*rival_entity);
                     match rival_health {
                         Some(health) => {
                             let damage = weapon.damage;
                             health.current -= damage as i64;
                             println!("{} attacked their rival {} for {} dmg",
-                                     name.value, rival_name.value, damage);
+                                     name.value, rival_name.unwrap().value, damage);
                         },
-                        None => ()
+                        None => { println!("ERROR: RIVAL NOT FOUND"); println!("Entity Val:{:?}", rival_entity) }
                     }
                 }
             }
@@ -176,7 +178,6 @@ struct PrintStatsSystem;
 impl<'a> specs::System<'a> for PrintStatsSystem {
     type SystemData = (
         specs::ReadStorage<'a, Named>,
-        specs::ReadStorage<'a, Rivals>,
         specs::ReadStorage<'a, Health>,
         // specs::ReadStorage<'a, Weapon>,
         // specs::Entities<'a>
@@ -185,11 +186,10 @@ impl<'a> specs::System<'a> for PrintStatsSystem {
         use specs::Join;
         let (
             names,
-            rivalses,
             healths,
             ) = data;
 
-        for (name, rival, health) in (&names, &rivalses, &healths).join() {
+        for (name, health) in (&names, &healths).join() {
             println!("NAME: {}", name.value);
             println!("HP  : {}/{}", health.current, health.max);
         }
@@ -224,5 +224,25 @@ impl<'a> specs::System<'a> for DeathSystem {
                 println!("{} has died!", name_string);
             }
         }
+    }
+}
+
+struct PrintEntitySystem;
+
+impl<'a> specs::System<'a> for PrintEntitySystem {
+    type SystemData = (
+        specs::Entities<'a>
+        );
+
+    fn run(&mut self, data: Self::SystemData) {
+        use specs::Join;
+        let entities = data;
+
+        let mut active_entities = 0;
+        for entity in (entities).join() {
+            active_entities += 1;
+            println!("{:?}", entity);
+        }
+        println!("TOTAL: {}", active_entities);
     }
 }
