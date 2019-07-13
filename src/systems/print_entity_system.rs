@@ -1,3 +1,5 @@
+/// Prints all entities in the world.
+
 use specs::{
     Entities,
     System

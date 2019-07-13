@@ -1,3 +1,5 @@
+/// Prints name and hp of every entity that has a name and hp.
+
 use specs::{
     ReadStorage,
     System

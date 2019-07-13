@@ -1,3 +1,5 @@
+/// Kills entities that are out of health.
+
 use specs::{
     ReadStorage,
     Entities,

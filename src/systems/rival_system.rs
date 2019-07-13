@@ -1,3 +1,6 @@
+/// If entity has no rivals, find one.
+/// Otherwise, hurt rival.
+
 use specs::{
     ReadStorage,
     WriteStorage,
@@ -35,6 +38,7 @@ impl<'a> System<'a> for RivalSystem {
         for (entity, rivals) in (&entities, &mut rivalses).join() {
             let name = names.get(entity).unwrap();
             // must have at least one rival
+            // TODO this doesn't work - see todos below
             if rivals.entities.is_empty() {
                 for rival_entity in (entities).join() {
                     if entity != rival_entity {
@@ -47,6 +51,7 @@ impl<'a> System<'a> for RivalSystem {
             } else {
                 let weapon = weapons.get(entity).unwrap();
                 // hurt each rival
+                // TODO learn how iterators work and use one here so dead rivals can be deleted...
                 for rival_entity in &rivals.entities {
                     let rival_health = healths.get_mut(*rival_entity);
                     let rival_name = names.get(*rival_entity);
