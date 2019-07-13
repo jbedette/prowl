@@ -57,7 +57,10 @@ impl<'a> System<'a> for RivalSystem {
                             println!("{} attacked their rival {} for {} dmg",
                                      name.value, rival_name.unwrap().value, damage);
                         },
-                        None => { println!("ERROR: RIVAL NOT FOUND"); println!("Entity Val:{:?}", rival_entity) }
+                        None => {
+                            // TODO delete rival somehow...
+                            // eprintln!("ERROR: RIVAL NOT FOUND -- Entity Val:{:?}", rival_entity);
+                        }
                     }
                 }
             }

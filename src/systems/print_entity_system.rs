@@ -14,6 +14,7 @@ impl<'a> System<'a> for PrintEntitySystem {
         use specs::Join;
         let entities = data;
 
+        println!("ACTIVE ENTITIES:");
         let mut active_entities = 0;
         for entity in (entities).join() {
             active_entities += 1;
