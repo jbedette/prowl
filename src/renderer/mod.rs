@@ -5,6 +5,8 @@ use termion::{
     terminal_size,
     raw::IntoRawMode,
     clear,
+    input::TermRead,
+    event::Key,
 };
 
 use std::{
@@ -37,6 +39,7 @@ impl Screen {
     }
 }
 
+#[derive(Clone)]
 struct Vector2 {
     x: i32,
     y: i32,
@@ -53,23 +56,39 @@ pub struct TermionRenderer {
 
 impl TermionRenderer {
     pub fn render() {
+        let stdin = stdin();
+        let mut stdout = stdout().into_raw_mode().unwrap();
+
         let size = terminal_size().unwrap();
         let screen = Screen::new(size.0 as i32, size.1 as i32, 0, 0);
-        println!("Size is {:?}", size);
-        let player = EntityRenderer {
+        let mut player = EntityRenderer {
             char: '@',
             color: color::Rgb(0x00, 0x95, 0xff),
-            position: Vector2 { x: 8, y: 8 }
+            position: Vector2 { x: 8, y: 8 },
         };
+
         // let color_string = "#FFFF00";
-        // 
-        let mut stdout = stdout().into_raw_mode().unwrap();
         writeln!(stdout, "{}{}", clear::All, cursor::Hide).unwrap();
-        TermionRenderer::render_entity(&mut stdout, player);
+        stdout.flush().unwrap();
+        // for _i in 0..20 {
+            for c in stdin.keys() {
+                TermionRenderer::clear_at(&mut stdout, &player.position);
+                match c.unwrap() {
+                    Key::Char('h') => player.position.x -= 1,
+                    Key::Char('j') => player.position.y += 1,
+                    Key::Char('k') => player.position.y -= 1,
+                    Key::Char('l') => player.position.x += 1,
+                    Key::Char('q') => break,
+                    _ => ()
+                }
+                TermionRenderer::render_entity(&mut stdout, &player);
+                stdout.flush().unwrap();
+            }
+        // }
     }
 
     /// Render entity character at screen position...
-    fn render_entity<W: Write>(stdout: &mut W, entity_renderer: EntityRenderer) { // , position: Vector2) {
+    fn render_entity<W: Write>(stdout: &mut W, entity_renderer: &EntityRenderer) { // , position: Vector2) {
         let (x, y, color, character) = (
             entity_renderer.position.x as u16,
             entity_renderer.position.y as u16,
@@ -78,9 +97,22 @@ impl TermionRenderer {
             );
         writeln!(
            stdout,
-           "{}{}@",
+           "{}{}{}",
            cursor::Goto(x, y),
-           color::Fg(color)
+           color::Fg(color),
+           character
             ).unwrap();
+    }
+
+    fn clear_at<W: Write>(stdout: &mut W, position: &Vector2) {
+        let (x, y) = (
+            position.x as u16,
+            position.y as u16
+            );
+        writeln!(
+            stdout,
+            "{} ",
+            cursor::Goto(x, y)
+        ).unwrap();
     }
 }
