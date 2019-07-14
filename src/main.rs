@@ -13,6 +13,7 @@ use systems::{
     // PrintEntitySystem
     RenderingSystem,
     UserInputSystem,
+    AISystem,
 };
 
 mod components;
@@ -24,11 +25,19 @@ use components::{
     Money,
     Position,
     CharRenderer,
-    Player
+    Player,
+    PendingActions,
+    AI,
+    ai,
 };
 
 mod resources;
 use resources::{
+    console::{
+        Console,
+        Log,
+        LogLevel,
+    },
     RendererResource,
     input::UserInput,
     Quit,
@@ -42,37 +51,33 @@ fn main() {
     // return;
     // create a world
     let mut world = World::new();
-    // world.add_resource is in the tutorials, but deprecated
-    world.add_resource(RendererResource::new());
-    world.add_resource(UserInput::new());
-    world.add_resource(Quit(false));
+    resources::add_all(&mut world);
 
     // initialize systems in the world
     // format:
     // system, "string id", dependencies (systems that must run before this one)
     let mut dispatcher = specs::DispatcherBuilder::new()
         // .with(RivalSystem, "rival_system", &[])
-        // .with(DeathSystem, "death_system", &["rival_system"])
+        // .with(DeathSystem, "death_system", &[])
         // .with(PrintStatsSystem, "print_stats_system", &[])
         // .with(PrintEntitySystem, "print_entity_system", &["death_system"])
-        // .with(UserInputSystem, "user_input", &[])
+        .with(AISystem, "ai_system", &[])
         .with_thread_local(RenderingSystem)
         .with_thread_local(UserInputSystem)
         .build();
+    // TODO why doesn't this work?
     // dispatcher.setup(&mut world.res);
 
-    // register all the components (setup isn't working correctly?)
-    world.register::<Named>();
-    world.register::<Rivals>();
-    world.register::<Health>();
-    world.register::<Money>();
-    world.register::<Weapon>();
-    world.register::<Position>();
-    world.register::<CharRenderer>();
-    world.register::<Player>();
+    // Register all the components (setup isn't working correctly?)
+    components::register(&mut world);
 
 
     // create some entities in the world
+    // TODO make generator functions:
+    // create_human() ?
+    // Creator object ?
+    // how to make random ?
+    // what determines parameters ?
     world.create_entity()
         .with(Named::new("Mark"))
         .with(Rivals::new())
@@ -91,6 +96,8 @@ fn main() {
         .with(Money::new(4))
         .with(Position::new(4, 10))
         .with(CharRenderer::new('L', color::Rgb(0x20, 0x76, 0xbb)))
+        .with(AI::with_goal(ai::Goal::MoveRandom))
+        .with(PendingActions::default())
         .build();
     world.create_entity()
         .with(Named::new("Dumbo"))
@@ -100,17 +107,32 @@ fn main() {
         .with(Money::new(4))
         .with(Position::new(2, 10))
         .with(CharRenderer::new('D', color::Rgb(0xff, 0x00, 0x95)))
+        .with(AI::with_goal(ai::Goal::MoveRandom))
+        .with(PendingActions::default())
         .build();
 
-    // for _i in 0..5 {
+    run(world, dispatcher);
+}
+
+/// Main game loop.
+fn run(mut world: World, mut dispatcher: Dispatcher) {
+    let mut i = 0;
     loop {
-        // println!("!!!!!! SIMULATION STEP {} !!!!!!", i);
+        // must be in block, world can't be borrowed or dispatch will
+        // be upset.
+        {
+            let mut console = world.write_resource::<Console>();
+            // for _ in 0..10 {
+                console.log(Log {
+                    level: LogLevel::Debug,
+                    message: format!("Simulation Step {}", i),
+                });
+            //}
+        }
         dispatcher.dispatch(&mut world);
         world.maintain();
         let quit = world.read_resource::<Quit>();
-        if quit.0 == true {
-            break 
-        }
-        // std::thread::sleep(std::time::Duration::from_secs(1));
+        if quit.0 == true { break; }
+        i += 1;
     }
 }
