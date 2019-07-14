@@ -7,7 +7,7 @@ use specs_derive::Component;
 #[derive(Component, Debug, Default)]
 #[storage(VecStorage)]
 pub struct PendingActions {
-    action: Vec<Action>,
+    pub actions: Vec<Action>,
 }
 
 #[derive(Debug)]

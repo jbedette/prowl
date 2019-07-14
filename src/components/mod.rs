@@ -19,7 +19,6 @@ pub use money::Money;
 pub use position::Position;
 pub use renderer::CharRenderer;
 pub use player::Player;
-pub use pending_actions::PendingActions;
 pub use ai::AI;
 
 pub fn register(world: &mut World) {
@@ -31,6 +30,6 @@ pub fn register(world: &mut World) {
     world.register::<Position>();
     world.register::<CharRenderer>();
     world.register::<Player>();
-    world.register::<PendingActions>();
+    world.register::<pending_actions::PendingActions>();
     world.register::<AI>();
 }

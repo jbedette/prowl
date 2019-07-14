@@ -14,6 +14,7 @@ use systems::{
     RenderingSystem,
     UserInputSystem,
     AISystem,
+    ExecuteActionSystem,
 };
 
 mod components;
@@ -26,7 +27,7 @@ use components::{
     Position,
     CharRenderer,
     Player,
-    PendingActions,
+    pending_actions::PendingActions,
     AI,
     ai,
 };
@@ -38,8 +39,8 @@ use resources::{
         Log,
         LogLevel,
     },
-    RendererResource,
-    input::UserInput,
+    // RendererResource,
+    // input::UserInput,
     Quit,
 };
 
@@ -56,12 +57,17 @@ fn main() {
     // initialize systems in the world
     // format:
     // system, "string id", dependencies (systems that must run before this one)
-    let mut dispatcher = specs::DispatcherBuilder::new()
+    let dispatcher = specs::DispatcherBuilder::new()
         // .with(RivalSystem, "rival_system", &[])
         // .with(DeathSystem, "death_system", &[])
         // .with(PrintStatsSystem, "print_stats_system", &[])
         // .with(PrintEntitySystem, "print_entity_system", &["death_system"])
-        .with(AISystem, "ai_system", &[])
+        // .with(UserInputSystem, "input", &[])
+        // .with_thread_local(UserInputSystem)
+        .with(AISystem, "ai", &[])
+        // .with(ExecuteActionSystem, "execute_actions", &["ai", "input"])
+        .with(ExecuteActionSystem, "execute_actions", &["ai"])
+        // .with(RenderingSystem, "render", &["execute_actions"])
         .with_thread_local(RenderingSystem)
         .with_thread_local(UserInputSystem)
         .build();
@@ -118,9 +124,9 @@ fn main() {
 fn run(mut world: World, mut dispatcher: Dispatcher) {
     let mut i = 0;
     loop {
-        // must be in block, world can't be borrowed or dispatch will
-        // be upset.
         {
+            // must be in block, world can't be borrowed or dispatch will
+            // be upset.
             let mut console = world.write_resource::<Console>();
             // for _ in 0..10 {
                 console.log(Log {
@@ -129,10 +135,11 @@ fn run(mut world: World, mut dispatcher: Dispatcher) {
                 });
             //}
         }
-        dispatcher.dispatch(&mut world);
+        dispatcher.dispatch(&world);
         world.maintain();
+        // check if user requested quit
         let quit = world.read_resource::<Quit>();
-        if quit.0 == true { break; }
+        if quit.0 { break; }
         i += 1;
     }
 }

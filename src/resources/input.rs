@@ -5,12 +5,6 @@ use std::{
     }
 };
 use termion::{
-    cursor,
-    color,
-    style,
-    terminal_size,
-    raw::IntoRawMode,
-    clear,
     input::TermRead,
     event::Key,
 };

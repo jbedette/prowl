@@ -9,7 +9,10 @@ use crate::components::{
         AI,
         Goal
     },
-    Position,
+    pending_actions::{
+        PendingActions,
+        Action,
+    }
 };
 
 // use rand::prelude::*;
@@ -20,32 +23,29 @@ pub struct AISystem;
 impl<'a> System<'a> for AISystem {
     type SystemData = (
         WriteStorage<'a, AI>,
-        WriteStorage<'a, Position>,
+        WriteStorage<'a, PendingActions>,
     );
 
     fn run(&mut self, data: Self::SystemData) {
         let (
             ais,
-            mut positions
+            mut pending_actionses
         ) = data;
 
-        for (ai, position) in (&ais, &mut positions).join() {
+        for (ai, pending_actions) in
+            (&ais, &mut pending_actionses).join() {
             match ai.goal {
                 // TODO make better lmao
                 Some(Goal::MoveRandom) => {
+                    let mut delta = (0, 0);
                     if rand::random() {
-                        if rand::random() {
-                            position.x += 1;
-                        } else if rand::random() {
-                            position.x -= 1;
-                        }
-                    } else {
-                        if rand::random() {
-                            position.y += 1;
-                        } else if rand::random() {
-                            position.y -= 1;
-                        }
+                        if rand::random() { delta.0 += 1; }
+                        else { delta.0 -= 1; }
+                    } else if rand::random() {
+                        if rand::random() { delta.1 += 1; }
+                        else { delta.1 -= 1; }
                     }
+                    pending_actions.actions.push(Action::Move { delta });
                 },
                 _ => (),
             };

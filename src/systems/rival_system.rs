@@ -55,18 +55,20 @@ impl<'a> System<'a> for RivalSystem {
                 for rival_entity in &rivals.entities {
                     let rival_health = healths.get_mut(*rival_entity);
                     let rival_name = names.get(*rival_entity);
-                    match rival_health {
-                        Some(health) => {
+                    // match rival_health {
+                        // Some(health) => {
+                    if let Some(health) = rival_health {
                             let damage = weapon.damage;
                             health.current -= damage as i64;
                             println!("{} attacked their rival {} for {} dmg",
                                      name.value, rival_name.unwrap().value, damage);
-                        },
-                        None => {
+                    }
+                        // },
+                        // None => {
                             // TODO delete rival somehow...
                             // eprintln!("ERROR: RIVAL NOT FOUND -- Entity Val:{:?}", rival_entity);
-                        }
-                    }
+                        // }
+                    // }
                 }
             }
         }
