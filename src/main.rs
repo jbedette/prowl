@@ -1,9 +1,14 @@
+use std::{
+    thread,
+    time
+};
 use specs::{
     World,
     Builder,
     prelude::*
 };
 use termion::color;
+// use num;
 
 mod systems;
 use systems::{
@@ -12,7 +17,7 @@ use systems::{
     // PrintStatsSystem,
     // PrintEntitySystem
     RenderingSystem,
-    UserInputSystem,
+    // UserInputSystem,
     AISystem,
     ExecuteActionSystem,
 };
@@ -44,6 +49,8 @@ use resources::{
     Quit,
 };
 
+mod data;
+
 // mod renderer;
 // use renderer::TermionRenderer;
 
@@ -58,10 +65,11 @@ fn main() {
     // format:
     // system, "string id", dependencies (systems that must run before this one)
     let dispatcher = specs::DispatcherBuilder::new()
-        .with(AISystem, "ai", &[])
-        .with(ExecuteActionSystem, "execute_actions", &["ai"])
+        // .with(AISystem, "ai", &[])
+        // .with(ExecuteActionSystem, "execute_actions", &["ai"])
+        .with(ExecuteActionSystem, "execute_actions", &[])
         .with(RenderingSystem, "render", &["execute_actions"])
-        .with_thread_local(UserInputSystem)
+        // .with_thread_local(UserInputSystem)
         .build();
     // TODO why doesn't this work?
     // dispatcher.setup(&mut world.res);
@@ -132,6 +140,7 @@ fn run(mut world: World, mut dispatcher: Dispatcher) {
         // check if user requested quit
         let quit = world.read_resource::<Quit>();
         if quit.0 { break; }
+        thread::sleep(time::Duration::from_secs(1));
         i += 1;
     }
 }

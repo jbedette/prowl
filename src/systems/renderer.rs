@@ -23,6 +23,10 @@ use crate::resources::{
     }
 };
 
+use crate::data::{
+    Vector2,
+};
+
 pub struct RenderingSystem;
 
 impl<'a> System<'a> for RenderingSystem {
@@ -52,29 +56,16 @@ impl<'a> System<'a> for RenderingSystem {
         // Render characters.
         for (position, char_renderer) in (&positions, &char_renderers).join() {
             renderer.put_char(
-                char_renderer.character,
-                char_renderer.color,
-                position.x as u16,
-                position.y as u16);
+                Vector2::new(position.x as i32, position.y as i32),
+                char_renderer.character
+                );
         }
         // Render windows.
         // TODO make this generic somehow? window object that
         // handles printing to itself??
+        /*
         let (screen_width, screen_height) = renderer.get_bounds();
         let (padding_x, padding_y) = (1, 1);
-        // horizontal
-        /*
-        let window_height = 5;
-        let top = screen_height - padding_y - window_height;
-        renderer.put_window(
-            padding_x, // x1
-            top,
-            screen_width - padding_x,
-            screen_height - padding_y,
-        );
-        let top_left = (padding_x, top + 1);
-        */
-        // vertical
         renderer.put_window(
             screen_width / 2,
             padding_y + 1,
@@ -84,13 +75,6 @@ impl<'a> System<'a> for RenderingSystem {
         let window_height = screen_height - padding_y * 2;
         let top_left = (screen_width / 2, padding_y + 2);
         let mut i = 0;
-        /*
-        for log in &console.logs {
-            renderer.put_text(&log.message, padding_x + 2, top + 1 + i);
-            i += 1;
-        }
-        console.logs = vec!();
-        */
         while let Some(log) = &console.logs.pop() {
             renderer.put_text(&log.message, top_left.0 + 2, top_left.1 + 1 + i);
             i += 1;
@@ -99,6 +83,7 @@ impl<'a> System<'a> for RenderingSystem {
             }
         }
         renderer.put_text("[wasd] to move, [q] to quit", 1, screen_height);
+        */
         // Render to console.
         renderer.flush();
     }
