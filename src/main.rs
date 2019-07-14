@@ -65,9 +65,9 @@ fn main() {
     // format:
     // system, "string id", dependencies (systems that must run before this one)
     let dispatcher = specs::DispatcherBuilder::new()
-        // .with(AISystem, "ai", &[])
-        // .with(ExecuteActionSystem, "execute_actions", &["ai"])
-        .with(ExecuteActionSystem, "execute_actions", &[])
+        .with(AISystem, "ai", &[])
+        .with(ExecuteActionSystem, "execute_actions", &["ai"])
+        // .with(ExecuteActionSystem, "execute_actions", &[])
         .with(RenderingSystem, "render", &["execute_actions"])
         // .with_thread_local(UserInputSystem)
         .build();
