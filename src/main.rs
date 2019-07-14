@@ -58,17 +58,9 @@ fn main() {
     // format:
     // system, "string id", dependencies (systems that must run before this one)
     let dispatcher = specs::DispatcherBuilder::new()
-        // .with(RivalSystem, "rival_system", &[])
-        // .with(DeathSystem, "death_system", &[])
-        // .with(PrintStatsSystem, "print_stats_system", &[])
-        // .with(PrintEntitySystem, "print_entity_system", &["death_system"])
-        // .with(UserInputSystem, "input", &[])
-        // .with_thread_local(UserInputSystem)
         .with(AISystem, "ai", &[])
-        // .with(ExecuteActionSystem, "execute_actions", &["ai", "input"])
         .with(ExecuteActionSystem, "execute_actions", &["ai"])
-        // .with(RenderingSystem, "render", &["execute_actions"])
-        .with_thread_local(RenderingSystem)
+        .with(RenderingSystem, "render", &["execute_actions"])
         .with_thread_local(UserInputSystem)
         .build();
     // TODO why doesn't this work?

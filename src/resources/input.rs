@@ -7,6 +7,7 @@ use std::{
 use termion::{
     input::TermRead,
     event::Key,
+    async_stdin,
 };
 
 #[derive(Debug)]
@@ -21,6 +22,7 @@ impl UserInput {
     }
 
     pub fn get(&self) -> InputCode {
+        // let stdin = async_stdin();
         let stdin = stdin();
         for key in stdin.keys() {
             match key.unwrap() {
@@ -42,6 +44,7 @@ impl Default for UserInput {
     }
 }
 
+#[derive(Eq, PartialEq)]
 pub enum InputCode {
     Up,
     Down,

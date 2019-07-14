@@ -75,7 +75,7 @@ impl RendererResource {
       self.size = terminal_size().unwrap();
     }
 
-    pub fn get_bounds(&self) -> (u16, u16){
+    pub fn get_bounds(&self) -> (u16, u16) {
       self.size
     }
 

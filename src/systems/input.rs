@@ -57,7 +57,7 @@ impl<'a> System<'a> for UserInputSystem {
                 &players,
                 &mut positions,
                 // &mut pending_actionses,
-            ).join() { 
+            ).join() {
             // for some reason input has to be dereferenced.
             // presumably any resource with methods would have to
             // be dereferenced?
@@ -69,9 +69,13 @@ impl<'a> System<'a> for UserInputSystem {
 
             // NOTE For some reason trying to read pending_actions mutably
             // makes this system non-blocking? WTF
-            let key: InputCode = (*input).get();
+            // let key: InputCode = (*input).get();
+            // while let key = (*input).get());
+            let mut key = (*input).get();
+            while key == InputCode::None { key = (*input).get(); }
+            (*console).log(Log::new(LogLevel::Debug, "Input Registered"));
             use InputCode::*;
-            let mut delta = (0, 0);
+            // let mut delta = (0, 0);
             match key {
                 Up => {
                     // delta.1 = -1;
@@ -100,9 +104,7 @@ impl<'a> System<'a> for UserInputSystem {
                 Quit => quit.0 = true,
                 _ => (),
             }
-            if delta != (0, 0) {
-                // pending_actions.actions.push(Action::Move { delta });
-            }
+            // if delta != (0, 0) { pending_actions.actions.push(Action::Move { delta }); }
         }
     }
 }
