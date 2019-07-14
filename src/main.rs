@@ -17,7 +17,7 @@ use systems::{
     // PrintStatsSystem,
     // PrintEntitySystem
     RenderingSystem,
-    // UserInputSystem,
+    UserInputSystem,
     AISystem,
     ExecuteActionSystem,
 };
@@ -68,8 +68,9 @@ fn main() {
         .with(AISystem, "ai", &[])
         .with(ExecuteActionSystem, "execute_actions", &["ai"])
         // .with(ExecuteActionSystem, "execute_actions", &[])
-        .with(RenderingSystem, "render", &["execute_actions"])
-        // .with_thread_local(UserInputSystem)
+        // .with(RenderingSystem, "render", &["execute_actions"])
+        .with_thread_local(RenderingSystem)
+        .with_thread_local(UserInputSystem)
         .build();
     // TODO why doesn't this work?
     // dispatcher.setup(&mut world.res);
@@ -140,7 +141,7 @@ fn run(mut world: World, mut dispatcher: Dispatcher) {
         // check if user requested quit
         let quit = world.read_resource::<Quit>();
         if quit.0 { break; }
-        thread::sleep(time::Duration::from_secs(1));
+        // thread::sleep(time::Duration::from_secs(1));
         i += 1;
     }
 }

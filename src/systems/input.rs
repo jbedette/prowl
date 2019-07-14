@@ -15,6 +15,7 @@ use crate::components::{
     Player,
 };
 use crate::resources::{
+    RendererResource,
     Quit,
     input::{
         InputCode,
@@ -27,6 +28,7 @@ use crate::resources::{
     }
 };
 
+#[derive(Default)]
 pub struct UserInputSystem;
 
 impl<'a> System<'a> for UserInputSystem {
@@ -37,6 +39,8 @@ impl<'a> System<'a> for UserInputSystem {
         Read<'a, UserInput>,
         Write<'a, Quit>,
         Write<'a, Console>,
+        // TODO get this out of here...
+        specs::Write<'a, RendererResource>,
         );
 
     fn run(&mut self, data: Self::SystemData) {
@@ -46,7 +50,8 @@ impl<'a> System<'a> for UserInputSystem {
             // mut pending_actionses,
             input,
             mut quit,
-            mut console
+            mut console,
+            mut renderer,
         ) = data;
 
         for (
@@ -71,8 +76,9 @@ impl<'a> System<'a> for UserInputSystem {
             // makes this system non-blocking? WTF
             // let key: InputCode = (*input).get();
             // while let key = (*input).get());
-            let mut key = (*input).get();
-            while key == InputCode::None { key = (*input).get(); }
+            // let mut key = (*input).get();
+            // while key == InputCode::None { key = (*input).get(); }
+            let key = UserInput::get(&mut renderer.root);
             (*console).log(Log::new(LogLevel::Debug, "Input Registered"));
             use InputCode::*;
             // let mut delta = (0, 0);

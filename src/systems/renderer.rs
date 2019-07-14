@@ -63,12 +63,11 @@ impl<'a> System<'a> for RenderingSystem {
         // Render windows.
         // TODO make this generic somehow? window object that
         // handles printing to itself??
-        /*
-        let (screen_width, screen_height) = renderer.get_bounds();
-        let (padding_x, padding_y) = (1, 1);
+        let (screen_width, screen_height) = renderer.get_bounds().to_tuple();
+        let (padding_x, padding_y) = (1, 2);
         renderer.put_window(
             screen_width / 2,
-            padding_y + 1,
+            padding_y,
             screen_width - padding_x,
             screen_height - padding_y,
         );
@@ -76,14 +75,18 @@ impl<'a> System<'a> for RenderingSystem {
         let top_left = (screen_width / 2, padding_y + 2);
         let mut i = 0;
         while let Some(log) = &console.logs.pop() {
-            renderer.put_text(&log.message, top_left.0 + 2, top_left.1 + 1 + i);
+            renderer.put_text(
+                Vector2::new(
+                    top_left.0 + 2,
+                    top_left.1 + 1 + i
+                    ),
+                &log.message);
             i += 1;
             if i >= window_height - 1 {
                 console.logs = vec!();
             }
         }
-        renderer.put_text("[wasd] to move, [q] to quit", 1, screen_height);
-        */
+        // renderer.put_text("[wasd] to move, [q] to quit", 1, screen_height);
         // Render to console.
         renderer.flush();
     }

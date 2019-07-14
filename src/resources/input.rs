@@ -1,46 +1,26 @@
-use std::{
-    io::{
-        stdin,
-        Stdin,
+use tcod::{
+    console::*,
+    input::{
+        Key,
+        KeyCode::*,
     }
 };
-use termion::{
-    input::TermRead,
-    event::Key,
-    async_stdin,
-};
 
-#[derive(Debug)]
-pub struct UserInput {
-    stdin: Stdin,
-    // stdin: termion::input::Keys<Stdin>
-}
+#[derive(Default)]
+pub struct UserInput {}
 
 impl UserInput {
-    pub fn new() -> Self {
-        Self { stdin: stdin() }
-    }
-
-    pub fn get(&self) -> InputCode {
-        // let stdin = async_stdin();
-        let stdin = stdin();
-        for key in stdin.keys() {
-            match key.unwrap() {
-                Key::Char('w') => return InputCode::Up,
-                Key::Char('a') => return InputCode::Left,
-                Key::Char('s') => return InputCode::Down,
-                Key::Char('d') => return InputCode::Right,
-                Key::Char('q') => return InputCode::Quit,
-                _ => ()
-            }
+    pub fn get(root: &mut Root) -> InputCode {
+        let key = root.wait_for_keypress(true);
+        match key {
+            Key { code: Up, .. } => return InputCode::Up,
+            Key { code: Left, .. } => return InputCode::Left,
+            Key { code: Down, .. } => return InputCode::Down,
+            Key { code: Right, .. } => return InputCode::Right,
+            Key { code: Escape, .. } => return InputCode::Quit,
+            _ => InputCode::None,
         }
-        InputCode::None
-    }
-}
-
-impl Default for UserInput {
-    fn default() -> Self {
-        Self::new()
+        // InputCode::None
     }
 }
 

@@ -19,7 +19,7 @@ use crate::data::{
 
 pub struct RendererResource {
     size: Vector2,
-    root: Root,
+    pub root: Root,
 }
 
 impl RendererResource {
@@ -54,6 +54,39 @@ impl RendererResource {
     pub fn flush(&mut self) {
         self.root.flush();
     }
+
+    pub fn put_window(&mut self, x1: i32, y1: i32, x2: i32, y2: i32) {
+      // let color = color::Rgb(0x10, 0x40, 0x30);
+      for x in (x1 + 1)..(x2 - 1) {
+        for y in (y1 + 1)..(y2 - 1) {
+          //self.put_char(' ', color, x, y);
+          self.put_char(Vector2::new(x, y), ' ');
+        }
+      }
+      for x in x1..x2 {
+          self.put_char(Vector2::new(x, y1), 'X');
+          self.put_char(Vector2::new(x, y2), 'X');
+      }
+      for y in y1..y2 {
+          self.put_char(Vector2::new(x1, y), 'X');
+          self.put_char(Vector2::new(x2, y), 'X');
+      }
+    }
+
+    pub fn get_bounds(&self) -> Vector2 {
+        return self.size;
+
+    }
+
+    pub fn put_text(&mut self, position: Vector2, string: &str) {
+        self.root.print_ex(
+            position.x,
+            position.y,
+            BackgroundFlag::None,
+            TextAlignment::Left,
+            string
+            );
+    }
 }
 
 impl Default for RendererResource {
@@ -62,12 +95,13 @@ impl Default for RendererResource {
         Self {
             size: Vector2::new(80, 50),
             root: Root::initializer()
-                // .font("terminal16x16_gs_ro.png", FontLayout::Tcod)
-                .font("arial10x10.png", FontLayout::Tcod)
+                .font("terminal16x16_gs_ro.png", FontLayout::AsciiInRow)
+                // .font("arial10x10.png", FontLayout::Tcod)
                 .font_type(FontType::Greyscale)
                 .size(80, 50)
                 .title("PROWL")
                 .init(),
         }
     }
+
 }
