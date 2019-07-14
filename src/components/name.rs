@@ -13,9 +13,7 @@ pub struct Named {
 impl Named {
     pub fn new(value: &str) -> Self {
         let value = String::from(value);
-        Self {
-            value
-        }
+        Self { value }
     }
 }
 

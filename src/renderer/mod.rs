@@ -58,33 +58,46 @@ impl TermionRenderer {
     pub fn render() {
         let stdin = stdin();
         let mut stdout = stdout().into_raw_mode().unwrap();
+        TermionRenderer::initialize(&mut stdout);
 
         let size = terminal_size().unwrap();
-        let screen = Screen::new(size.0 as i32, size.1 as i32, 0, 0);
+        // let screen = Screen::new(size.0 as i32, size.1 as i32, 0, 0);
         let mut player = EntityRenderer {
             char: '@',
             color: color::Rgb(0x00, 0x95, 0xff),
             position: Vector2 { x: 8, y: 8 },
         };
 
-        // let color_string = "#FFFF00";
-        writeln!(stdout, "{}{}", clear::All, cursor::Hide).unwrap();
         stdout.flush().unwrap();
-        // for _i in 0..20 {
-            for c in stdin.keys() {
-                TermionRenderer::clear_at(&mut stdout, &player.position);
-                match c.unwrap() {
-                    Key::Char('h') => player.position.x -= 1,
-                    Key::Char('j') => player.position.y += 1,
-                    Key::Char('k') => player.position.y -= 1,
-                    Key::Char('l') => player.position.x += 1,
-                    Key::Char('q') => break,
-                    _ => ()
-                }
-                TermionRenderer::render_entity(&mut stdout, &player);
-                stdout.flush().unwrap();
+        for c in stdin.keys() {
+            TermionRenderer::clear_at(&mut stdout, &player.position);
+            match c.unwrap() {
+                Key::Char('h') | Key::Char('a') => player.position.x -= 1,
+                Key::Char('j') | Key::Char('s') => player.position.y += 1,
+                Key::Char('k') | Key::Char('w') => player.position.y -= 1,
+                Key::Char('l') | Key::Char('d') => player.position.x += 1,
+                Key::Char('q') => break,
+                _ => ()
             }
-        // }
+            TermionRenderer::render_entity(&mut stdout, &player);
+            stdout.flush().unwrap();
+        }
+
+        TermionRenderer::cleanup(&mut stdout);
+    }
+
+    fn initialize<W: Write>(stdout: &mut W) {
+        writeln!(stdout, "{}{}", clear::All, cursor::Hide).unwrap();
+    }
+
+    fn cleanup<W:Write>(stdout: &mut W) {
+        writeln!(
+            stdout,
+            "{}{}{}",
+            style::Reset,
+            cursor::Goto(1, 1),
+            cursor::Show,
+        ).unwrap();
     }
 
     /// Render entity character at screen position...

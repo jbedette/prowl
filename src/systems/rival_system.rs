@@ -5,7 +5,8 @@ use specs::{
     ReadStorage,
     WriteStorage,
     Entities,
-    System
+    System,
+    Join
 };
 use crate::components::{
     Named,
@@ -26,7 +27,6 @@ impl<'a> System<'a> for RivalSystem {
         );
 
     fn run(&mut self, data: Self::SystemData) {
-        use specs::Join;
         let (
             names,
             mut rivalses,
