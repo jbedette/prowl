@@ -69,7 +69,7 @@ fn main() {
         .build();
     let dispatcher = specs::DispatcherBuilder::new()
         .with(AISystem, "ai", &[])
-        .with(UserInputSystem, "input", &[])
+        .with(UserInputSystem, "input", &["ai"])
         .with(ExecuteActionSystem, "execute_actions", &["ai", "input"])
         // rendering must be on local thread (i think?)
         .with_thread_local(RenderingSystem)
