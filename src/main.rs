@@ -27,7 +27,7 @@ use systems::{
 mod components;
 use components::{
     Named,
-    Rivals,
+    // Rivals,
     Health,
     Weapon,
     Money,
@@ -37,6 +37,7 @@ use components::{
     pending_actions::PendingActions,
     AI,
     ai,
+    // TileMap,
 };
 
 mod resources;
@@ -56,81 +57,58 @@ fn main() {
     let mut world = World::new();
     resources::add_all(&mut world);
 
-    // initialize systems in the world
     // format:
-    // system, "string id", dependencies (systems that must run before this one)
+    // let loader = build_load_dispatcher;
+    // let dispatcher = build_main_loop_dispatcher();
     let mut loader = specs::DispatcherBuilder::new()
+        // system, "string id", &[dependencies]
+        // rendering must be on local thread
         .with_thread_local(RenderingSystem)
         .build();
     let dispatcher = specs::DispatcherBuilder::new()
+        // system, "string id", &[dependencies]
         .with(RivalSystem, "rivals", &[])
         .with(AISystem, "ai", &[])
         .with(UserInputSystem, "input", &["ai"])
         .with(ExecuteActionSystem, "execute_actions", &["ai", "input"])
         .with(DeathSystem, "deaths", &["execute_actions"])
-        // rendering must be on local thread (i think?)
+        // rendering must be on local thread
         .with_thread_local(RenderingSystem)
         .build();
     // dispatcher.setup(&mut world.res); // TODO why doesn't this work?
 
     // Register all the components (setup isn't working correctly?)
     components::register(&mut world);
-
-
-    // create some entities in the world
-    // TODO make generator functions:
-    // create_human() ?
-    // Creator object ?
-    // how to make random ?
-    // what determines parameters ?
-
-    /*
-    world.create_entity()
-        .with(Named::new("Matt"))
-        .with(Rivals::new())
-        .with(Health::new(100, 80))
-        .with(Weapon::new(1))
-        .with(Money::new(4))
-        .with(Position::new(4, 8))
-        .with(CharRenderer::new('@', Color::new(0x00, 0x95, 0xff)))
-        .with(PendingActions::default())
-        .with(Player::default())
-        .build();
-        */
-
     make_person(&mut world, true);
-    for _ in 0..30 {
-        make_person(&mut world, false);
-    }
-    /*
-    world.create_entity()
-        .with(Named::new("Lysa"))
-        .with(Rivals::new())
-        .with(Health::new(9, 12))
-        .with(Weapon::new(2))
-        .with(Money::new(4))
-        .with(Position::new(4, 10))
-        .with(CharRenderer::new('L', Color::new(0x20, 0x76, 0xbb)))
-        .with(AI::with_goal(ai::Goal::MoveRandom))
-        .with(PendingActions::default())
-        .build();
-
-    world.create_entity()
-        .with(Named::new("Dumbo"))
-        .with(Rivals::new())
-        .with(Health::new(10, 10))
-        .with(Weapon::new(1))
-        .with(Money::new(4))
-        .with(Position::new(2, 10))
-        .with(CharRenderer::new('D', Color::new(0xff, 0x00, 0x95)))
-        .with(AI::with_goal(ai::Goal::MoveRandom))
-        .with(PendingActions::default())
-        .build();
-        */
-
+    for _ in 0..30 { make_person(&mut world, false); }
     loader.dispatch(&world);
     run(world, dispatcher);
 }
+
+/*
+/// initialize systems in the loader state
+fn build_load_dispatcher() -> Dispatcher {
+    specs::DispatcherBuilder::new()
+        // system, "string id", &[dependencies]
+        // rendering must be on local thread
+        .with_thread_local(RenderingSystem)
+        .build()
+}
+
+/// initialize systems in the main loop state
+fn build_main_loop_dispatcher() -> Dispatcher {
+    specs::DispatcherBuilder::new()
+        // system, "string id", &[dependencies]
+            .with(RivalSystem, "rivals", &[])
+            .with(AISystem, "ai", &[])
+            .with(UserInputSystem, "input", &["ai"])
+            .with(ExecuteActionSystem, "execute_actions", &["ai", "input"])
+            .with(DeathSystem, "deaths", &["execute_actions"])
+            // rendering must be on local thread
+            .with_thread_local(RenderingSystem)
+            .build()
+}
+*/
 
 /// Main game loop.
 fn run(mut world: World, mut dispatcher: Dispatcher) {
@@ -162,6 +140,7 @@ fn log_turn(world: &mut World, i: i32) {
         });
 }
 
+// TODO what determines parameters ?
 fn make_person(world: &mut World, is_player: bool) {
     let names = [
         "Mark",

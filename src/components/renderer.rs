@@ -11,7 +11,7 @@ use tcod::{
 
 // use crate::components::position::Position;
 
-#[derive(Component, Debug)]
+#[derive(Component, Debug, Clone)]
 #[storage(VecStorage)]
 pub struct CharRenderer {
     pub character: char,
