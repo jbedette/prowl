@@ -21,6 +21,7 @@ use crate::components::{
 use crate::resources::{
     // RendererResource,
     Window,
+    // window::RenderingConsoles,
     console::{
         Console,
         // LogLevel,
@@ -33,7 +34,9 @@ use crate::shared::{
 };
 
 use tcod::{
-    colors::*,
+    colors,
+    colors::Color,
+    console::*,
 };
 
 pub struct RenderingSystem;
@@ -65,7 +68,15 @@ impl<'a> System<'a> for RenderingSystem {
             mut window,
         ) = data;
 
-        renderer::prepare(&mut window.root);
+        if window.root.window_closed() {
+            // quit somehow?
+            panic!() // quit somehow!
+        }
+
+        let mut root = Offscreen::new(window.size.x, window.size.y);
+
+        // renderer::prepare(&mut window.root);
+        renderer::prepare(&mut root);
 
         // Render map.
         // TODO
@@ -73,18 +84,34 @@ impl<'a> System<'a> for RenderingSystem {
         // Render characters.
         for (position, char_renderer) in (&positions, &char_renderers).join() {
             renderer::put_char(
-                &mut window.root,
+                &mut root,
                 Vector2::new(position.x as i32, position.y as i32),
                 &char_renderer.color,
                 char_renderer.character
             );
         }
+        // Render from offscreen to window
+        // TODO these still render to main window...
         // Render windows.
+        // TODO use TCOD panels
+        let (screen_width, screen_height) = (*window).size.to_tuple();
+        let (padding_x, padding_y) = (1, 2);
+        renderer::put_window(
+            &mut root,
+            screen_width / 2,
+            padding_y,
+            screen_width - padding_x,
+            screen_height - padding_y,
+        );
+        window.blit(&root);
+
+        // STATS
         for (name, _player, health, money) in (&names, &players, &healths, &moneys).join() {
             renderer::put_text(
+                // &mut root,
                 &mut window.root,
                 Vector2::new(1, 1),
-                &WHITE,
+                &colors::WHITE,
                 &format!(
 "{}
 + {}/{}
@@ -94,38 +121,31 @@ $ {}",
                          &health.max,
                          &money.current));
         }
-        // TODO use TCOD panels
-        let (screen_width, screen_height) = (*window).size.to_tuple();
-        let (padding_x, padding_y) = (1, 2);
-        renderer::put_window(
-            &mut window.root,
-            screen_width / 2,
-            padding_y,
-            screen_width - padding_x,
-            screen_height - padding_y,
-        );
-        // let window_height = screen_height - padding_y * 2;
+        // CONSOLE
         let top_left = (screen_width / 2, padding_y + 2);
         let mut i = 0;
         for log in &console.logs {
             renderer::put_text(
+                // &mut root,
                 &mut window.root,
                 Vector2::new(
                     top_left.0 + 1,
                     top_left.1 + i - 1
                 ),
-                &WHITE,
+                &colors::WHITE,
                 &log.message);
             i += 1;
         }
         console.logs = vec![];
         renderer::put_text(
+            // &mut root,
             &mut window.root,
             Vector2::new(top_left.0 + 1, screen_height - 3),
             &Color::new(0x00, 0x50, 0x80),
             "[arrows] to move, [esc] to quit");
-        // Render to console.
-        renderer::flush(&mut window.root);
+
+        // TODO delete this, do it all in blit
+        window.flush();
     }
 }
 
@@ -133,24 +153,21 @@ $ {}",
 mod renderer {
     use tcod::{
         console::*,
-        colors::*,
+        colors,
+        colors::Color,
     };
     use crate::shared::{
         Vector2,
     };
 
-    pub fn prepare(r: &mut Root) {
-        if r.window_closed() {
-            // quit somehow?
-            // TODO set GameData::QuitGame
-            panic!() // quit somehow!
-        }
-        r.set_default_foreground(WHITE);
+    // pub fn prepare(r: &mut Root) {
+    pub fn prepare(r: &mut Console) {
+        r.set_default_foreground(colors::WHITE);
         r.clear();
     }
 
     pub fn put_char(
-        r: &mut Root,
+        r: &mut Console,
         screen_position: Vector2,
         color: &Color,
         character: char)
@@ -164,11 +181,8 @@ mod renderer {
         r.set_default_foreground(color.clone());
         r.put_char(x, y, character, BackgroundFlag::None)
     }
-    pub fn flush(r: &mut Root) {
-        r.flush();
-    }
 
-    pub fn put_window(r: &mut Root, x1: i32, y1: i32, x2: i32, y2: i32) {
+    pub fn put_window(r: &mut Console, x1: i32, y1: i32, x2: i32, y2: i32) {
         let border = '+';
         let color = Color::new(0x00, 0x50, 0x80);
         for x in (x1 + 1)..(x2 - 1) {

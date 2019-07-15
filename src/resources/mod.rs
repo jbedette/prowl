@@ -4,7 +4,7 @@ use specs::prelude::*;
 // pub mod input;
 mod quit;
 pub mod console;
-mod window;
+pub mod window;
 pub mod game_data;
 
 // pub use renderer::RendererResource;

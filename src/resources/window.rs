@@ -16,14 +16,6 @@ pub struct TCODWindow {
     pub key_press: Option<KeyCode>,
     pub root: Root,
     pub size: Vector2,
-    // pub consoles: Option<RenderingConsoles>,
-}
-
-pub struct RenderingConsoles {
-    pub main: Offscreen,
-    pub map: Offscreen,
-    pub characters: Offscreen,
-    pub ui: Offscreen,
 }
 
 impl TCODWindow {
@@ -47,30 +39,24 @@ impl TCODWindow {
                 .size(size.x, size.y)
                 .title(title)
                 .init(),
-                /*
-            consoles: {
-                main: Offscreen = Offscreen::new(size.x, size.y),
-                map: Offscreen::new(size.x, size.y),
-                characters: Offscreen::new(size.x, size.y),
-                ui: Offscreen::new(size.x, size.y),
-            }
-            */
         }
     }
 
-    /*
-    pub fn blit(&self) {
+    pub fn blit(&mut self, console: &Console) {
         tcod::console::blit(
-            &mut self.console.main,
-            (0, 0)
-            (self.size.x, self.size.y),
+            &console,
+            (0, 0),
+            self.size.to_tuple(),
             &mut self.root,
             (0, 0),
             1.0,
             1.0
         );
     }
-    */
+
+    pub fn flush(&mut self) {
+        self.root.flush();
+    }
 }
 
 impl Default for TCODWindow {
