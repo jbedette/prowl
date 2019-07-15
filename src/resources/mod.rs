@@ -16,7 +16,7 @@ pub fn add_all(world: &mut World) {
     // world.add_resource is in the tutorials, but deprecated
     // but the new thing doesn't work
     world.add_resource(RendererResource::new());
-    world.add_resource(UserInput::default());
+    // world.add_resource(UserInput::default());
     world.add_resource(Quit(false));
     world.add_resource(Console::new());
 }

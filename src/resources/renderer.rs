@@ -13,7 +13,7 @@ use tcod::{
     */
 };
 
-use crate::data::{
+use crate::shared::{
     Vector2,
 };
 
@@ -56,20 +56,19 @@ impl RendererResource {
     }
 
     pub fn put_window(&mut self, x1: i32, y1: i32, x2: i32, y2: i32) {
-      // let color = color::Rgb(0x10, 0x40, 0x30);
+        let border = '+';
       for x in (x1 + 1)..(x2 - 1) {
         for y in (y1 + 1)..(y2 - 1) {
-          //self.put_char(' ', color, x, y);
           self.put_char(Vector2::new(x, y), ' ');
         }
       }
       for x in x1..x2 {
-          self.put_char(Vector2::new(x, y1), 'X');
-          self.put_char(Vector2::new(x, y2), 'X');
+          self.put_char(Vector2::new(x, y1), border);
+          self.put_char(Vector2::new(x, y2), border);
       }
       for y in y1..y2 {
-          self.put_char(Vector2::new(x1, y), 'X');
-          self.put_char(Vector2::new(x2, y), 'X');
+          self.put_char(Vector2::new(x1, y), border);
+          self.put_char(Vector2::new(x2, y), border);
       }
     }
 

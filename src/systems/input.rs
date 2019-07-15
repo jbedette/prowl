@@ -35,8 +35,8 @@ impl<'a> System<'a> for UserInputSystem {
     type SystemData = (
         ReadStorage<'a, Player>,
         WriteStorage<'a, Position>,
-        // WriteStorage<'a, PendingActions>,
-        Read<'a, UserInput>,
+        WriteStorage<'a, PendingActions>,
+        // Read<'a, UserInput>,
         Write<'a, Quit>,
         Write<'a, Console>,
         // TODO get this out of here...
@@ -47,15 +47,15 @@ impl<'a> System<'a> for UserInputSystem {
         let (
             players,
             mut positions,
-            // mut pending_actionses,
-            input,
+            mut pending_actionses,
+            // input,
             mut quit,
             mut console,
             mut renderer,
         ) = data;
 
         for (
-                _,
+                _player,
                 position,
                 // pending_actions
             ) in (
@@ -74,43 +74,26 @@ impl<'a> System<'a> for UserInputSystem {
 
             // NOTE For some reason trying to read pending_actions mutably
             // makes this system non-blocking? WTF
-            // let key: InputCode = (*input).get();
-            // while let key = (*input).get());
-            // let mut key = (*input).get();
-            // while key == InputCode::None { key = (*input).get(); }
+            // delta movement (change to add to position)
+            let mut delta = (0, 0);
             let key = UserInput::get(&mut renderer.root);
             (*console).log(Log::new(LogLevel::Debug, "Input Registered"));
             use InputCode::*;
-            // let mut delta = (0, 0);
             match key {
-                Up => {
-                    // delta.1 = -1;
-                    position.y -= 1;
-                    // pending_actions.actions.push(Action::Move { delta });
-                    (*console).log(Log::new(LogLevel::Debug, "Player Moved Up"));
-                },
-                Down => {
-                    position.y += 1;
-                    // delta.1 = 1;
-                    // pending_actions.actions.push(Action::Move { delta });
-                    (*console).log(Log::new(LogLevel::Debug, "Player Moved Down"));
-                },
-                Left => {
-                    position.x -= 1;
-                    // delta.0 = -1;
-                    // pending_actions.actions.push(Action::Move { delta });
-                    (*console).log(Log::new(LogLevel::Debug, "Player Moved Left"));
-                },
-                Right => {
-                    position.x += 1;
-                    // delta.0 = 1;
-                    // pending_actions.actions.push(Action::Move { delta });
-                    (*console).log(Log::new(LogLevel::Debug, "Player Moved Right"));
-                },
+                Up => delta.1 = -1,
+                Down => delta.1 = 1,
+                Left => delta.0 = -1,
+                Right => delta.0 = 1,
                 Quit => quit.0 = true,
                 _ => (),
             }
-            // if delta != (0, 0) { pending_actions.actions.push(Action::Move { delta }); }
+            if delta != (0, 0) {
+                (*console).log(Log::new(LogLevel::Debug, &format!("Player Moved {:?}", delta)));
+                // TODO WHY DOESN'T THIS WORK! >:O
+                // pending_actions.actions.push(Action::Move { delta });
+                position.x += delta.0;
+                position.y += delta.1;
+            }
         }
     }
 }

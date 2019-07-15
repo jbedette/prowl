@@ -1,7 +1,7 @@
-use std::{
-    thread,
-    time
-};
+// use std::{
+    // thread,
+    // time
+// };
 use specs::{
     World,
     Builder,
@@ -49,7 +49,7 @@ use resources::{
     Quit,
 };
 
-mod data;
+mod shared;
 
 // mod renderer;
 // use renderer::TermionRenderer;
@@ -64,13 +64,15 @@ fn main() {
     // initialize systems in the world
     // format:
     // system, "string id", dependencies (systems that must run before this one)
+    let mut loader = specs::DispatcherBuilder::new()
+        .with_thread_local(RenderingSystem)
+        .build();
     let dispatcher = specs::DispatcherBuilder::new()
         .with(AISystem, "ai", &[])
-        .with(ExecuteActionSystem, "execute_actions", &["ai"])
-        // .with(ExecuteActionSystem, "execute_actions", &[])
-        // .with(RenderingSystem, "render", &["execute_actions"])
+        .with(UserInputSystem, "input", &[])
+        .with(ExecuteActionSystem, "execute_actions", &["ai", "input"])
+        // rendering must be on local thread (i think?)
         .with_thread_local(RenderingSystem)
-        .with_thread_local(UserInputSystem)
         .build();
     // TODO why doesn't this work?
     // dispatcher.setup(&mut world.res);
@@ -93,7 +95,7 @@ fn main() {
         .with(Money::new(4))
         .with(Position::new(4, 8))
         .with(CharRenderer::new('M', color::Rgb(0x00, 0x95, 0xff)))
-        .with(Player)
+        .with(Player::default())
         .build();
     world.create_entity()
         .with(Named::new("Lysa"))
@@ -118,6 +120,7 @@ fn main() {
         .with(PendingActions::default())
         .build();
 
+    loader.dispatch(&world);
     run(world, dispatcher);
 }
 
@@ -125,17 +128,7 @@ fn main() {
 fn run(mut world: World, mut dispatcher: Dispatcher) {
     let mut i = 0;
     loop {
-        {
-            // must be in block, world can't be borrowed or dispatch will
-            // be upset.
-            let mut console = world.write_resource::<Console>();
-            // for _ in 0..10 {
-                console.log(Log {
-                    level: LogLevel::Debug,
-                    message: format!("Simulation Step {}", i),
-                });
-            //}
-        }
+        log_turn(&mut world, i);
         dispatcher.dispatch(&world);
         world.maintain();
         // check if user requested quit
@@ -144,4 +137,12 @@ fn run(mut world: World, mut dispatcher: Dispatcher) {
         // thread::sleep(time::Duration::from_secs(1));
         i += 1;
     }
+}
+
+fn log_turn(world: &mut World, i: i32) {
+    let mut console = world.write_resource::<Console>();
+        console.log(Log {
+            level: LogLevel::Debug,
+            message: format!("Simulation Step {}", i),
+        });
 }

@@ -23,7 +23,7 @@ use crate::resources::{
     }
 };
 
-use crate::data::{
+use crate::shared::{
     Vector2,
 };
 
@@ -71,9 +71,20 @@ impl<'a> System<'a> for RenderingSystem {
             screen_width - padding_x,
             screen_height - padding_y,
         );
-        let window_height = screen_height - padding_y * 2;
+        // let window_height = screen_height - padding_y * 2;
         let top_left = (screen_width / 2, padding_y + 2);
         let mut i = 0;
+        for log in &console.logs {
+            renderer.put_text(
+                Vector2::new(
+                    top_left.0 + 1,
+                    top_left.1 + i - 1
+                    ),
+                &log.message);
+            i += 1;
+        }
+        console.logs = vec![];
+        /*
         while let Some(log) = &console.logs.pop() {
             renderer.put_text(
                 Vector2::new(
@@ -86,6 +97,7 @@ impl<'a> System<'a> for RenderingSystem {
                 console.logs = vec!();
             }
         }
+        */
         // renderer.put_text("[wasd] to move, [q] to quit", 1, screen_height);
         // Render to console.
         renderer.flush();
