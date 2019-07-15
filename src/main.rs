@@ -2,6 +2,9 @@
     // thread,
     // time
 // };
+use rand;
+use rand::Rng;
+
 use specs::{
     World,
     Builder,
@@ -15,8 +18,6 @@ mod systems;
 use systems::{
     RivalSystem,
     DeathSystem,
-    // PrintStatsSystem,
-    // PrintEntitySystem
     RenderingSystem,
     UserInputSystem,
     AISystem,
@@ -46,20 +47,12 @@ use resources::{
         LogLevel,
     },
     game_data::GameData,
-    // RendererResource,
-    // input::UserInput,
-    // Quit,
 };
 
 mod shared;
 
-// mod renderer;
-// use renderer::TermionRenderer;
-
 fn main() {
-    // TermionRenderer::render();
-    // return;
-    // create a world
+    // create an ECS "world"
     let mut world = World::new();
     resources::add_all(&mut world);
 
@@ -78,8 +71,7 @@ fn main() {
         // rendering must be on local thread (i think?)
         .with_thread_local(RenderingSystem)
         .build();
-    // TODO why doesn't this work?
-    // dispatcher.setup(&mut world.res);
+    // dispatcher.setup(&mut world.res); // TODO why doesn't this work?
 
     // Register all the components (setup isn't working correctly?)
     components::register(&mut world);
@@ -93,17 +85,21 @@ fn main() {
     // what determines parameters ?
 
     world.create_entity()
-        .with(Named::new("Mark"))
+        .with(Named::new("Matt"))
         .with(Rivals::new())
         .with(Health::new(100, 80))
         .with(Weapon::new(1))
         .with(Money::new(4))
         .with(Position::new(4, 8))
-        .with(CharRenderer::new('M', Color::new(0x00, 0x95, 0xff)))
+        .with(CharRenderer::new('@', Color::new(0x00, 0x95, 0xff)))
         .with(PendingActions::default())
         .with(Player::default())
         .build();
 
+    for _ in 0..30 {
+        make_person(&mut world, false);
+    }
+    /*
     world.create_entity()
         .with(Named::new("Lysa"))
         .with(Rivals::new())
@@ -127,6 +123,7 @@ fn main() {
         .with(AI::with_goal(ai::Goal::MoveRandom))
         .with(PendingActions::default())
         .build();
+        */
 
     loader.dispatch(&world);
     run(world, dispatcher);
@@ -163,3 +160,56 @@ fn log_turn(world: &mut World, i: i32) {
             message: format!("Simulation Step {}", i),
         });
 }
+
+fn make_person(world: &mut World, is_player: bool) {
+    let names = [
+        "Mark",
+        "Dumbo",
+        "Kyle",
+        "Jumbo",
+        "Jarvis",
+        "Cool Man",
+        "Smarto",
+    ];
+    let name = names[random_range(0, names.len())];
+    let health = random_range(80, 200) as i64;
+    let weapon = random_range(1, 10) as u64;
+    let money = random_range(30, 300) as u64;
+    let position = (random_range(0, 50) as i32,
+                    random_range(0, 50) as i32);
+    let renderer = (
+        &name.chars().next().unwrap().clone(), 
+        Color::new(
+            random_range(0, 255) as u8,
+            random_range(0, 255) as u8,
+            random_range(0, 255) as u8,
+            ));
+    if is_player {
+        world.create_entity()
+            .with(Named::new(name))
+            .with(Health::new(health, health))
+            .with(Weapon::new(weapon))
+            .with(Money::new(money))
+            .with(Position::new(position.0, position.1))
+            .with(CharRenderer::new(*renderer.0, renderer.1))
+            .with(PendingActions::default())
+            .with(Player::default())
+            .build();
+    } else {
+        world.create_entity()
+            .with(Named::new(name))
+            .with(Health::new(health, health))
+            .with(Weapon::new(weapon))
+            .with(Money::new(money))
+            .with(Position::new(position.0, position.1))
+            .with(CharRenderer::new(*renderer.0, renderer.1))
+            .with(PendingActions::default())
+            .with(AI::with_goal(ai::Goal::MoveRandom))
+            .build();
+    }
+}
+
+fn random_range(low: usize, hi: usize) -> usize {
+    rand::thread_rng().gen_range(low, hi)
+}
+

@@ -7,6 +7,7 @@ pub struct GameData {
     pub switch_state: Option<StateChangeRequest>,
 }
 
+#[allow(dead_code)]
 pub enum StateChangeRequest {
     ResetMenu,
     QuitGame,

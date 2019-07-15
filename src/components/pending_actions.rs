@@ -11,6 +11,7 @@ pub struct PendingActions {
 }
 
 #[derive(Debug)]
+#[allow(dead_code)]
 pub enum Action {
     Move {
         // Relative movement to complete action

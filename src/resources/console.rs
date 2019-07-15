@@ -1,3 +1,7 @@
+use tcod::{
+    colors::*,
+};
+
 #[derive(Default)]
 pub struct Console {
     pub logs: Vec<Log>,
@@ -29,9 +33,18 @@ impl Log {
             message
         }
     }
+
+    pub fn get_color(&self) -> Color {
+        use LogLevel::*;
+        match self.level {
+            Game => WHITE,
+            Debug => YELLOW,
+        }
+    }
 }
 
 #[derive(Copy, Clone)]
+#[allow(dead_code)]
 pub enum LogLevel {
     Game,
     Debug,

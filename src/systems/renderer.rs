@@ -132,7 +132,7 @@ $ {}",
                     top_left.0 + 1,
                     top_left.1 + i - 1
                 ),
-                &colors::WHITE,
+                &log.get_color(),
                 &log.message);
             i += 1;
         }
