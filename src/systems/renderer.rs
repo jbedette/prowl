@@ -32,6 +32,10 @@ use crate::shared::{
     Vector2,
 };
 
+use tcod::{
+    colors::*,
+};
+
 pub struct RenderingSystem;
 
 impl<'a> System<'a> for RenderingSystem {
@@ -57,10 +61,8 @@ impl<'a> System<'a> for RenderingSystem {
             healths,
             moneys,
             players,
-            // mut renderer,
             mut console,
             mut window,
-            // entities
         ) = data;
 
         renderer::prepare(&mut window.root);
@@ -78,15 +80,21 @@ impl<'a> System<'a> for RenderingSystem {
             );
         }
         // Render windows.
-        for (name, player, health, money) in (&names, &players, &healths, &moneys).join() {
+        for (name, _player, health, money) in (&names, &players, &healths, &moneys).join() {
             renderer::put_text(
                 &mut window.root,
-                Vector2::new(1, 2),
-                &format!("{}\nHP: {}\nMONEY: 0", &name.value, &health.current));
+                Vector2::new(1, 1),
+                &WHITE,
+                &format!(
+"{}
++ {}/{}
+$ {}",
+                         &name.value,
+                         &health.current,
+                         &health.max,
+                         &money.current));
         }
-        // TODO make this generic somehow? window object that
-        // handles printing to itself??
-        // let (screen_width, screen_height) = renderer.get_bounds().to_tuple();
+        // TODO use TCOD panels
         let (screen_width, screen_height) = (*window).size.to_tuple();
         let (padding_x, padding_y) = (1, 2);
         renderer::put_window(
@@ -106,13 +114,15 @@ impl<'a> System<'a> for RenderingSystem {
                     top_left.0 + 1,
                     top_left.1 + i - 1
                 ),
+                &WHITE,
                 &log.message);
             i += 1;
         }
         console.logs = vec![];
         renderer::put_text(
             &mut window.root,
-            Vector2::new(1, screen_height - 2),
+            Vector2::new(top_left.0 + 1, screen_height - 3),
+            &Color::new(0x00, 0x50, 0x80),
             "[arrows] to move, [esc] to quit");
         // Render to console.
         renderer::flush(&mut window.root);
@@ -132,7 +142,8 @@ mod renderer {
     pub fn prepare(r: &mut Root) {
         if r.window_closed() {
             // quit somehow?
-            panic!() // quit somehow.
+            // TODO set GameData::QuitGame
+            panic!() // quit somehow!
         }
         r.set_default_foreground(WHITE);
         r.clear();
@@ -142,7 +153,8 @@ mod renderer {
         r: &mut Root,
         screen_position: Vector2,
         color: &Color,
-        character: char) {
+        character: char)
+    {
         let (x, y) = screen_position.to_tuple();
         if x < 0 || y < 0 {
             println!("PUTCHAR ERROR: X/Y LESS THAN 0 -> x: {}, y: {}, char: {}",
@@ -174,8 +186,13 @@ mod renderer {
         }
     }
 
-    pub fn put_text(r: &mut Root, position: Vector2, string: &str) {
-        r.set_default_foreground(WHITE);
+    pub fn put_text(
+        r: &mut Root,
+        position: Vector2,
+        color: &Color,
+        string: &str)
+    {
+        r.set_default_foreground(color.clone());
         r.print_ex(
             position.x,
             position.y,

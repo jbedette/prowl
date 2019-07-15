@@ -7,15 +7,13 @@ use specs::{
     Builder,
     prelude::*
 };
-// use termion::color;
 use tcod::{
     colors::*,
 };
-// use num;
 
 mod systems;
 use systems::{
-    // RivalSystem,
+    RivalSystem,
     DeathSystem,
     // PrintStatsSystem,
     // PrintEntitySystem
@@ -72,7 +70,7 @@ fn main() {
         .with_thread_local(RenderingSystem)
         .build();
     let dispatcher = specs::DispatcherBuilder::new()
-        // .with(RivalSystem, "rivals", &[])
+        .with(RivalSystem, "rivals", &[])
         .with(AISystem, "ai", &[])
         .with(UserInputSystem, "input", &["ai"])
         .with(ExecuteActionSystem, "execute_actions", &["ai", "input"])
@@ -97,7 +95,7 @@ fn main() {
     world.create_entity()
         .with(Named::new("Mark"))
         .with(Rivals::new())
-        .with(Health::new(8, 10))
+        .with(Health::new(100, 80))
         .with(Weapon::new(1))
         .with(Money::new(4))
         .with(Position::new(4, 8))
