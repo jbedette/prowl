@@ -15,6 +15,7 @@ use tcod::{
 
 use crate::shared::{
     Vector2,
+    application_root_dir,
 };
 
 pub struct RendererResource {
@@ -94,8 +95,9 @@ impl Default for RendererResource {
         Self {
             size: Vector2::new(80, 50),
             root: Root::initializer()
-                .font("terminal16x16_gs_ro.png", FontLayout::AsciiInRow)
-                // .font("arial10x10.png", FontLayout::Tcod)
+                .font(
+                    application_root_dir().unwrap().join("terminal16x16_gs_ro.png"),
+                    FontLayout::AsciiInRow)
                 .font_type(FontType::Greyscale)
                 .size(80, 50)
                 .title("PROWL")
