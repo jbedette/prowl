@@ -2,30 +2,32 @@ use specs::{
     System,
     WriteStorage,
     ReadStorage,
-    Read,
+    // Read,
     Write,
     Join
 };
+
 use crate::components::{
-    Position,
     pending_actions::{
         PendingActions,
         Action,
     },
     Player,
 };
+
 use crate::resources::{
-    RendererResource,
-    Quit,
-    input::{
-        InputCode,
-        UserInput
-    },
+    // RendererResource,
+    // Quit,
     console::{
         Console,
         LogLevel,
         Log
-    }
+    },
+    Window,
+    game_data::{
+        GameData,
+        StateChangeRequest::QuitGame,
+    },
 };
 
 #[derive(Default)]
@@ -34,66 +36,91 @@ pub struct UserInputSystem;
 impl<'a> System<'a> for UserInputSystem {
     type SystemData = (
         ReadStorage<'a, Player>,
-        WriteStorage<'a, Position>,
         WriteStorage<'a, PendingActions>,
-        // Read<'a, UserInput>,
-        Write<'a, Quit>,
+        // Write<'a, Quit>,
         Write<'a, Console>,
-        // TODO get this out of here...
-        specs::Write<'a, RendererResource>,
+        Write<'a, GameData>,
+        specs::Write<'a, Window>,
         );
 
     fn run(&mut self, data: Self::SystemData) {
         let (
             players,
-            mut positions,
             mut pending_actionses,
-            // input,
-            mut quit,
+            // mut quit,
             mut console,
-            mut renderer,
+            mut game_data,
+            mut window,
         ) = data;
 
+        if players.is_empty() {
+            let key = input::get(&mut window.root);
+            (*console).log(Log::new(LogLevel::Debug, &format!("Player is dead.")));
+            use input::InputCode::*;
+            match key {
+                Quit => game_data.switch_state = Some(QuitGame),
+                _ => (),
+            }
+            return
+        }
         for (
                 _player,
-                position,
-                // pending_actions
+                pending_actions
             ) in (
                 &players,
-                &mut positions,
-                // &mut pending_actionses,
+                &mut pending_actionses,
             ).join() {
-            // for some reason input has to be dereferenced.
-            // presumably any resource with methods would have to
-            // be dereferenced?
-            // TODO: input resource may be possible as just Input, need to test
-            // so like: `Input::get()`
-            // input.get() is blocking, nothing can happen while waiting for
-            // input. We will have to re-evaluate input if we want a
-            // non-blocking method.
-
-            // NOTE For some reason trying to read pending_actions mutably
-            // makes this system non-blocking? WTF
             // delta movement (change to add to position)
             let mut delta = (0, 0);
-            let key = UserInput::get(&mut renderer.root);
+            let key = input::get(&mut window.root);
             (*console).log(Log::new(LogLevel::Debug, "Input Registered"));
-            use InputCode::*;
+            use input::InputCode::*;
             match key {
                 Up => delta.1 = -1,
                 Down => delta.1 = 1,
                 Left => delta.0 = -1,
                 Right => delta.0 = 1,
-                Quit => quit.0 = true,
+                Quit => game_data.switch_state = Some(QuitGame),
                 _ => (),
             }
             if delta != (0, 0) {
                 (*console).log(Log::new(LogLevel::Debug, &format!("Player Moved {:?}", delta)));
-                // TODO WHY DOESN'T THIS WORK! >:O
-                // pending_actions.actions.push(Action::Move { delta });
-                position.x += delta.0;
-                position.y += delta.1;
+                pending_actions.actions.push(Action::Move { delta });
             }
         }
+    }
+}
+
+// Contains input logic.
+mod input {
+    use tcod::{
+        console::*,
+        input::{
+            Key,
+            KeyCode::*,
+        }
+    };
+
+    pub fn get(root: &mut Root) -> InputCode {
+        let key = root.wait_for_keypress(true);
+        match key {
+            Key { code: Up, .. } => return InputCode::Up,
+            Key { code: Left, .. } => return InputCode::Left,
+            Key { code: Down, .. } => return InputCode::Down,
+            Key { code: Right, .. } => return InputCode::Right,
+            Key { code: Escape, .. } => return InputCode::Quit,
+            _ => InputCode::None,
+        }
+        // InputCode::None
+    }
+
+    #[derive(Eq, PartialEq)]
+    pub enum InputCode {
+        Up,
+        Down,
+        Left,
+        Right,
+        Quit,
+        None
     }
 }

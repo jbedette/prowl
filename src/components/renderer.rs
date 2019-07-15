@@ -3,7 +3,10 @@ use specs::{
     VecStorage
 };
 use specs_derive::Component;
-use termion::color;
+// use termion::color;
+use tcod::{
+    colors::Color,
+};
 // use std::io::Write;
 
 // use crate::components::position::Position;
@@ -12,11 +15,11 @@ use termion::color;
 #[storage(VecStorage)]
 pub struct CharRenderer {
     pub character: char,
-    pub color: color::Rgb,
+    pub color: Color,
 }
 
 impl CharRenderer {
-    pub fn new(character: char, color: color::Rgb) -> Self {
+    pub fn new(character: char, color: Color) -> Self {
         Self { character, color }
     }
 }

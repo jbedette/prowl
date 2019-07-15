@@ -15,8 +15,6 @@ impl<'a> System<'a> for PrintStatsSystem {
     type SystemData = (
         ReadStorage<'a, Named>,
         ReadStorage<'a, Health>,
-        // specs::ReadStorage<'a, Weapon>,
-        // specs::Entities<'a>
         );
     fn run(&mut self, data: Self::SystemData) {
         use specs::Join;

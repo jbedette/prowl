@@ -7,7 +7,10 @@ use specs::{
     Builder,
     prelude::*
 };
-use termion::color;
+// use termion::color;
+use tcod::{
+    colors::*,
+};
 // use num;
 
 mod systems;
@@ -44,9 +47,10 @@ use resources::{
         Log,
         LogLevel,
     },
+    game_data::GameData,
     // RendererResource,
     // input::UserInput,
-    Quit,
+    // Quit,
 };
 
 mod shared;
@@ -68,6 +72,7 @@ fn main() {
         .with_thread_local(RenderingSystem)
         .build();
     let dispatcher = specs::DispatcherBuilder::new()
+        // .with(RivalSystem, "rivals", &[])
         .with(AISystem, "ai", &[])
         .with(UserInputSystem, "input", &["ai"])
         .with(ExecuteActionSystem, "execute_actions", &["ai", "input"])
@@ -88,6 +93,7 @@ fn main() {
     // Creator object ?
     // how to make random ?
     // what determines parameters ?
+
     world.create_entity()
         .with(Named::new("Mark"))
         .with(Rivals::new())
@@ -95,9 +101,11 @@ fn main() {
         .with(Weapon::new(1))
         .with(Money::new(4))
         .with(Position::new(4, 8))
-        .with(CharRenderer::new('M', color::Rgb(0x00, 0x95, 0xff)))
+        .with(CharRenderer::new('M', Color::new(0x00, 0x95, 0xff)))
+        .with(PendingActions::default())
         .with(Player::default())
         .build();
+
     world.create_entity()
         .with(Named::new("Lysa"))
         .with(Rivals::new())
@@ -105,10 +113,11 @@ fn main() {
         .with(Weapon::new(2))
         .with(Money::new(4))
         .with(Position::new(4, 10))
-        .with(CharRenderer::new('L', color::Rgb(0x20, 0x76, 0xbb)))
+        .with(CharRenderer::new('L', Color::new(0x20, 0x76, 0xbb)))
         .with(AI::with_goal(ai::Goal::MoveRandom))
         .with(PendingActions::default())
         .build();
+
     world.create_entity()
         .with(Named::new("Dumbo"))
         .with(Rivals::new())
@@ -116,7 +125,7 @@ fn main() {
         .with(Weapon::new(1))
         .with(Money::new(4))
         .with(Position::new(2, 10))
-        .with(CharRenderer::new('D', color::Rgb(0xff, 0x00, 0x95)))
+        .with(CharRenderer::new('D', Color::new(0xff, 0x00, 0x95)))
         .with(AI::with_goal(ai::Goal::MoveRandom))
         .with(PendingActions::default())
         .build();
@@ -127,19 +136,28 @@ fn main() {
 
 /// Main game loop.
 fn run(mut world: World, mut dispatcher: Dispatcher) {
-    let mut i = 0;
+    let mut turn = 0;
     loop {
-        log_turn(&mut world, i);
+        log_turn(&mut world, turn);
         dispatcher.dispatch(&world);
         world.maintain();
         // check if user requested quit
-        let quit = world.read_resource::<Quit>();
-        if quit.0 { break; }
-        // thread::sleep(time::Duration::from_secs(1));
-        i += 1;
+        // let quit = world.read_resource::<Quit>();
+        let game_data = &mut world.write_resource::<GameData>();
+        // let game_data = (*game_data);
+        use resources::game_data::StateChangeRequest::*;
+        match game_data.switch_state {
+            Some(ResetMenu) => (),
+            Some(QuitGame) => break,
+            _ => (),
+        }
+        turn += 1;
+        game_data.current_turn = turn;
     }
 }
+// thread::sleep(time::Duration::from_secs(1));
 
+/// Logs current turn
 fn log_turn(world: &mut World, i: i32) {
     let mut console = world.write_resource::<Console>();
         console.log(Log {

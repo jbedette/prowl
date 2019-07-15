@@ -1,111 +1,107 @@
-use std::io::{
-    stdout,
-    Write,
+use tcod;
+use tcod::{
+    colors::*,
+    console::*,
+    /*
+    console::{
+        Root,
+        // RootInitializer
+        FontType,
+        FontLayout,
+        *
+    }
+    */
 };
 
-use termion::{
-    cursor,
-    color,
-    style,
-    clear,
-    raw::{
-        IntoRawMode,
-        RawTerminal,
-    },
-    terminal_size,
+use crate::shared::{
+    Vector2,
+    application_root_dir,
 };
-
 
 pub struct RendererResource {
-    stdout: RawTerminal<std::io::Stdout>,
-    size: (u16, u16)
-}
-
-impl Default for RendererResource {
-    fn default() -> Self {
-        RendererResource::new()
-    }
+    size: Vector2,
+    pub root: Root,
 }
 
 impl RendererResource {
     pub fn new() -> Self {
-        Self {
-            stdout: stdout().into_raw_mode().unwrap(),
-            size: terminal_size().unwrap(),
+        Self::default()
+    }
+
+    pub fn put_char(&mut self, screen_position: Vector2, character: char) {
+        let (x, y) = screen_position.to_tuple();
+        if x < 0 || y < 0 {
+            println!("X OR Y LESS THAN 0 -> x: {}, y: {}, char: {}", x, y, character);
+            return
         }
+        self.root.put_char(x, y, character, BackgroundFlag::None)
     }
 
-    /// Renders a character at a location
-    pub fn put_char(&mut self, character: char, color: color::Rgb, x: u16, y: u16) {
-        writeln!(
-           self.stdout,
-           "{}{}{}",
-           cursor::Goto(x, y),
-           color::Fg(color),
-           character
-            ).unwrap();
-    }
-
-    pub fn put_text(&mut self, text: &str, x: u16, y: u16) {
-      let color = color::Rgb(0xbb, 0xbb, 0xbb);
-        writeln!(
-           self.stdout,
-           "{}{}{}",
-           cursor::Goto(x, y),
-           color::Fg(color),
-           text
-            ).unwrap();
-
+    // call at the start of the frame.
+    pub fn prepare(&mut self) {
+        let r = &mut self.root;
+        if r.window_closed() {
+            // quit somehow?
+            panic!() // quit somehow.
+        }
+        r.set_default_foreground(WHITE);
+        r.clear();
     }
 
     pub fn flush(&mut self) {
-        self.stdout.flush().unwrap();
+        self.root.flush();
     }
 
-    fn clear(&mut self) {
-        writeln!(self.stdout, "{}{}", clear::All, cursor::Hide).unwrap();
-    }
-
-    pub fn prepare(&mut self) {
-      self.update_size();
-      self.clear();
-    }
-
-    fn update_size(&mut self) {
-      self.size = terminal_size().unwrap();
-    }
-
-    pub fn get_bounds(&self) -> (u16, u16) {
-      self.size
-    }
-
-    pub fn put_window(&mut self, x1: u16, y1: u16, x2: u16, y2: u16) {
-      let color = color::Rgb(0x10, 0x40, 0x30);
-      for x in (x1 + 1)..(x2 - 1) {
-        for y in (y1 + 1)..(y2 - 1) {
-          self.put_char(' ', color, x, y);
+    pub fn put_window(
+        &mut self, x1: i32, y1: i32, x2: i32, y2: i32) {
+        let border = '+';
+        for x in (x1 + 1)..(x2 - 1) {
+            for y in (y1 + 1)..(y2 - 1) {
+                self.put_char(Vector2::new(x, y), ' ');
+            }
         }
-      }
-      for x in x1..x2 {
-        self.put_char('#', color, x, y1);
-        self.put_char('#', color, x, y2);
-      }
-      for y in y1..y2 {
-        self.put_char('#', color, x1, y);
-        self.put_char('#', color, x2, y);
-      }
+        for x in x1..x2 {
+            self.put_char(Vector2::new(x, y1), border);
+            self.put_char(Vector2::new(x, y2), border);
+        }
+        for y in y1..y2 {
+            self.put_char(Vector2::new(x1, y), border);
+            self.put_char(Vector2::new(x2, y), border);
+        }
+    }
+
+    pub fn get_bounds(&self) -> Vector2 {
+        return self.size;
+    }
+
+    pub fn put_text(
+        &mut self,
+        position: Vector2,
+        string: &str) {
+        self.root.print_ex(
+            position.x,
+            position.y,
+            BackgroundFlag::None,
+            TextAlignment::Left,
+            string
+            );
     }
 }
 
-impl Drop for RendererResource {
-    fn drop(&mut self) {
-        self.clear();
-        writeln!(
-            self.stdout,
-            "{}{}{}",
-            style::Reset,
-            cursor::Goto(1,1),
-            cursor::Show,
-        ).unwrap();
+impl Default for RendererResource {
+    fn default() -> Self {
+        tcod::system::set_fps(20);
+        Self {
+            size: Vector2::new(80, 50),
+            root: Root::initializer()
+                .font(
+                    application_root_dir().unwrap().join("terminal16x16_gs_ro.png"),
+                    FontLayout::AsciiInRow)
+                .font_type(FontType::Greyscale)
+                .size(80, 50)
+                .title("PROWL")
+                .init(),
+        }
     }
+
 }

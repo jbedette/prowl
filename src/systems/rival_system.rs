@@ -3,6 +3,7 @@
 
 use specs::{
     ReadStorage,
+    Write,
     WriteStorage,
     Entities,
     System,
@@ -14,6 +15,11 @@ use crate::components::{
     Health,
     Weapon
 };
+use crate::resources::console::{
+    Console,
+    Log,
+    LogLevel,
+};
 
 pub struct RivalSystem;
 
@@ -23,6 +29,7 @@ impl<'a> System<'a> for RivalSystem {
         WriteStorage<'a, Rivals>,
         WriteStorage<'a, Health>,
         WriteStorage<'a, Weapon>,
+        Write<'a, Console>,
         Entities<'a>
         );
 
@@ -32,6 +39,7 @@ impl<'a> System<'a> for RivalSystem {
             mut rivalses,
             mut healths,
             weapons,
+            mut console,
             entities
         ) = data;
 
@@ -44,7 +52,10 @@ impl<'a> System<'a> for RivalSystem {
                     if entity != rival_entity {
                         rivals.entities.push(rival_entity);
                         let rival_name = names.get(rival_entity).unwrap();
-                        println!("{} has become rivals with {}", name.value, rival_name.value);
+                        console.log(Log {
+                            level: LogLevel::Debug,
+                            message: format!("{} has become rivals with {}", name.value, rival_name.value),
+                        });
                         break;
                     }
                 }
@@ -60,8 +71,11 @@ impl<'a> System<'a> for RivalSystem {
                     if let Some(health) = rival_health {
                             let damage = weapon.damage;
                             health.current -= damage as i64;
-                            println!("{} attacked their rival {} for {} dmg",
-                                     name.value, rival_name.unwrap().value, damage);
+                            console.log(Log {
+                                level: LogLevel::Debug,
+                                message: format!("{} attacked their rival {} for {} dmg",
+                                     name.value, rival_name.unwrap().value, damage),
+                            });
                     }
                         // },
                         // None => {
