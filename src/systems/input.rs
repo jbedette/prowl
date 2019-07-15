@@ -58,7 +58,8 @@ impl<'a> System<'a> for UserInputSystem {
             (*console).log(Log::new(LogLevel::Debug, &format!("Player is dead.")));
             use input::InputCode::*;
             match key {
-                Quit => game_data.switch_state = Some(QuitGame),
+                // TODO reset menu
+                Quit => game_data.state_change_request = Some(QuitGame),
                 _ => (),
             }
             return
@@ -80,7 +81,7 @@ impl<'a> System<'a> for UserInputSystem {
                 Down => delta.1 = 1,
                 Left => delta.0 = -1,
                 Right => delta.0 = 1,
-                Quit => game_data.switch_state = Some(QuitGame),
+                Quit => game_data.state_change_request = Some(QuitGame),
                 _ => (),
             }
             if delta != (0, 0) {

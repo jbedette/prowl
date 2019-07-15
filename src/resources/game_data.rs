@@ -4,7 +4,7 @@
 #[derive(Default)]
 pub struct GameData {
     pub current_turn: i32,
-    pub switch_state: Option<StateChangeRequest>,
+    pub state_change_request: Option<StateChangeRequest>,
 }
 
 #[allow(dead_code)]

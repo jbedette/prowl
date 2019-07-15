@@ -84,6 +84,7 @@ fn main() {
     // how to make random ?
     // what determines parameters ?
 
+    /*
     world.create_entity()
         .with(Named::new("Matt"))
         .with(Rivals::new())
@@ -95,7 +96,9 @@ fn main() {
         .with(PendingActions::default())
         .with(Player::default())
         .build();
+        */
 
+    make_person(&mut world, true);
     for _ in 0..30 {
         make_person(&mut world, false);
     }
@@ -137,11 +140,9 @@ fn run(mut world: World, mut dispatcher: Dispatcher) {
         dispatcher.dispatch(&world);
         world.maintain();
         // check if user requested quit
-        // let quit = world.read_resource::<Quit>();
         let game_data = &mut world.write_resource::<GameData>();
-        // let game_data = (*game_data);
         use resources::game_data::StateChangeRequest::*;
-        match game_data.switch_state {
+        match game_data.state_change_request {
             Some(ResetMenu) => (),
             Some(QuitGame) => break,
             _ => (),
@@ -191,8 +192,10 @@ fn make_person(world: &mut World, is_player: bool) {
             .with(Weapon::new(weapon))
             .with(Money::new(money))
             .with(Position::new(position.0, position.1))
-            .with(CharRenderer::new(*renderer.0, renderer.1))
             .with(PendingActions::default())
+            // special
+            .with(CharRenderer::new('@', Color::new(0x00, 0x95, 0xff)))
+            // special
             .with(Player::default())
             .build();
     } else {
