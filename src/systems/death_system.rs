@@ -3,6 +3,7 @@
 use specs::{
     ReadStorage,
     Entities,
+    Write,
     System
 };
 
@@ -11,13 +12,22 @@ use crate::components::{
     Health,
 };
 
+use crate::resources::{
+    console::{
+        Console,
+        Log,
+        LogLevel
+    }
+};
+
 pub struct DeathSystem;
 
 impl<'a> System<'a> for DeathSystem {
     type SystemData = (
         ReadStorage<'a, Named>,
         ReadStorage<'a, Health>,
-        Entities<'a>
+        Entities<'a>,
+        Write<'a, Console>,
         );
 
     fn run(&mut self, data: Self::SystemData) {
@@ -25,7 +35,8 @@ impl<'a> System<'a> for DeathSystem {
         let (
             names,
             healths,
-            entities
+            entities,
+            mut console
             ) = data;
 
         for (health, entity) in (&healths, &entities).join() {
@@ -36,7 +47,7 @@ impl<'a> System<'a> for DeathSystem {
                     None => String::from("UNNAMED ENTITY"),
                 };
                 let _result = entities.delete(entity);
-                println!("{} has died!", name_string);
+                (*console).log(Log::new(LogLevel::Debug, &format!("{} has died.", name_string)));
             }
         }
     }

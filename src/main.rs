@@ -13,7 +13,7 @@ use termion::color;
 mod systems;
 use systems::{
     // RivalSystem,
-    // DeathSystem,
+    DeathSystem,
     // PrintStatsSystem,
     // PrintEntitySystem
     RenderingSystem,
@@ -71,6 +71,7 @@ fn main() {
         .with(AISystem, "ai", &[])
         .with(UserInputSystem, "input", &["ai"])
         .with(ExecuteActionSystem, "execute_actions", &["ai", "input"])
+        .with(DeathSystem, "deaths", &["execute_actions"])
         // rendering must be on local thread (i think?)
         .with_thread_local(RenderingSystem)
         .build();
