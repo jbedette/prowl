@@ -1,14 +1,8 @@
 #![allow(unused)]
 // Approach to interacting with TCOD inspired by
 // https://gist.github.com/AndrewJakubowicz/3cc636d10bd1dfe1abd08b990472b822
-use tcod::{
-    console::*,
-    input::KeyCode,
-};
-use crate::shared::{
-    Vector2,
-    application_root_dir,
-};
+use crate::shared::{application_root_dir, Vector2};
+use tcod::{console::*, input::KeyCode};
 
 /// Contains the application window.
 pub struct TCODWindow {
@@ -20,21 +14,17 @@ pub struct TCODWindow {
 
 impl TCODWindow {
     // Create a new window, initialize TCOD
-    pub fn new(
-        title: &str,
-        fps: i32,
-        size: Vector2,
-        font_path: &str,
-    ) -> Self {
+    pub fn new(title: &str, fps: i32, size: Vector2, font_path: &str) -> Self {
         tcod::system::set_fps(fps);
         Self {
             quit_requested: false,
             key_press: None,
-            size: size,
+            size,
             root: Root::initializer()
-                .font(application_root_dir()
-                     .unwrap().join(font_path),
-                FontLayout::AsciiInRow)
+                .font(
+                    application_root_dir().unwrap().join(font_path),
+                    FontLayout::AsciiInRow,
+                )
                 .font_type(FontType::Greyscale)
                 .size(size.x, size.y)
                 .title(title)
@@ -50,13 +40,16 @@ impl TCODWindow {
             &mut self.root,
             (0, 0),
             1.0,
-            1.0
+            1.0,
         );
+        self.root.flush();
     }
 
+    /*
     pub fn flush(&mut self) {
         self.root.flush();
     }
+    */
 }
 
 impl Default for TCODWindow {
@@ -65,6 +58,7 @@ impl Default for TCODWindow {
             "DEFAULT",
             20,
             Vector2::new(80, 50),
-            "terminal16x16_gs_ro.png")
+            "terminal16x16_gs_ro.png",
+        )
     }
 }

@@ -1,11 +1,10 @@
-
 use specs::prelude::*;
 
 // pub mod input;
-mod quit;
 pub mod console;
-pub mod window;
 pub mod game_data;
+mod quit;
+pub mod window;
 
 // pub use renderer::RendererResource;
 pub use quit::Quit;

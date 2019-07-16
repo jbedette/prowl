@@ -1,7 +1,4 @@
-use specs::{
-    Component,
-    VecStorage
-};
+use specs::{Component, VecStorage};
 use specs_derive::Component;
 
 #[derive(Component, Debug)]
@@ -12,9 +9,6 @@ pub struct Money {
 
 impl Money {
     pub fn new(current: u64) -> Self {
-        Self {
-            current,
-        }
+        Self { current }
     }
 }
-

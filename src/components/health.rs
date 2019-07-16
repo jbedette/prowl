@@ -1,7 +1,4 @@
-use specs::{
-    Component,
-    VecStorage
-};
+use specs::{Component, VecStorage};
 use specs_derive::Component;
 
 #[derive(Component, Debug)]
@@ -13,10 +10,6 @@ pub struct Health {
 
 impl Health {
     pub fn new(current: i64, max: i64) -> Self {
-        Self {
-            current,
-            max
-        }
+        Self { current, max }
     }
 }
-

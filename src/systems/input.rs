@@ -1,33 +1,23 @@
 use specs::{
-    System,
-    WriteStorage,
+    Join,
     ReadStorage,
+    System,
     // Read,
     Write,
-    Join
+    WriteStorage,
 };
 
 use crate::components::{
-    pending_actions::{
-        PendingActions,
-        Action,
-    },
+    pending_actions::{Action, PendingActions},
     Player,
 };
 
 use crate::resources::{
     // RendererResource,
     // Quit,
-    console::{
-        Console,
-        LogLevel,
-        Log
-    },
+    console::{Console, Log, LogLevel},
+    game_data::{GameData, StateChangeRequest::QuitGame},
     Window,
-    game_data::{
-        GameData,
-        StateChangeRequest::QuitGame,
-    },
 };
 
 #[derive(Default)]
@@ -41,7 +31,7 @@ impl<'a> System<'a> for UserInputSystem {
         Write<'a, Console>,
         Write<'a, GameData>,
         specs::Write<'a, Window>,
-        );
+    );
 
     fn run(&mut self, data: Self::SystemData) {
         let (
@@ -62,15 +52,9 @@ impl<'a> System<'a> for UserInputSystem {
                 Quit => game_data.state_change_request = Some(QuitGame),
                 _ => (),
             }
-            return
+            return;
         }
-        for (
-                _player,
-                pending_actions
-            ) in (
-                &players,
-                &mut pending_actionses,
-            ).join() {
+        for (_player, pending_actions) in (&players, &mut pending_actionses).join() {
             // delta movement (change to add to position)
             let mut delta = (0, 0);
             let key = input::get(&mut window.root);
@@ -82,10 +66,11 @@ impl<'a> System<'a> for UserInputSystem {
                 Left => delta.0 = -1,
                 Right => delta.0 = 1,
                 Quit => game_data.state_change_request = Some(QuitGame),
+                ConsoleSrollUp => console.y_offset += 1,
+                ConsoleSrollDown => console.y_offset -= 1,
                 _ => (),
             }
             if delta != (0, 0) {
-                (*console).log(Log::new(LogLevel::Debug, &format!("Player Moved {:?}", delta)));
                 pending_actions.actions.push(Action::Move { delta });
             }
         }
@@ -96,23 +81,32 @@ impl<'a> System<'a> for UserInputSystem {
 mod input {
     use tcod::{
         console::*,
-        input::{
-            Key,
-            KeyCode::*,
-        }
+        input::{Key, KeyCode::*},
     };
 
     pub fn get(root: &mut Root) -> InputCode {
         let key = root.wait_for_keypress(true);
         match key {
+            /*
             Key { code: Up, .. } => return InputCode::Up,
             Key { code: Left, .. } => return InputCode::Left,
             Key { code: Down, .. } => return InputCode::Down,
             Key { code: Right, .. } => return InputCode::Right,
-            Key { code: Escape, .. } => return InputCode::Quit,
+            */
+            Key { code: Char, .. } => {
+                match key.printable {
+                    'w' => InputCode::Up,
+                    'a' => InputCode::Left,
+                    's' => InputCode::Down,
+                    'd' => InputCode::Right,
+                    'k' => InputCode::ConsoleSrollUp,
+                    'j' => InputCode::ConsoleSrollDown,
+                    _ => InputCode::None,
+                }
+            },
+            Key { code: Escape, .. } => InputCode::Quit,
             _ => InputCode::None,
         }
-        // InputCode::None
     }
 
     #[derive(Eq, PartialEq)]
@@ -121,7 +115,9 @@ mod input {
         Down,
         Left,
         Right,
+        ConsoleSrollUp,
+        ConsoleSrollDown,
         Quit,
-        None
+        None,
     }
 }

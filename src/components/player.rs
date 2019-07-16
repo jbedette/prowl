@@ -1,7 +1,4 @@
-use specs::{
-    Component,
-    NullStorage,
-};
+use specs::{Component, NullStorage};
 use specs_derive::Component;
 
 #[derive(Component, Default)]

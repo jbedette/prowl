@@ -1,7 +1,4 @@
-use specs::{
-    Component,
-    VecStorage
-};
+use specs::{Component, VecStorage};
 use specs_derive::Component;
 
 #[derive(Component, Debug)]
@@ -16,4 +13,3 @@ impl Position {
         Self { x, y }
     }
 }
-

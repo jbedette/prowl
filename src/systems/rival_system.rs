@@ -1,25 +1,8 @@
+use crate::components::{Health, Named, Rivals, Weapon};
+use crate::resources::console::{Console, Log, LogLevel};
 /// If entity has no rivals, find one.
 /// Otherwise, hurt rival.
-
-use specs::{
-    ReadStorage,
-    Write,
-    WriteStorage,
-    Entities,
-    System,
-    Join
-};
-use crate::components::{
-    Named,
-    Rivals,
-    Health,
-    Weapon
-};
-use crate::resources::console::{
-    Console,
-    Log,
-    LogLevel,
-};
+use specs::{Entities, Join, ReadStorage, System, Write, WriteStorage};
 
 pub struct RivalSystem;
 
@@ -30,31 +13,30 @@ impl<'a> System<'a> for RivalSystem {
         WriteStorage<'a, Health>,
         WriteStorage<'a, Weapon>,
         Write<'a, Console>,
-        Entities<'a>
-        );
+        Entities<'a>,
+    );
 
     fn run(&mut self, data: Self::SystemData) {
-        let (
-            names,
-            mut rivalses,
-            mut healths,
-            weapons,
-            mut console,
-            entities
-        ) = data;
+        let (names, mut rivalses, mut healths, weapons, mut console, entities) = data;
 
         for (entity, rivals) in (&entities, &mut rivalses).join() {
-            let name = names.get(entity).unwrap();
+            let name = names.get(entity);
+            let name = Named::name_or_noname(name);
             // must have at least one rival
             // TODO this doesn't work - see todos below
             if rivals.entities.is_empty() {
                 for rival_entity in (entities).join() {
                     if entity != rival_entity {
                         rivals.entities.push(rival_entity);
-                        let rival_name = names.get(rival_entity).unwrap();
+                        let rival_name = names.get(rival_entity);
+                        let rival_name = Named::name_or_noname(rival_name);
                         console.log(Log {
                             level: LogLevel::Debug,
-                            message: format!("{} has become rivals with {}", name.value, rival_name.value),
+                            message: format!(
+                                "{} has become rivals with {}",
+                                name,
+                                rival_name
+                            ),
                         });
                         break;
                     }
@@ -62,30 +44,26 @@ impl<'a> System<'a> for RivalSystem {
             } else {
                 let weapon = weapons.get(entity).unwrap();
                 // hurt each rival
-                // TODO learn how iterators work and use one here so dead rivals can be deleted...
                 for rival_entity in &rivals.entities {
                     let rival_health = healths.get_mut(*rival_entity);
                     let rival_name = names.get(*rival_entity);
-                    // match rival_health {
-                        // Some(health) => {
                     if let Some(health) = rival_health {
-                            let damage = weapon.damage;
-                            health.current -= damage as i64;
-                            console.log(Log {
-                                level: LogLevel::Debug,
-                                message: format!("{} attacked their rival {} for {} dmg",
-                                     name.value, rival_name.unwrap().value, damage),
-                            });
+                        let damage = weapon.damage;
+                        health.current -= damage as i64;
+                        console.log(Log {
+                            level: LogLevel::Debug,
+                            message: format!(
+                                "{} attacked their rival {} for {} dmg",
+                                name,
+                                rival_name.unwrap().value,
+                                damage
+                            ),
+                        });
+                    } else {
+                        // TODO delete somehow
                     }
-                        // },
-                        // None => {
-                            // TODO delete rival somehow...
-                            // eprintln!("ERROR: RIVAL NOT FOUND -- Entity Val:{:?}", rival_entity);
-                        // }
-                    // }
                 }
             }
         }
     }
 }
-

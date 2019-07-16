@@ -11,6 +11,10 @@ impl Vector2 {
         Self { x, y }
     }
 
+    pub fn zero() -> Self {
+        Self { x: 0, y: 0 }
+    }
+
     pub fn to_tuple(&self) -> (i32, i32) {
         (self.x, self.y)
     }

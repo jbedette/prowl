@@ -1,15 +1,17 @@
-use tcod::{
-    colors::*,
-};
+use tcod::colors::*;
 
 #[derive(Default)]
 pub struct Console {
     pub logs: Vec<Log>,
+    pub y_offset: i32,
 }
 
 impl Console {
     pub fn new() -> Self {
-        Self { logs: vec![] }
+        Self {
+            logs: vec![],
+            y_offset: 0,
+        }
     }
 
     pub fn log(&mut self, message: Log) {
@@ -26,24 +28,21 @@ pub struct Log {
 }
 
 impl Log {
-    pub fn new(level: LogLevel, message: &str) -> Self {
-        let message = String::from(message);
-        Self {
-            level,
-            message
-        }
+    pub fn new<T: Into<String>>(level: LogLevel, message: T) -> Self {
+        let message = message.into();
+        Self { level, message }
     }
 
     pub fn get_color(&self) -> Color {
         use LogLevel::*;
         match self.level {
             Game => WHITE,
-            Debug => YELLOW,
+            Debug => Color::new(0x20, 0x10, 0x10),
         }
     }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Debug, Copy, Clone, Eq, PartialEq)]
 #[allow(dead_code)]
 pub enum LogLevel {
     Game,
