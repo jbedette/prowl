@@ -98,7 +98,7 @@ fn build_main_loop_dispatcher() -> Dispatcher<'static, 'static> {
 fn run(mut world: World, mut dispatcher: Dispatcher) {
     let mut turn = 0;
     loop {
-        log_turn(&mut world, turn);
+        log_turn(&mut world);
         dispatcher.dispatch(&world);
         world.maintain();
         // check if user requested quit
@@ -116,7 +116,7 @@ fn run(mut world: World, mut dispatcher: Dispatcher) {
 // thread::sleep(time::Duration::from_secs(1));
 
 /// Logs current turn
-fn log_turn(world: &mut World, i: i32) {
+fn log_turn(world: &mut World) {
     let mut console = world.write_resource::<Console>();
     console.log(Log {
         level: LogLevel::Game,

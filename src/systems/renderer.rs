@@ -43,7 +43,7 @@ impl<'a> System<'a> for RenderingSystem {
         ReadStorage<'a, Player>,
         ReadStorage<'a, TileMap>,
         // specs::Write<'a, RendererResource>,
-        specs::Write<'a, Console>,
+        specs::Read<'a, Console>,
         specs::Write<'a, Window>,
         specs::Read<'a, GameData>,
         Entities<'a>,
@@ -58,7 +58,7 @@ impl<'a> System<'a> for RenderingSystem {
              moneys,
              players,
              tilemaps,
-             mut console,
+             console,
              mut window,
              game_data,
              entities,
@@ -104,7 +104,7 @@ impl<'a> System<'a> for RenderingSystem {
             );
         }
 
-        // CONSOLE WINDOW
+        // CONSOLE WINDOW TODO refactor
         let (screen_width, screen_height) = (*window).size.to_tuple();
         let (padding_x, padding_y) = (1, 2);
         let left_edge = screen_width / 2 + 10;
@@ -118,7 +118,7 @@ impl<'a> System<'a> for RenderingSystem {
         let top_left = (left_edge, padding_y + 2);
 
 
-        // STATS
+        // STATS TODO refactor
         for (name, _player, health, money) in (&names, &players, &healths, &moneys).join() {
             renderer::put_text(
                 &mut root,
@@ -136,7 +136,7 @@ T {}",
                 ),
             );
         }
-        // CONSOLE
+        // CONSOLE TODO refactor
         let mut i = 0;
         let offset = &console.y_offset;
         for log in &console.logs {
@@ -155,14 +155,13 @@ T {}",
             }
             i += 1;
         }
-        // console.logs = vec![];
+        // INSTRUCTIONS TODO replace
         renderer::put_text(
             &mut root,
-            // &mut window.root,
-            Vector2::new(0, screen_height - 2),
-            Vector2::new(10, 5),
+            Vector2::new(2, screen_height - 2),
+            Vector2::new(200, 5),
             &Color::new(0x00, 0x50, 0x80),
-            "[arrows] to move, [esc] to quit",
+            "[wasd] to move, [esc] to quit",
         );
 
         window.blit(&root);
@@ -236,9 +235,11 @@ mod renderer {
         color: &Color,
         string: &str)
     {
+        /*
         if position.y > bounds.y {
             return;
         }
+        */
         r.set_default_foreground(color.clone());
         r.print_rect(
             position.x,
