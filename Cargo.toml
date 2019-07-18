@@ -1,7 +1,12 @@
 [package]
 name = "prowl"
 version = "0.1.0"
-authors = ["John Bedette <jbedette@yahoo.com>"]
+authors = ["John Bedette <jbedette@yahoo.com>, Matt O'Tousa <matt@mattotousa.com>"]
 edition = "2018"
 
 [dependencies]
+specs = "0.15.0"
+specs-derive = "0.4.0"
+rand = "*"
+tcod = "0.15"
+num = "0.2"
