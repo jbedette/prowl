@@ -11,10 +11,16 @@ use rand;
 pub struct AISystem;
 
 impl<'a> System<'a> for AISystem {
-    type SystemData = (WriteStorage<'a, AI>, WriteStorage<'a, PendingActions>);
+    type SystemData = (
+        WriteStorage<'a, AI>,
+        WriteStorage<'a, PendingActions>
+        );
 
     fn run(&mut self, data: Self::SystemData) {
-        let (ais, mut pending_actionses) = data;
+        let (
+            ais,
+            mut pending_actionses
+            ) = data;
 
         for (ai, pending_actions) in (&ais, &mut pending_actionses).join() {
             match ai.goal {

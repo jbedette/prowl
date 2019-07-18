@@ -10,7 +10,12 @@ use tcod::colors::*;
 
 mod systems;
 use systems::{
-    AISystem, DeathSystem, ExecuteActionSystem, RenderingSystem, RivalSystem, UserInputSystem,
+    AISystem,
+    DeathSystem,
+    ExecuteActionSystem,
+    RenderingSystem,
+    RivalSystem,
+    UserInputSystem,
 };
 
 mod components;
@@ -84,7 +89,7 @@ fn build_setup_dispatcher() -> Dispatcher<'static, 'static> {
 fn build_main_loop_dispatcher() -> Dispatcher<'static, 'static> {
     specs::DispatcherBuilder::new()
         // system, "string id", &[dependencies]
-        .with(RivalSystem, "rivals", &[])
+        // .with(RivalSystem, "rivals", &[])
         .with(AISystem, "ai", &[])
         .with(UserInputSystem, "input", &["ai"])
         .with(ExecuteActionSystem, "execute_actions", &["ai", "input"])

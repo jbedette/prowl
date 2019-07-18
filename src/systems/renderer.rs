@@ -140,9 +140,9 @@ T {}",
         let mut i = 0;
         let offset = &console.y_offset;
         for log in &console.logs {
-            if log.level == LogLevel::Debug {
-                break;
-            }
+            // if log.level == LogLevel::Debug {
+            //     break;
+            // }
             if i < *offset { i += 1; }
             else {
                 renderer::put_text(
