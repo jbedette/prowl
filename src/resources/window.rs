@@ -16,19 +16,20 @@ impl TCODWindow {
     // Create a new window, initialize TCOD
     pub fn new(title: &str, fps: i32, size: Vector2, font_path: &str) -> Self {
         tcod::system::set_fps(fps);
+        let root = Root::initializer()
+            .font(
+                application_root_dir().unwrap().join(font_path),
+                FontLayout::AsciiInRow,
+            )
+            .font_type(FontType::Greyscale)
+            .size(size.x, size.y)
+            .title(title)
+            .init();
         Self {
             quit_requested: false,
             key_press: None,
             size,
-            root: Root::initializer()
-                .font(
-                    application_root_dir().unwrap().join(font_path),
-                    FontLayout::AsciiInRow,
-                )
-                .font_type(FontType::Greyscale)
-                .size(size.x, size.y)
-                .title(title)
-                .init(),
+            root,
         }
     }
 

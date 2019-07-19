@@ -18,13 +18,16 @@ impl Console {
         // TODO is to_owned best here?
         self.logs.push(message.to_owned());
     }
+
+    pub fn clear(&mut self) {
+        self.logs = vec![];
+    }
 }
 
 #[derive(Clone)]
 pub struct Log {
     pub level: LogLevel,
     pub message: String,
-    // entity: Entity, // maybe better than grabbing name all the time...
 }
 
 impl Log {

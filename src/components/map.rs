@@ -1,5 +1,8 @@
 use crate::components::CharRenderer;
-use specs::{Component, VecStorage};
+use specs::{
+    Component,
+    VecStorage
+};
 use specs_derive::Component;
 #[allow(unused_imports)]
 use crate::shared::Vector2;

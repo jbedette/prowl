@@ -6,18 +6,22 @@ pub mod map;
 pub mod money;
 pub mod name;
 pub mod pending_actions;
-pub mod player;
 pub mod position;
 pub mod renderer;
 pub mod rivals;
 pub mod weapon;
+pub mod markers;
 
 pub use ai::AI;
 pub use health::Health;
 pub use map::TileMap;
 pub use money::Money;
 pub use name::Named;
-pub use player::Player;
+pub use markers::{
+    Player,
+    Ship,
+    MoveableEntity,
+};
 pub use position::Position;
 pub use renderer::CharRenderer;
 pub use rivals::Rivals;
@@ -32,6 +36,8 @@ pub fn register(world: &mut World) {
     world.register::<Position>();
     world.register::<CharRenderer>();
     world.register::<Player>();
+    world.register::<Ship>();
+    world.register::<MoveableEntity>();
     world.register::<pending_actions::PendingActions>();
     world.register::<AI>();
     world.register::<TileMap>();

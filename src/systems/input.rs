@@ -9,7 +9,7 @@ use specs::{
 
 use crate::components::{
     pending_actions::{Action, PendingActions},
-    Player,
+    markers::Player,
 };
 
 use crate::resources::{
@@ -70,8 +70,17 @@ impl<'a> System<'a> for UserInputSystem {
                 ConsoleSrollDown => console.y_offset -= 1,
                 _ => (),
             }
+
+            // Some inputs increment the current game turn
+            // Others (like UI) generally don't.
+            let mut increment_turn = false;
             if delta != (0, 0) {
                 pending_actions.actions.push(Action::Move { delta });
+                increment_turn = true;
+            }
+
+            if increment_turn {
+                game_data.current_turn += 1;
             }
         }
     }
@@ -81,19 +90,18 @@ impl<'a> System<'a> for UserInputSystem {
 mod input {
     use tcod::{
         console::*,
-        input::{Key, KeyCode::*},
+        input::{
+            Key,
+            KeyCode::*,
+            KeyPressFlags,
+        },
     };
 
     pub fn get(root: &mut Root) -> InputCode {
         let key = root.wait_for_keypress(true);
+        // let key = root.check_for_keypress(KeyPressFlags::all());
         match key {
-            /*
-            Key { code: Up, .. } => return InputCode::Up,
-            Key { code: Left, .. } => return InputCode::Left,
-            Key { code: Down, .. } => return InputCode::Down,
-            Key { code: Right, .. } => return InputCode::Right,
-            */
-            Key { code: Char, .. } => {
+            Key { code: Char, pressed: true, .. } => {
                 match key.printable {
                     'w' => InputCode::Up,
                     'a' => InputCode::Left,
