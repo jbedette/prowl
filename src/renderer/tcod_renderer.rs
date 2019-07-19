@@ -6,6 +6,7 @@ use crate::components::{
     CharRenderer
 };
 use tcod::{colors, colors::Color, console::*};
+use crate::ui::panel::Panel;
 
 pub fn init(r: &mut Console) {
     r.set_default_foreground(colors::WHITE);
@@ -38,7 +39,7 @@ pub fn put_char(
     r.put_char(x, y, character.character, background_flag)
 }
 
-pub fn put_panel(r: &mut Offscreen, x1: i32, y1: i32, x2: i32, y2: i32) {
+pub fn _put_panel(r: &mut Offscreen, x1: i32, y1: i32, x2: i32, y2: i32) {
     let bg_color = Color::new(0x40, 0x20, 0x20);
     let border_color = Color::new(0x80, 0x40, 0x30);
     let border_bg_color = Color::new(0x50, 0x30, 0x30);
@@ -65,6 +66,42 @@ pub fn put_panel(r: &mut Offscreen, x1: i32, y1: i32, x2: i32, y2: i32) {
     }
 }
 
+pub fn put_panel(r: &mut Offscreen, panel: &Panel) {
+    let bg_color = panel.border.color;
+    let border_color = panel.background.color;
+    r.set_default_background(border_color);
+    r.rect(
+        panel.position.x,
+        panel.position.y,
+        // panel.position.x + panel.bounds.x,
+        // panel.position.y + panel.bounds.y,
+        panel.bounds.x,
+        panel.bounds.y,
+        true,
+        BackgroundFlag::Set,
+        );
+    r.set_default_foreground(bg_color);
+    r.set_default_background(bg_color);
+    r.print_rect(
+        panel.position.x + 1,
+        panel.position.y,
+        panel.bounds.x - 3,
+        0,
+        panel.title.clone()
+        );
+    r.rect(
+        panel.position.x + 1,
+        panel.position.y + 1,
+        // panel.position.x + panel.bounds.x - 2,
+        // panel.position.y + panel.bounds.y - 2,
+        panel.bounds.x - 2,
+        panel.bounds.y - 2,
+        true,
+        BackgroundFlag::Set,
+        );
+    // TODO widgets
+}
+
 pub fn put_text(
     r: &mut Offscreen,
     position: Vector2,
@@ -77,7 +114,7 @@ pub fn put_text(
         position.x,
         position.y,
         bounds.x,
-        0,
+        bounds.y,
         string,
     );
 }

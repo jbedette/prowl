@@ -24,7 +24,6 @@ use components::{
     TileMap,
     pending_actions::PendingActions,
     CharRenderer,
-    // Rivals,
     Health,
     Money,
     Named,
@@ -39,7 +38,6 @@ use components::{
 
 mod resources;
 use resources::{
-    // console::{Console, Log, LogLevel},
     game_data::GameData,
 };
 
@@ -52,7 +50,7 @@ use shared::{
 mod ui;
 use ui::panel::Panel;
 
-const MAP_SIZE: i32 = 1000;
+const MAP_SIZE: i32 = 500;
 
 fn main() {
     // create an ECS "world"
@@ -67,10 +65,10 @@ fn main() {
      // player
     make_person(&mut world, true);
     // populate gameworld
-    for _ in 0..1000 { make_person(&mut world, false); }
+    for _ in 0..500 { make_person(&mut world, false); }
     // build a map (dumb af)
     let mut map = TileMap::new(Vector2::new(MAP_SIZE, MAP_SIZE));
-    for _ in 0..1000 {
+    for _ in 0..2000 {
         map.place_island(Vector2::new(
                 random_range(0, MAP_SIZE as usize) as i32,
                 random_range(0, MAP_SIZE as usize) as i32),
@@ -84,7 +82,16 @@ fn main() {
                 Vector2::new(1, 1),
                 Vector2::new(14, 6),
                 CharRenderer::new(' ', Color::new(12, 24, 32)),
-                CharRenderer::new(' ', Color::new(28, 42, 90)),
+                CharRenderer::new(' ', Color::new(45, 42, 90)),
+                ))
+        .build();
+    world.create_entity()
+        .with(Panel::new(
+                "Panel Test",
+                Vector2::new(44, 29),
+                Vector2::new(35, 20),
+                CharRenderer::new(' ', Color::new(12, 24, 32)),
+                CharRenderer::new(' ', Color::new(45, 42, 90)),
                 ))
         .build();
 

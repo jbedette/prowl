@@ -107,53 +107,30 @@ impl<'a> System<'a> for RenderingSystem {
                 &window.size);
         }
         // Render characters, ignoring any that aren't in view.
-        {
-            let lower_right_corner = window.size + offset;
-            for (position, char_renderer) in (&positions, &char_renderers)
-                .join()
-                .into_iter()
-                .filter(|(pos, _)| {
-                    (*pos).value.x >= offset.x &&
-                    (*pos).value.y >= offset.y &&
-                    (*pos).value.x <= lower_right_corner.x &&
-                    (*pos).value.y <= lower_right_corner.y
-                }) {
-                    let (x, y) = (position.value - offset).to_tuple();
-                    let x = x as i32;
-                    let y = y as i32;
-                    renderer::put_char(
-                        &mut root,
-                        Vector2::new(x, y),
-                        &char_renderer,
-                    );
-                }
-        }
+        let lower_right_corner = window.size + offset;
+        for (position, char_renderer) in (&positions, &char_renderers)
+            .join()
+            .into_iter()
+            .filter(|(pos, _)| {
+                (*pos).value.x >= offset.x &&
+                (*pos).value.y >= offset.y &&
+                (*pos).value.x <= lower_right_corner.x &&
+                (*pos).value.y <= lower_right_corner.y
+            }) {
+                let (x, y) = (position.value - offset).to_tuple();
+                let x = x as i32;
+                let y = y as i32;
+                renderer::put_char(
+                    &mut root,
+                    Vector2::new(x, y),
+                    &char_renderer,
+                );
+            }
 
-        // CONSOLE WINDOW TODO refactor
-        let (screen_width, screen_height) = (*window).size.to_tuple();
-        let (padding_x, padding_y) = (1, 2);
-        let left_edge = screen_width / 2 + 10;
-        renderer::put_panel(
-            &mut root,
-            left_edge,
-            padding_y - 1,
-            screen_width - padding_x,
-            screen_height - padding_y,
-        );
-        let top_left = (left_edge, padding_y + 2);
+        let (_screen_width, screen_height) = (*window).size.to_tuple();
 
         for panel in (&panels).join() {
-            renderer::put_panel(
-                &mut root,
-                panel.position.x,
-                panel.position.y,
-                panel.position.x + panel.bounds.x,
-                panel.position.y + panel.bounds.y
-                // panel.top_left.x,
-                // panel.top_left.y,
-                // panel.top_left.x + panel.bounds.x,
-                // panel.top_left.y + panel.bounds.y
-                )
+            renderer::put_panel(&mut root, &panel)
         }
 
 
@@ -179,15 +156,15 @@ T {}",
         let mut i = 0;
         let offset = &console.y_offset;
         for log in &console.logs {
-            if log.level == LogLevel::Debug {
-                break;
-            }
+            // if log.level == LogLevel::Debug {
+            //     break;
+            // }
             if i < *offset { i += 1; }
             else {
                 renderer::put_text(
                     &mut root,
-                    Vector2::new(top_left.0 + 1, top_left.1 + (i - offset) as i32 - 2),
-                    Vector2::new(screen_width - left_edge, screen_height - padding_y * 2),
+                    Vector2::new(45, 30 + i),
+                    Vector2::new(35, 1),
                     &log.get_color(),
                     &log.message,
                 );
