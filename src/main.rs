@@ -52,7 +52,7 @@ use shared::{
 mod ui;
 use ui::panel::Panel;
 
-const MAP_SIZE: i32 = 100;
+const MAP_SIZE: i32 = 1000;
 
 fn main() {
     // create an ECS "world"
@@ -67,20 +67,22 @@ fn main() {
      // player
     make_person(&mut world, true);
     // populate gameworld
-    for _ in 0..10 { make_person(&mut world, false); }
+    for _ in 0..1000 { make_person(&mut world, false); }
     // build a map (dumb af)
     let mut map = TileMap::new(Vector2::new(MAP_SIZE, MAP_SIZE));
-    for _ in 0..100 {
+    for _ in 0..1000 {
         map.place_island(Vector2::new(
-                random_range(00, MAP_SIZE as usize) as i32,
-                random_range(00, MAP_SIZE as usize) as i32)
+                random_range(0, MAP_SIZE as usize) as i32,
+                random_range(0, MAP_SIZE as usize) as i32),
+                Vector2::new( random_range(3,10) as i32,
+                    random_range(3,10) as i32)
             );
     }
     world.create_entity()
         .with(Panel::new(
                 "Panel Test",
                 Vector2::new(1, 1),
-                Vector2::new(10, 6),
+                Vector2::new(14, 6),
                 CharRenderer::new(' ', Color::new(12, 24, 32)),
                 CharRenderer::new(' ', Color::new(28, 42, 90)),
                 ))
@@ -113,8 +115,10 @@ fn build_main_loop_dispatcher() -> Dispatcher<'static, 'static> {
         .with(UserInputSystem, "input", &[])
         .with(AISystem, "ai", &[])
         // .with(UserInputSystem, "input", &[])
-        .with(ExecuteActionSystem, "execute_actions", &["ai", "input"])
-        .with(DeathSystem, "deaths", &["execute_actions"])
+        // .with(ExecuteActionSystem, "execute_actions", &["ai", "input"])
+        // .with(ExecuteActionSystem, "execute_actions", &["ai"])
+        .with(ExecuteActionSystem, "execute_actions", &[])
+        .with(DeathSystem, "deaths", &[])
         // rendering must be on local thread
         .with_thread_local(RenderingSystem)
         .build()

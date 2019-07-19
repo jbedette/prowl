@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use crate::shared::Vector2;
 
 #[derive(Default)]

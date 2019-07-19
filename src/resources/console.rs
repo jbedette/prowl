@@ -19,6 +19,7 @@ impl Console {
         self.logs.push(message.to_owned());
     }
 
+    #[allow(unused)]
     pub fn clear(&mut self) {
         self.logs = vec![];
     }

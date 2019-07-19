@@ -8,7 +8,6 @@ pub mod name;
 pub mod pending_actions;
 pub mod position;
 pub mod renderer;
-pub mod rivals;
 pub mod weapon;
 pub mod markers;
 
@@ -24,12 +23,10 @@ pub use markers::{
 };
 pub use position::Position;
 pub use renderer::CharRenderer;
-pub use rivals::Rivals;
 pub use weapon::Weapon;
 
 pub fn register(world: &mut World) {
     world.register::<Named>();
-    world.register::<Rivals>();
     world.register::<Health>();
     world.register::<Money>();
     world.register::<Weapon>();

@@ -33,6 +33,7 @@ impl<'a> System<'a> for UserInputSystem {
         specs::Write<'a, Window>,
     );
 
+    /// Responds to user input
     fn run(&mut self, data: Self::SystemData) {
         let (
             players,
@@ -56,10 +57,15 @@ impl<'a> System<'a> for UserInputSystem {
         }
         for (_player, pending_actions) in (&players, &mut pending_actionses).join() {
             // delta movement (change to add to position)
+            if !pending_actions.actions.is_empty() { continue; }
             let mut delta = (0, 0);
             let key = input::get(&mut window.root);
             (*console).log(Log::new(LogLevel::Debug, "Input Registered"));
-            use input::InputCode::*;
+            use input::InputCode;
+            use InputCode::*;
+            if key != InputCode::None {
+                println!("{:?}", key)
+            }
             match key {
                 Up => delta.1 = -1,
                 Down => delta.1 = 1,
@@ -86,38 +92,41 @@ impl<'a> System<'a> for UserInputSystem {
     }
 }
 
-// Contains input logic.
+/// Polls TCOD for keyboard input. Blocks.
 mod input {
     use tcod::{
         console::*,
         input::{
             Key,
             KeyCode::*,
-            KeyPressFlags,
+            // KeyPressFlags,
         },
     };
 
+    // Gets keyboard input, returns an 'InputCode'
     pub fn get(root: &mut Root) -> InputCode {
-        let key = root.wait_for_keypress(true);
         // let key = root.check_for_keypress(KeyPressFlags::all());
-        match key {
-            Key { code: Char, pressed: true, .. } => {
-                match key.printable {
-                    'w' => InputCode::Up,
-                    'a' => InputCode::Left,
-                    's' => InputCode::Down,
-                    'd' => InputCode::Right,
-                    'k' => InputCode::ConsoleSrollUp,
-                    'j' => InputCode::ConsoleSrollDown,
-                    _ => InputCode::None,
-                }
-            },
-            Key { code: Escape, .. } => InputCode::Quit,
-            _ => InputCode::None,
-        }
+        let key = Some(root.wait_for_keypress(true));
+        if let Some(key) = key {
+            match key {
+                Key { code: Char, pressed: true, .. } => {
+                    match key.printable {
+                        'w' => InputCode::Up,
+                        'a' => InputCode::Left,
+                        's' => InputCode::Down,
+                        'd' => InputCode::Right,
+                        'k' => InputCode::ConsoleSrollUp,
+                        'j' => InputCode::ConsoleSrollDown,
+                        _ => InputCode::None,
+                    }
+                },
+                Key { code: Escape, .. } => InputCode::Quit,
+                _ => InputCode::None,
+            }
+        } else { InputCode::None }
     }
 
-    #[derive(Eq, PartialEq)]
+    #[derive(Debug, Eq, PartialEq)]
     pub enum InputCode {
         Up,
         Down,

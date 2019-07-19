@@ -96,7 +96,7 @@ impl<'a> System<'a> for RenderingSystem {
         }
 
         let mut root = Offscreen::new(window.size.x, window.size.y);
-        renderer::prepare(&mut root);
+        renderer::init(&mut root);
         // Render map.
         for tilemap in (&tilemaps).join() {
             renderer::put_map(

@@ -7,8 +7,7 @@ use crate::components::{
 };
 use tcod::{colors, colors::Color, console::*};
 
-// pub fn prepare(r: &mut Root) {
-pub fn prepare(r: &mut Console) {
+pub fn init(r: &mut Console) {
     r.set_default_foreground(colors::WHITE);
     r.clear();
 }

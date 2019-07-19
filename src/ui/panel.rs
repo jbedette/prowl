@@ -37,7 +37,7 @@ impl Panel {
     }
 }
 
-struct PanelSystem;
+// struct PanelSystem;
 
 #[derive(Debug)]
 pub struct Widget {
@@ -46,6 +46,7 @@ pub struct Widget {
     widget_type: WidgetType
 }
 
+#[allow(dead_code)]
 #[derive(Debug)]
 pub enum WidgetType {
     Label,
@@ -54,6 +55,7 @@ pub enum WidgetType {
     ProgressBar,
 }
 
+#[allow(dead_code)]
 pub enum BorderType {
     Flat
 }
