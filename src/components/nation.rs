@@ -1,4 +1,4 @@
-use specs::{Component, VecStorage, Entitity};
+use specs::{Component, VecStorage, Entity};
 use specs_derive::Component;
 
 #[derive(Component, Debug)]
@@ -6,8 +6,8 @@ use specs_derive::Component;
 
 //
 pub struct Nation{
-    islands: Vec<Entitity>, //stores vec of islands
-    ambition: Vec<Entitity>,
+    islands: Vec<Entity>, //stores vec of islands
+    //ambition: Vec<Entity>,
     ruler: Entitity,
 }
 impl Nation{
