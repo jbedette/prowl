@@ -33,6 +33,7 @@ impl TCODWindow {
         }
     }
 
+    // Draws a TCOD console to the screen.
     pub fn blit(&mut self, console: &Console) {
         tcod::console::blit(
             &console,
@@ -45,12 +46,6 @@ impl TCODWindow {
         );
         self.root.flush();
     }
-
-    /*
-    pub fn flush(&mut self) {
-        self.root.flush();
-    }
-    */
 }
 
 impl Default for TCODWindow {
