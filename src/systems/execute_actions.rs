@@ -55,11 +55,25 @@ impl<'a> System<'a> for ExecuteActionSystem {
                         let new_pos = Vector2::new(x, y);
                         let mut move_allowed = true;
                         for tilemap in (&mut tilemaps).join() {
+                            let tile_data = tilemap.passable_at(new_pos);
+                            if Some(entity) == tile_data.1 {
+                                // TODO interaction trigger
+                            } else {
+                                if !tile_data.0 {
+                                    move_allowed = false;
+                                } else {
+                                    tilemap.remove_from_dynamic(position.value);
+                                    tilemap.add_to_dynamic(new_pos, entity);
+                                }
+                            }
+                            /*
                             if !tilemap.passable_at(new_pos) {
                                 move_allowed = false;
                             } else {
-                                tilemap.add_to_dynamic(new_pos);
+                                tilemap.remove_from_dynamic(position.value);
+                                tilemap.add_to_dynamic(new_pos, entity);
                             }
+                            */
                         }
                         if move_allowed {
                             let mut position = positions.get_mut(entity).unwrap();
@@ -84,12 +98,14 @@ impl<'a> System<'a> for ExecuteActionSystem {
             }
         }
 
+        /*
         for tilemap in (&mut tilemaps).join() {
             tilemap.clear_dynamic();
             for position in (&positions).join() {
                 tilemap.add_to_dynamic(position.value);
             }
         }
+        */
 
     }
 }

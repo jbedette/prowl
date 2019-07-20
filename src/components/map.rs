@@ -1,5 +1,6 @@
 use crate::components::CharRenderer;
 use specs::{
+    Entity,
     Component,
     VecStorage
 };
@@ -14,7 +15,8 @@ use tcod::colors::Color;
 pub struct TileMap {
     tiles: Vec<Tile>,
     pub size: Vector2,
-    dynamic_passable_map: Vec<bool>,
+    // dynamic_passable_map: Vec<bool>,
+    dynamic_map: Vec<Option<Entity>>,
     vec_size: usize,
 }
 
@@ -26,7 +28,8 @@ impl TileMap {
         Self {
             tiles: vec![tile; vec_size],
             size,
-            dynamic_passable_map: vec![false; vec_size],
+            //dynamic_passable_map: vec![false; vec_size],
+            dynamic_map: vec![None; vec_size],
             vec_size,
         }
     }
@@ -57,24 +60,42 @@ impl TileMap {
     }
 
     // get whether tile at x, y is passable
-    pub fn passable_at(&self, position: Vector2) -> bool {
+    pub fn passable_at(&self, position: Vector2) -> (bool, Option<Entity>) {
         let tile = self.get_tile(position);
         let index = self.vector2_to_index(position);
         match tile {
-            Some(tile) => self.dynamic_passable_map[index.unwrap()] &&
-                tile.passable ,
-            None => false,
+            // Some(tile) => self.dynamic_passable_map[index.unwrap()] &&
+            Some(tile) => {
+                // self.dynamic_map[index.unwrap()].is_none() &&
+                // tile.passable
+                let entity = self.dynamic_map[index.unwrap()];
+                if entity.is_some() {
+                    (false, entity)
+                } else {
+                    (tile.passable, None)
+                }
+            },
+            None => (false, None),
         }
     }
 
+    /*
     pub fn clear_dynamic(&mut self) {
-        self.dynamic_passable_map = vec![true; self.vec_size];
+        self.dynamic_map = vec![None; self.vec_size];
     }
+    */
 
-    pub fn add_to_dynamic(&mut self, position: Vector2) {
+    pub fn add_to_dynamic(&mut self, position: Vector2, entity: Entity) {
         let index = self.vector2_to_index(position);
         if let Some(index) = index {
-            self.dynamic_passable_map[index] = false;
+            self.dynamic_map[index] = Some(entity);
+        }
+    }
+
+    pub fn remove_from_dynamic(&mut self, position: Vector2) {
+        let index = self.vector2_to_index(position);
+        if let Some(index) = index {
+            self.dynamic_map[index] = None;
         }
     }
 }

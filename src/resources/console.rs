@@ -41,7 +41,7 @@ impl Log {
         use LogLevel::*;
         match self.level {
             Game => WHITE,
-            Debug => Color::new(0x20, 0x10, 0x10),
+            Debug => Color::new(0x60, 0x60, 0x60),
         }
     }
 }
