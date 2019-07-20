@@ -2,7 +2,6 @@ use specs::{
     Join,
     ReadStorage,
     System,
-    // Read,
     Write,
     WriteStorage,
 };
@@ -13,8 +12,6 @@ use crate::components::{
 };
 
 use crate::resources::{
-    // RendererResource,
-    // Quit,
     console::{Console, Log, LogLevel},
     game_data::{GameData, StateChangeRequest::QuitGame},
     Window,
@@ -27,7 +24,6 @@ impl<'a> System<'a> for UserInputSystem {
     type SystemData = (
         ReadStorage<'a, Player>,
         WriteStorage<'a, PendingActions>,
-        // Write<'a, Quit>,
         Write<'a, Console>,
         Write<'a, GameData>,
         specs::Write<'a, Window>,
@@ -44,28 +40,30 @@ impl<'a> System<'a> for UserInputSystem {
             mut window,
         ) = data;
 
+        // No player(s)
         if players.is_empty() {
             let key = input::get(&mut window.root);
             (*console).log(Log::new(LogLevel::Debug, &format!("Player is dead.")));
             use input::InputCode::*;
             match key {
-                // TODO reset menu
+                // TODO reset menu and stuff
                 Quit => game_data.state_change_request = Some(QuitGame),
                 _ => (),
             }
             return;
         }
-        for (_player, pending_actions) in (&players, &mut pending_actionses).join() {
-            // delta movement (change to add to position)
+        // 1 or more players
+        for (_player, pending_actions) in
+                (&players, &mut pending_actionses).join() {
+            // Has pending_action, can't take further input
             if !pending_actions.actions.is_empty() { continue; }
+            // Delta movement (change to add to position)
             let mut delta = (0, 0);
+            // Get user input
             let key = input::get(&mut window.root);
             (*console).log(Log::new(LogLevel::Debug, "Input Registered"));
             use input::InputCode;
             use InputCode::*;
-            if key != InputCode::None {
-                println!("{:?}", key)
-            }
             match key {
                 Up => delta.1 = -1,
                 Down => delta.1 = 1,
@@ -78,52 +76,68 @@ impl<'a> System<'a> for UserInputSystem {
             }
 
             // Some inputs increment the current game turn
-            // Others (like UI) generally don't.
+            // Others (like UI) don't.
             let mut increment_turn = false;
             if delta != (0, 0) {
                 pending_actions.actions.push(Action::Move { delta });
                 increment_turn = true;
             }
 
-            if increment_turn {
-                game_data.current_turn += 1;
-            }
+            // Triggers a turn
+            if increment_turn { game_data.current_turn += 1; }
         }
     }
 }
 
 /// Polls TCOD for keyboard input. Blocks.
+// TODO wtf Non-blocking input keeps repeating after key release.
 mod input {
     use tcod::{
         console::*,
         input::{
             Key,
             KeyCode::*,
-            // KeyPressFlags,
         },
     };
 
     // Gets keyboard input, returns an 'InputCode'
     pub fn get(root: &mut Root) -> InputCode {
-        // let key = root.check_for_keypress(KeyPressFlags::all());
-        let key = Some(root.wait_for_keypress(true));
+        get_blocking(root)
+    }
+
+    // Gets user input. Blocks further execution.
+    fn get_blocking(root: &mut Root) -> InputCode {
+        let key = root.wait_for_keypress(true);
+        key_to_input(key)
+    }
+
+    // TODO I cannot get this to work.
+    #[allow(dead_code)]
+    fn get_non_blocking(root: &mut Root) -> InputCode {
+        let key = root.check_for_keypress(tcod::input::KeyPressFlags::all());
         if let Some(key) = key {
-            match key {
-                Key { code: Char, pressed: true, .. } => {
-                    match key.printable {
-                        'w' => InputCode::Up,
-                        'a' => InputCode::Left,
-                        's' => InputCode::Down,
-                        'd' => InputCode::Right,
-                        'k' => InputCode::ConsoleSrollUp,
-                        'j' => InputCode::ConsoleSrollDown,
-                        _ => InputCode::None,
-                    }
-                },
-                Key { code: Escape, .. } => InputCode::Quit,
-                _ => InputCode::None,
-            }
+            key_to_input(key)
         } else { InputCode::None }
+    }
+
+    // Maps a pressed key to an input code.
+    // This makes it ez to have 2 keys do the same thing
+    fn key_to_input(key: Key) -> InputCode {
+        match key {
+            Key { code: Char, pressed: true, .. } => {
+                match key.printable {
+                    'w' => InputCode::Up,
+                    'a' => InputCode::Left,
+                    's' => InputCode::Down,
+                    'd' => InputCode::Right,
+                    'k' => InputCode::ConsoleSrollUp,
+                    'j' => InputCode::ConsoleSrollDown,
+                    _ => InputCode::None,
+                }
+            },
+            Key { code: Escape, .. } => InputCode::Quit,
+            _ => InputCode::None,
+        }
     }
 
     #[derive(Debug, Eq, PartialEq)]

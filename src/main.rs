@@ -58,14 +58,15 @@ fn main() {
     resources::add_all(&mut world);
     // dispatchers determine the order systems run in
     let mut setup = build_setup_dispatcher();
-    let dispatcher = build_main_loop_dispatcher();
+    let input = build_input_dispatcher();
+    let turn = build_turn_dispatcher();
     // Register all the components used (setup isn't working correctly?)
     components::register(&mut world);
     ui::register(&mut world);
      // player
     make_person(&mut world, true);
     // populate gameworld
-    for _ in 0..500 { make_person(&mut world, false); }
+    for _ in 0..2000 { make_person(&mut world, false); }
     // build a map (dumb af)
     let mut map = TileMap::new(Vector2::new(MAP_SIZE, MAP_SIZE));
     for _ in 0..2000 {
@@ -100,7 +101,7 @@ fn main() {
         .build();
     // run setup state (only does an initial render for now)
     setup.dispatch(&world);
-    run_game(world, dispatcher);
+    run_game(world, input, turn);
 }
 
 // TODO not 'static?
@@ -113,32 +114,39 @@ fn build_setup_dispatcher() -> Dispatcher<'static, 'static> {
         .build()
 }
 
-// TODO not 'static?
-/// initialize systems in the main loop state
-fn build_main_loop_dispatcher() -> Dispatcher<'static, 'static> {
+fn build_input_dispatcher() -> Dispatcher<'static, 'static> {
     specs::DispatcherBuilder::new()
         // system, "string id", &[dependencies]
-        // .with(RivalSystem, "rivals", &[])
+        .with_thread_local(RenderingSystem)
         .with(UserInputSystem, "input", &[])
+        .build()
+}
+
+fn build_turn_dispatcher() -> Dispatcher<'static, 'static> {
+    specs::DispatcherBuilder::new()
+        // system, "string id", &[dependencies]
+        .with_thread_local(RenderingSystem)
         .with(AISystem, "ai", &[])
-        // .with(UserInputSystem, "input", &[])
-        // .with(ExecuteActionSystem, "execute_actions", &["ai", "input"])
-        // .with(ExecuteActionSystem, "execute_actions", &["ai"])
         .with(ExecuteActionSystem, "execute_actions", &[])
         .with(DeathSystem, "deaths", &[])
-        // rendering must be on local thread
-        .with_thread_local(RenderingSystem)
         .build()
 }
 
 /// Main game loop.
-fn run_game(mut world: World, mut dispatcher: Dispatcher) {
+fn run_game(
+    mut world: World,
+    mut input: Dispatcher,
+    mut turn: Dispatcher)
+{
     loop {
-        // run all systems
-        dispatcher.dispatch(&world);
+        // compute a turn
+        turn.dispatch(&world);
         // clear removed entities
         world.maintain();
-        // check if user requested quit
+        // allow input
+        // std::thread::sleep(std::time::Duration::from_millis(20));
+        input.dispatch(&world);
+        // check if state change is requested (only quit works for now)
         let game_data = &mut world.write_resource::<GameData>();
         use resources::game_data::StateChangeRequest::*;
         match game_data.state_change_request {

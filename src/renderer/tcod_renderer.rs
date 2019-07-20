@@ -39,33 +39,6 @@ pub fn put_char(
     r.put_char(x, y, character.character, background_flag)
 }
 
-pub fn _put_panel(r: &mut Offscreen, x1: i32, y1: i32, x2: i32, y2: i32) {
-    let bg_color = Color::new(0x40, 0x20, 0x20);
-    let border_color = Color::new(0x80, 0x40, 0x30);
-    let border_bg_color = Color::new(0x50, 0x30, 0x30);
-    let border = CharRenderer::with_bg(' ', border_color, border_bg_color);
-    // window bg
-    r.set_default_background(bg_color);
-    r.rect(
-        x1, y1,
-        x2 - x1, y2 - y1,
-        true,
-        BackgroundFlag::Set,
-        );
-    let y2 = y2 - 1;
-    // horizontal border
-    for x in x1..x2 {
-        put_char(r, Vector2::new(x, y1), &border);
-        put_char(r, Vector2::new(x, y2), &border);
-    }
-    let x2 = x2 - 1;
-    // vertical border
-    for y in y1..y2 {
-        put_char(r, Vector2::new(x1, y), &border);
-        put_char(r, Vector2::new(x2, y), &border);
-    }
-}
-
 pub fn put_panel(r: &mut Offscreen, panel: &Panel) {
     let bg_color = panel.border.color;
     let border_color = panel.background.color;
@@ -73,8 +46,6 @@ pub fn put_panel(r: &mut Offscreen, panel: &Panel) {
     r.rect(
         panel.position.x,
         panel.position.y,
-        // panel.position.x + panel.bounds.x,
-        // panel.position.y + panel.bounds.y,
         panel.bounds.x,
         panel.bounds.y,
         true,
@@ -92,8 +63,6 @@ pub fn put_panel(r: &mut Offscreen, panel: &Panel) {
     r.rect(
         panel.position.x + 1,
         panel.position.y + 1,
-        // panel.position.x + panel.bounds.x - 2,
-        // panel.position.y + panel.bounds.y - 2,
         panel.bounds.x - 2,
         panel.bounds.y - 2,
         true,
@@ -127,18 +96,23 @@ pub fn put_map(
     map_position: &Vector2,
     size: &Vector2)
 {
+    use std::cmp::{max};
+    println!("{}", map_position);
     let screen_size = Vector2::new(r.width(), r.height());
     let void_tile = Tile::void();
     let map_size = *size + *map_position;
+    let map_offset = map_position.to_owned();
+    let map_position = Vector2::new(
+        max(map_position.x, 0),
+        max(map_position.y, 0));
+
     for x in map_position.x..map_size.x {
+        // TODO this could be more efficient
         for y in map_position.y..map_size.y {
-            // let tile_position = Vector2::new(
-            //     map_position.x + x,
-            //     map_position.y + y);
             let tile_position = Vector2::new(x, y);
             let blit_position = Vector2::new(
-                         screen_position.x + (x - map_position.x),
-                         screen_position.y + (y - map_position.y));
+                         screen_position.x + (x - map_offset.x),
+                         screen_position.y + (y - map_offset.y));
             let tile = map.get_tile(tile_position);
             let tile = match tile {
                 Some(tile) => tile,

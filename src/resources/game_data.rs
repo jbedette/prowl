@@ -5,7 +5,6 @@
 pub struct GameData {
     pub current_turn: i32,
     pub state_change_request: Option<StateChangeRequest>,
-    pub last_input: std::time::Duration,
 }
 
 #[allow(dead_code)]

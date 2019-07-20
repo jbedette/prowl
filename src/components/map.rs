@@ -55,6 +55,7 @@ impl TileMap {
 
     // get index from x, y
     fn vector2_to_index(&self, vector: Vector2) -> Option<usize> {
+        if vector.x < 0 || vector.y < 0 { return None }
         let index = ((vector.x * self.size.x) + vector.y) as usize;
         if index < self.vec_size { Some(index) } else { None }
     }
