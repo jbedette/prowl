@@ -13,7 +13,7 @@ use crate::components::{
 
 use crate::resources::{
     console::{Console, Log, LogLevel},
-    game_data::{GameData, StateChangeRequest::QuitGame},
+    game_data::{GameData, StateChangeRequest::{QuitGame, NextTurn}},
     Window,
 };
 
@@ -61,19 +61,26 @@ impl<'a> System<'a> for UserInputSystem {
             let mut delta = (0, 0);
             // Get user input
             let key = input::get(&mut window.root);
-            (*console).log(Log::new(LogLevel::Debug, "Input Registered"));
             use input::InputCode;
             use InputCode::*;
             match key {
+                // Move
                 Up => delta.1 = -1,
                 Down => delta.1 = 1,
                 Left => delta.0 = -1,
                 Right => delta.0 = 1,
+                // Quit
                 Quit => game_data.state_change_request = Some(QuitGame),
+                // Console
                 ConsoleSrollUp => console.y_offset += 1,
                 ConsoleSrollDown => console.y_offset -= 1,
                 _ => (),
             }
+            (*console).log(
+                Log::new(
+                    LogLevel::Debug,
+                    format!("Input Registered: {:?}", key)
+                ));
 
             // Some inputs increment the current game turn
             // Others (like UI) don't.
@@ -82,9 +89,10 @@ impl<'a> System<'a> for UserInputSystem {
                 pending_actions.actions.push(Action::Move { delta });
                 increment_turn = true;
             }
-
             // Triggers a turn
-            if increment_turn { game_data.current_turn += 1; }
+            if increment_turn {
+                game_data.state_change_request = Some(NextTurn);
+            }
         }
     }
 }

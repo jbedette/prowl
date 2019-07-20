@@ -19,7 +19,6 @@ pub use name::Named;
 pub use markers::{
     Player,
     Ship,
-    MoveableEntity,
 };
 pub use position::Position;
 pub use renderer::CharRenderer;
@@ -34,7 +33,6 @@ pub fn register(world: &mut World) {
     world.register::<CharRenderer>();
     world.register::<Player>();
     world.register::<Ship>();
-    world.register::<MoveableEntity>();
     world.register::<pending_actions::PendingActions>();
     world.register::<AI>();
     world.register::<TileMap>();

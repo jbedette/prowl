@@ -7,8 +7,12 @@ pub struct GameData {
     pub state_change_request: Option<StateChangeRequest>,
 }
 
+/// Used to tell the game to 'change state', by running another turn or pausing
+/// or quitting.
 #[allow(dead_code)]
+#[derive(Debug, Copy, Clone)]
 pub enum StateChangeRequest {
+    NextTurn,
     ResetMenu,
     QuitGame,
 }

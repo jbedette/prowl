@@ -5,8 +5,7 @@ use crate::components::{
     map::Tile,
     CharRenderer
 };
-use tcod::{colors, colors::Color, console::*};
-use crate::ui::panel::Panel;
+use tcod::{colors, colors::Color, console::*}; use crate::ui::panel::Panel;
 
 pub fn init(r: &mut Console) {
     r.set_default_foreground(colors::WHITE);
@@ -97,7 +96,6 @@ pub fn put_map(
     size: &Vector2)
 {
     use std::cmp::{max};
-    println!("{}", map_position);
     let screen_size = Vector2::new(r.width(), r.height());
     let void_tile = Tile::void();
     let map_size = *size + *map_position;
