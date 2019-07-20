@@ -1,7 +1,5 @@
 use specs::prelude::*;
 
-// pub mod input;
-pub mod console;
 pub mod game_data;
 mod quit;
 pub mod ui;
@@ -12,7 +10,7 @@ pub use quit::Quit;
 pub use window::TCODWindow as Window;
 
 // use input::UserInput;
-use console::Console;
+use crate::console::resource::Console;
 use game_data::GameData;
 use ui::UI;
 

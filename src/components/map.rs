@@ -5,10 +5,11 @@ use specs::{
     VecStorage
 };
 use specs_derive::Component;
-#[allow(unused_imports)]
-use crate::shared::Vector2;
-#[allow(unused_imports)]
 use tcod::colors::Color;
+use crate::shared::{
+    Vector2,
+    random::random_range,
+};
 
 #[derive(Component)]
 #[storage(VecStorage)]
@@ -31,6 +32,17 @@ impl TileMap {
             //dynamic_passable_map: vec![false; vec_size],
             dynamic_map: vec![None; vec_size],
             vec_size,
+        }
+    }
+
+    pub fn generate(&mut self) {
+        for _ in 0..2000 {
+            self.place_island(Vector2::new(
+                    random_range(0, self.size.x as usize) as i32,
+                    random_range(0, self.size.y as usize) as i32),
+                    Vector2::new(random_range(3,10) as i32,
+                        random_range(3,10) as i32)
+                );
         }
     }
 

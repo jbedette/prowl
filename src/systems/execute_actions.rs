@@ -9,11 +9,7 @@ use crate::components::{
         // MoveableEntity,
     // }
 };
-use crate::resources::console::{
-    Console,
-    Log,
-    LogLevel
-};
+use crate::console::resource::{Log, LogLevel, Console};
 
 use crate::shared::Vector2;
 

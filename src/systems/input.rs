@@ -12,10 +12,10 @@ use crate::components::{
 };
 
 use crate::resources::{
-    console::{Console, Log, LogLevel},
     game_data::{GameData, StateChangeRequest::{QuitGame, NextTurn}},
     Window,
 };
+use crate::console::resource::{Log, LogLevel, Console};
 
 #[derive(Default)]
 pub struct UserInputSystem;

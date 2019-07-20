@@ -1,11 +1,8 @@
 /// Renders Entities
 use specs::{
-    // Read,
-    // Write,
     ReadStorage,
     Entities,
     System,
-    // prelude::Resources,
 };
 
 use crate::components::{
@@ -20,19 +17,10 @@ use crate::components::{
 
 #[allow(unused_imports)]
 use crate::resources::{
-    // window::RenderingConsoles,
-    console::{
-        Console,
-        LogLevel
-    },
-    // RendererResource,
     Window,
     game_data::GameData,
-    // ui::{
-        // UI,
-        // UIPanel
-    // },
 };
+use crate::console::resource::{Log, LogLevel, Console};
 
 use crate::ui::{
     panel::Panel,
@@ -57,8 +45,7 @@ impl<'a> System<'a> for RenderingSystem {
         ReadStorage<'a, Player>,
         ReadStorage<'a, TileMap>,
         ReadStorage<'a, Panel>,
-        specs::Write<'a, Console>,
-        // specs::Read<'a, UI>,
+        specs::Read<'a, Console>,
         specs::Write<'a, Window>,
         specs::Read<'a, GameData>,
         Entities<'a>,
@@ -74,13 +61,15 @@ impl<'a> System<'a> for RenderingSystem {
              players,
              tilemaps,
              panels,
-             mut console,
+             console,
              // ui,
              mut window,
              game_data,
              entities,
              ) = data;
 
+        // TODO store player position in game data or something?
+        // Then we can render without reading entities.
         let mut offset = Vector2::new(-window.size.x/3, -window.size.y/2);
         for (_player, entity) in (&players, &entities).join() {
             match positions.get(entity) {
@@ -171,7 +160,7 @@ T {}",
             }
             i += 1;
         }
-        console.logs = vec![];
+        // console.logs = vec![];
         // INSTRUCTIONS TODO replace
         renderer::put_text(
             &mut root,

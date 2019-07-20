@@ -3,26 +3,14 @@ use specs::{
     Builder,
     World
 };
-use tcod::colors::*;
-
-mod systems;
-use systems::{
-    AISystem,
-    DeathSystem,
-    ExecuteActionSystem,
-    UserInputSystem,
-};
-
-mod renderer;
-use renderer::{
-    rendering_system::RenderingSystem,
-};
-
+mod console;
 mod components;
 use components::{
-    CharRenderer,
     TileMap,
 };
+
+mod systems;
+mod renderer;
 
 mod resources;
 use resources::{
@@ -32,16 +20,16 @@ use resources::{
 mod shared;
 use shared::{
     Vector2,
-    random::random_range,
 };
 
 mod ui;
-use ui::panel::Panel;
 
 mod entity_builder;
 use entity_builder::{
     ship::make_ship,
 };
+
+mod dispatcher_builder;
 
 pub const MAP_SIZE: i32 = 500;
 
@@ -49,10 +37,14 @@ fn main() {
     // create an ECS "world"
     let mut world = World::new();
     resources::add_all(&mut world);
-    // dispatchers determine the order systems run in
-    let mut setup = build_setup_dispatcher();
-    let input = build_input_dispatcher();
-    let turn = build_turn_dispatcher();
+    // Dispatchers determine the order systems run in.
+    // There are 3 states right now:
+    // Setup: Runs only once at the beginning.
+    let mut setup = dispatcher_builder::setup_dispatcher();
+    // Turn: Calculates the logic of a turn happening.
+    let turn = dispatcher_builder::turn_dispatcher();
+    // Input: Loops at the end of every turn, allowing user input and UI.
+    let input = dispatcher_builder::input_dispatcher();
     // Register all the components used (setup isn't working correctly?)
     components::register(&mut world);
     ui::register(&mut world);
@@ -62,38 +54,15 @@ fn main() {
     for _ in 0..2000 { make_ship(&mut world, false); }
     // build a map (dumb af)
     let mut map = TileMap::new(Vector2::new(MAP_SIZE, MAP_SIZE));
-    for _ in 0..2000 {
-        map.place_island(Vector2::new(
-                random_range(0, MAP_SIZE as usize) as i32,
-                random_range(0, MAP_SIZE as usize) as i32),
-                Vector2::new( random_range(3,10) as i32,
-                    random_range(3,10) as i32)
-            );
-    }
-    world.create_entity()
-        .with(Panel::new(
-                "Panel Test",
-                Vector2::new(1, 1),
-                Vector2::new(14, 6),
-                CharRenderer::new(' ', Color::new(12, 24, 32)),
-                CharRenderer::new(' ', Color::new(45, 42, 90)),
-                ))
-        .build();
-    world.create_entity()
-        .with(Panel::new(
-                "Panel Test",
-                Vector2::new(44, 29),
-                Vector2::new(35, 20),
-                CharRenderer::new(' ', Color::new(12, 24, 32)),
-                CharRenderer::new(' ', Color::new(45, 42, 90)),
-                ))
-        .build();
-
+    map.generate();
+    // make ui windows
+    ui::init::init(&mut world);
     world.create_entity()
         .with(map)
         .build();
     // run setup state (only does an initial render for now)
     setup.dispatch(&world);
+    // start game loop
     run_game(world, input, turn);
 }
 
@@ -110,51 +79,32 @@ fn run_game(
         world.maintain();
         // input loop
         loop {
+            // dispatch input system
             input.dispatch(&world);
-            let game_data = &mut world.write_resource::<GameData>();
-            use resources::game_data::StateChangeRequest::*;
-            let state_change_request = game_data.state_change_request;
-            game_data.state_change_request = None;
-            match state_change_request {
-                // trigger next turn
-                Some(NextTurn) => {
-                    game_data.current_turn += 1;
-                    break;
+            // consider state change
+            {
+                // open GameData resource
+                let game_data = &mut world.write_resource::<GameData>();
+                use resources::game_data::StateChangeRequest::*;
+                let state_change_request = game_data.state_change_request;
+                game_data.state_change_request = None;
+                // if state change requested, make it happen here.
+                // NOTE currently states are simple. not sure if we'll need more
+                // and might need to refactor this into a big "match" or maybe
+                // a primitive state machine?
+                match state_change_request {
+                    // trigger next turn by breaking inner loop
+                    Some(NextTurn) => {
+                        game_data.current_turn += 1;
+                        break;
+                    }
+                    // doesn't exist yet
+                    Some(ResetMenu) => (),
+                    // quit the game by returning
+                    Some(QuitGame) => return,
+                    _ => (),
                 }
-                // doesn't exist yet
-                Some(ResetMenu) => (),
-                // quit the game
-                Some(QuitGame) => return,
-                _ => (),
             }
         }
     }
-}
-
-// TODO not 'static?
-/// initialize systems in the loader state
-fn build_setup_dispatcher() -> Dispatcher<'static, 'static> {
-    specs::DispatcherBuilder::new()
-        // system, "string id", &[dependencies]
-        // rendering must be on local thread
-        .with_thread_local(RenderingSystem)
-        .build()
-}
-
-fn build_input_dispatcher() -> Dispatcher<'static, 'static> {
-    specs::DispatcherBuilder::new()
-        // system, "string id", &[dependencies]
-        .with_thread_local(RenderingSystem)
-        .with(UserInputSystem, "input", &[])
-        .build()
-}
-
-fn build_turn_dispatcher() -> Dispatcher<'static, 'static> {
-    specs::DispatcherBuilder::new()
-        // system, "string id", &[dependencies]
-        .with_thread_local(RenderingSystem)
-        .with(AISystem, "ai", &[])
-        .with(ExecuteActionSystem, "execute_actions", &[])
-        .with(DeathSystem, "deaths", &[])
-        .build()
 }

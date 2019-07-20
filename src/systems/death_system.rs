@@ -3,7 +3,9 @@ use specs::{Entities, ReadStorage, System, Write};
 
 use crate::components::{Health, Named};
 
-use crate::resources::console::{Console, Log, LogLevel};
+use crate::console::resource::{
+    Log, LogLevel, Console
+};
 
 pub struct DeathSystem;
 
