@@ -8,15 +8,12 @@ use crate::shared::Vector2;
 use tcod::colors::Color;
 
 pub fn init(world: &mut World) {
-    // Makes main UI stats window.
-    world.create_entity()
-        .build();
     // Makes main UI console window.
     world.create_entity()
         .with(Panel::new(
                 "Console",
-                Vector2::new(44, 29),
-                Vector2::new(35, 20),
+                Vector2::new(50, 11),
+                Vector2::new(29, 38),
                 CharRenderer::new(' ', Color::new(12, 24, 32)),
                 CharRenderer::new(' ', Color::new(45, 42, 90)),
                 ))

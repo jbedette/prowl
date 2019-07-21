@@ -11,6 +11,8 @@ use crate::ui::panel::{
     Widget,
 };
 
+const TEXT_COLOR_DEFAULT : Color = Color::new(0xdd, 0xdd, 0xdd);
+
 pub fn init(r: &mut Console) {
     r.set_default_foreground(colors::WHITE);
     r.clear();
@@ -81,7 +83,7 @@ pub fn put_panel(r: &mut Offscreen, panel: &Panel) {
                     r,
                     Vector2::new(x, y),
                     Vector2::new(panel.bounds.x - 2, 1),
-                    &colors::WHITE,
+                    &TEXT_COLOR_DEFAULT,
                     text,
                 );
                 y += 1;
@@ -93,7 +95,7 @@ pub fn put_panel(r: &mut Offscreen, panel: &Panel) {
                     r,
                     Vector2::new(x, y),
                     Vector2::new(max_x, max_y),
-                    &colors::WHITE,
+                    &TEXT_COLOR_DEFAULT,
                     text,
                 );
                 y += 1;

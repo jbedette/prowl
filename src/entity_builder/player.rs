@@ -44,8 +44,8 @@ pub fn make_player(world: &mut World) {
         // Stats panel
         .with(Panel::new(
                 "Stats",
-                Vector2::new(1, 1),
-                Vector2::new(22, 6),
+                Vector2::new(50, 1),
+                Vector2::new(29, 10),
                 CharRenderer::ui_body(),
                 CharRenderer::ui_border(),
                 ))
