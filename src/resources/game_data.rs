@@ -10,9 +10,10 @@ pub struct GameData {
 /// Used to tell the game to 'change state', by running another turn or pausing
 /// or quitting.
 #[allow(dead_code)]
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub enum StateChangeRequest {
     NextTurn,
     ResetMenu,
     QuitGame,
+    WaitForUI,
 }

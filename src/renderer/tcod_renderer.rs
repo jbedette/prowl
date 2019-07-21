@@ -5,7 +5,11 @@ use crate::components::{
     map::Tile,
     CharRenderer
 };
-use tcod::{colors, colors::Color, console::*}; use crate::ui::panel::Panel;
+use tcod::{colors, colors::Color, console::*};
+use crate::ui::panel::{
+    Panel,
+    Widget,
+};
 
 pub fn init(r: &mut Console) {
     r.set_default_foreground(colors::WHITE);
@@ -68,6 +72,34 @@ pub fn put_panel(r: &mut Offscreen, panel: &Panel) {
         BackgroundFlag::Set,
         );
     // TODO widgets
+    let x = panel.position.x + 1;
+    let mut y = panel.position.y + 1;
+    for widget in &panel.widgets {
+        match widget {
+            Widget::Label { text } => {
+                put_text(
+                    r,
+                    Vector2::new(x, y),
+                    Vector2::new(panel.bounds.x - 2, 1),
+                    &colors::WHITE,
+                    text,
+                );
+                y += 1;
+            },
+            Widget::TextBox { text } => {
+                let max_x = panel.bounds.x - 2;
+                let max_y = panel.bounds.y - 2;
+                put_text(
+                    r,
+                    Vector2::new(x, y),
+                    Vector2::new(max_x, max_y),
+                    &colors::WHITE,
+                    text,
+                );
+                y += 1;
+            },
+        }
+    }
 }
 
 pub fn put_text(
@@ -89,7 +121,7 @@ pub fn put_text(
 
 // puts a Map object on to the screen.
 pub fn put_map(
-    r: &mut Console,
+    r: &mut Offscreen,
     map: &TileMap,
     screen_position: &Vector2,
     map_position: &Vector2,
@@ -118,10 +150,10 @@ pub fn put_map(
             };
             // invalid position
             // TODO check for this before loop dummyo
-            if screen_position.y > screen_size.y ||
-                screen_position.y < 0 ||
-                screen_position.x > screen_size.x ||
-                screen_position.x < 0
+            if blit_position.y > screen_size.y ||
+                blit_position.y < 0 ||
+                blit_position.x > screen_size.x ||
+                blit_position.x < 0
             { break; }
             put_char(r, blit_position, &tile.renderer);
         }

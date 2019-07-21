@@ -20,3 +20,10 @@ impl Named {
         }
     }
 }
+
+impl Default for Named {
+    fn default() -> Self {
+        let value = String::from("NO NAME?");
+        Self { value }
+    }
+}

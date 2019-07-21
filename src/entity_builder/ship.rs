@@ -1,5 +1,6 @@
+/// Builds other ships.
 use crate::components::{
-    ai,
+    ai::{AI, Goal},
     pending_actions::PendingActions,
     CharRenderer,
     Health,
@@ -7,10 +8,6 @@ use crate::components::{
     Named,
     Position,
     Weapon,
-    AI,
-    markers::{
-        Player,
-    }
 };
 use crate::shared::{
     Vector2,
@@ -22,8 +19,10 @@ use tcod::colors::*;
 use crate::MAP_SIZE;
 
 
-// TODO what determines parameters ?
-pub fn make_ship(world: &mut World, is_player: bool) {
+// TODO what determines parameters ? ?
+// What can ships do?
+// This is all just placeholder!
+pub fn make_ship(world: &mut World) {
     let names = [
         "Mark", "Dumbo", "Kyle", "Jumbo", "Jarvis", "Cool Man", "Smarto",
         "Dweebster", "Markov", "Callios", "Krun", "Eliza", "Thadd",
@@ -47,31 +46,16 @@ pub fn make_ship(world: &mut World, is_player: bool) {
             random_range(0x88, 0xff) as u8,
         ),
     );
-    // TODO should be able to combine these with some swapped
-    // components somehow... right?
-    if is_player {
-        world.create_entity()
-            .with(Named::new(name))
-            .with(Health::new(health, health))
-            .with(Weapon::new(weapon))
-            .with(Money::new(money))
-            .with(Position::new(Vector2::new(30, 30)))
-            .with(PendingActions::default())
-            // special
-            .with(CharRenderer::new('@', Color::new(0x00, 0x95, 0xff)))
-            // special
-            .with(Player::default())
-            .build();
-    } else {
-        world.create_entity()
-            .with(Named::new(name))
-            .with(Health::new(health, health))
-            .with(Weapon::new(weapon))
-            .with(Money::new(money))
-            .with(Position::new(position))
-            .with(CharRenderer::new(*renderer.0, renderer.1))
-            .with(PendingActions::default())
-            .with(AI::with_goal(ai::Goal::MoveRandom))
-            .build();
-    }
+    world.create_entity()
+        .with(Named::new(name))
+        .with(Health::new(health, health))
+        // does nothing yet
+        .with(Weapon::new(weapon))
+        // does nothing yet
+        .with(Money::new(money))
+        .with(Position::new(position))
+        .with(CharRenderer::new(*renderer.0, renderer.1))
+        .with(PendingActions::default())
+        .with(AI::with_goal(Goal::MoveRandom))
+        .build();
 }

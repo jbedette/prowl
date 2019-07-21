@@ -37,25 +37,25 @@ impl Panel {
     }
 }
 
-// struct PanelSystem;
-
 #[derive(Debug)]
-pub struct Widget {
-    position: Vector2,
-    bounds: Vector2,
-    widget_type: WidgetType
+pub enum Widget {
+    Label {
+        text: String,
+    },
+    TextBox {
+        text: String,
+    },
 }
 
-#[allow(dead_code)]
-#[derive(Debug)]
-pub enum WidgetType {
-    Label,
-    Quantity,
-    CurrentOfMax,
-    ProgressBar,
-}
-
-#[allow(dead_code)]
-pub enum BorderType {
-    Flat
+impl Widget {
+    // Single line, full line
+    pub fn label(text: &str) -> Self {
+        let text = String::from(text);
+        Widget::Label { text }
+    }
+    // Multi-line, full line, to-fit
+    pub fn text_box(text: &str) -> Self {
+        let text = String::from(text);
+        Widget::TextBox { text }
+    }
 }

@@ -24,14 +24,11 @@ impl<'a> System<'a> for DeathSystem {
         for (health, entity) in (&healths, &entities).join() {
             if health.current <= 0 {
                 let name = names.get(entity);
-                let name_string = match name {
-                    Some(name) => name.value.to_owned(),
-                    None => String::from("UNNAMED ENTITY"),
-                };
+                let name = Named::name_or_noname(name);
                 let _result = entities.delete(entity);
                 (*console).log(Log::new(
                     LogLevel::Debug,
-                    &format!("{} has died.", name_string),
+                    &format!("{} has died.", name),
                 ));
             }
         }

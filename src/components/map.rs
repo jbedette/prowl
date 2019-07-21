@@ -36,7 +36,7 @@ impl TileMap {
     }
 
     pub fn generate(&mut self) {
-        for _ in 0..2000 {
+        for _ in 0..400 {
             self.place_island(Vector2::new(
                     random_range(0, self.size.x as usize) as i32,
                     random_range(0, self.size.y as usize) as i32),

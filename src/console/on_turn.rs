@@ -11,6 +11,12 @@ impl<'a> System<'a> for OnTurnSystem {
 
     fn run(&mut self, data: Self::SystemData) {
         let mut console = data;
-        console.logs = vec![];
+        // console.logs = vec![];
+        console.log(Log::new(
+                LogLevel::Game,
+                "Time has passed...",
+                ));
+        console.y_offset = console.logs.len() as i32 - 1;
+
     }
 }

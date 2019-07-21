@@ -1,4 +1,4 @@
-use tcod::colors::*;
+// use tcod::colors::*;
 
 #[derive(Default)]
 pub struct Console {
@@ -14,9 +14,8 @@ impl Console {
         }
     }
 
-    pub fn log(&mut self, message: Log) {
-        // TODO is to_owned best here?
-        self.logs.push(message.to_owned());
+    pub fn log(&mut self, log: Log) {
+        self.logs.push(log.to_owned());
     }
 
     #[allow(unused)]
@@ -37,6 +36,8 @@ impl Log {
         Self { level, message }
     }
 
+    /*
+    // TODO log doesn't support color...
     pub fn get_color(&self) -> Color {
         use LogLevel::*;
         match self.level {
@@ -44,6 +45,7 @@ impl Log {
             Debug => Color::new(0x60, 0x60, 0x60),
         }
     }
+    */
 }
 
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]

@@ -7,9 +7,9 @@ use specs::{
 
 use crate::components::{
     CharRenderer,
-    Health,
+    // Health,
     Money,
-    Named,
+    // Named,
     Player,
     Position,
     TileMap,
@@ -20,7 +20,8 @@ use crate::resources::{
     Window,
     game_data::GameData,
 };
-use crate::console::resource::{Log, LogLevel, Console};
+// use crate::console::resource::{Log, LogLevel, Console};
+use crate::console::resource::Console;
 
 use crate::ui::{
     panel::Panel,
@@ -31,7 +32,10 @@ use tcod_renderer as renderer;
 
 use crate::shared::Vector2;
 
-use tcod::{colors, colors::Color, console::*};
+use tcod::{
+    colors::Color,
+    console::*
+};
 
 pub struct RenderingSystem;
 
@@ -39,8 +43,8 @@ impl<'a> System<'a> for RenderingSystem {
     type SystemData = (
         ReadStorage<'a, Position>,
         ReadStorage<'a, CharRenderer>,
-        ReadStorage<'a, Named>,
-        ReadStorage<'a, Health>,
+        // ReadStorage<'a, Named>,
+        // ReadStorage<'a, Health>,
         ReadStorage<'a, Money>,
         ReadStorage<'a, Player>,
         ReadStorage<'a, TileMap>,
@@ -55,16 +59,13 @@ impl<'a> System<'a> for RenderingSystem {
         use specs::Join;
         let (positions,
              char_renderers,
-             names,
-             healths,
-             moneys,
+             _moneys,
              players,
              tilemaps,
              panels,
-             console,
-             // ui,
+             _console,
              mut window,
-             game_data,
+             _game_data,
              entities,
              ) = data;
 
@@ -121,47 +122,7 @@ impl<'a> System<'a> for RenderingSystem {
         for panel in (&panels).join() {
             renderer::put_panel(&mut root, &panel)
         }
-
-
-        // STATS TODO refactor
-        for (name, _player, health, money) in (&names, &players, &healths, &moneys).join() {
-            renderer::put_text(
-                &mut root,
-                // &mut window.root,
-                Vector2::new(2, 2),
-                Vector2::new(10, 5),
-                &colors::WHITE,
-                &format!(
-                    "{}
-+ {}/{}
-$ {}
-T {}",
-                    &name.value, &health.current, &health.max, &money.current,
-                    &(*game_data).current_turn,
-                ),
-            );
-        }
-        // CONSOLE TODO refactor
-        let mut i = 0;
-        let offset = &console.y_offset;
-        for log in &console.logs {
-            // if log.level == LogLevel::Debug {
-            //     break;
-            // }
-            if i < *offset { i += 1; }
-            else {
-                renderer::put_text(
-                    &mut root,
-                    Vector2::new(45, 30 + i),
-                    Vector2::new(35, 1),
-                    &log.get_color(),
-                    &log.message,
-                );
-            }
-            i += 1;
-        }
-        // console.logs = vec![];
-        // INSTRUCTIONS TODO replace
+        // INSTRUCTIONS TODO replace with panel
         renderer::put_text(
             &mut root,
             Vector2::new(2, screen_height - 2),

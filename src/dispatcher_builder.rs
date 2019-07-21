@@ -2,11 +2,17 @@ use crate::systems::{
     AISystem,
     DeathSystem,
     ExecuteActionSystem,
-    UserInputSystem,
 };
-
+use crate::input::{
+    main_loop_system::UserInputSystem,
+};
 use crate::renderer::{
     rendering_system::RenderingSystem,
+};
+use crate::ui::ui_systems::{
+    // InteractiveUISystem,
+    StatusWindowSystem,
+    ConsoleWindowSystem,
 };
 
 use crate::console;
@@ -31,6 +37,8 @@ pub fn input_dispatcher() -> Dispatcher<'static, 'static> {
         // system, "string id", &[dependencies]
         .with_thread_local(RenderingSystem)
         .with(UserInputSystem, "input", &[])
+        .with(StatusWindowSystem, "status", &[])
+        .with(ConsoleWindowSystem, "console_window", &[])
         .build()
 }
 
@@ -42,5 +50,14 @@ pub fn turn_dispatcher() -> Dispatcher<'static, 'static> {
         .with(AISystem, "ai", &[])
         .with(ExecuteActionSystem, "execute_actions", &[])
         .with(DeathSystem, "deaths", &[])
+        .with(StatusWindowSystem, "status", &[])
+        .with(ConsoleWindowSystem, "console_window", &[])
+        .build()
+}
+
+pub fn ui_dispatcher() -> Dispatcher<'static, 'static> {
+    DispatcherBuilder::new()
+        // system, "string id", &[dependencies]
+        .with_thread_local(RenderingSystem)
         .build()
 }

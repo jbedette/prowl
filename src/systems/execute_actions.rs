@@ -5,11 +5,12 @@ use crate::components::{
     pending_actions::{Action, PendingActions},
     Position,
     TileMap,
-    // markers::{
-        // MoveableEntity,
-    // }
 };
-use crate::console::resource::{Log, LogLevel, Console};
+use crate::console::resource::{
+    // Log,
+    // LogLevel,
+    Console
+};
 
 use crate::shared::Vector2;
 
@@ -21,7 +22,6 @@ impl<'a> System<'a> for ExecuteActionSystem {
         WriteStorage<'a, PendingActions>,
         ReadStorage<'a, Named>,
         WriteStorage<'a, TileMap>,
-        // ReadStorage<'a, MoveableEntity>,
         Write<'a, Console>,
         Entities<'a>,
     );
@@ -30,10 +30,9 @@ impl<'a> System<'a> for ExecuteActionSystem {
         let (
              mut positions,
              mut pending_actionses,
-             names,
+             _names,
              mut tilemaps,
-             // moveable_entities,
-             mut console,
+             mut _console,
              entities
         ) = data;
 
@@ -41,7 +40,7 @@ impl<'a> System<'a> for ExecuteActionSystem {
             // for action in &pending_actions.actions {
             // TODO wut.. yuck..
             while let Some(action) = pending_actions.actions.pop() {
-                let mut action_string = String::from("");
+                // let mut action_string = String::from("");
                 let took_action = match action {
                     // pending move action
                     Action::Move { delta } => {
@@ -62,19 +61,11 @@ impl<'a> System<'a> for ExecuteActionSystem {
                                     tilemap.add_to_dynamic(new_pos, entity);
                                 }
                             }
-                            /*
-                            if !tilemap.passable_at(new_pos) {
-                                move_allowed = false;
-                            } else {
-                                tilemap.remove_from_dynamic(position.value);
-                                tilemap.add_to_dynamic(new_pos, entity);
-                            }
-                            */
                         }
                         if move_allowed {
                             let mut position = positions.get_mut(entity).unwrap();
                             position.value = new_pos;
-                            action_string = format!("move to {}", position.value);
+                            // action_string = format!("mov {}", position.value);
                             true
                         } else {
                             false
@@ -84,24 +75,14 @@ impl<'a> System<'a> for ExecuteActionSystem {
                 };
                 if !took_action { break; }
                 // Log into console.
-                let name = names.get(entity);
-                let name_string = Named::name_or_noname(name);
+                // let name = names.get(entity);
+                // let name_string = Named::name_or_noname(name);
                 // println!("{}: {}", name_string, action_string);
-                (*console).log(Log::new(
-                    LogLevel::Debug,
-                    &format!("{}: {}", name_string, action_string),
-                ));
+                // (*console).log(Log::new(
+                //     LogLevel::Debug,
+                //     &format!("{}: {}", name_string, action_string),
+                // ));
             }
         }
-
-        /*
-        for tilemap in (&mut tilemaps).join() {
-            tilemap.clear_dynamic();
-            for position in (&positions).join() {
-                tilemap.add_to_dynamic(position.value);
-            }
-        }
-        */
-
     }
 }

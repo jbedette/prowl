@@ -23,4 +23,12 @@ impl CharRenderer {
         let bg_color = Some(bg_color);
         Self { character, color, bg_color }
     }
+
+    pub fn ui_border() -> Self {
+        CharRenderer::new(' ', Color::new(45, 42, 90))
+    }
+
+    pub fn ui_body() -> Self {
+        CharRenderer::new(' ', Color::new(12, 24, 32))
+    }
 }
