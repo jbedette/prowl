@@ -11,7 +11,7 @@ use crate::ui::panel::{
     Widget,
 };
 
-const TEXT_COLOR_DEFAULT : Color = Color::new(0xdd, 0xdd, 0xdd);
+const TEXT_COLOR_DEFAULT : Color = Color::new(0xbb, 0xbb, 0xbb);
 
 pub fn init(r: &mut Console) {
     r.set_default_foreground(colors::WHITE);

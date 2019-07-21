@@ -12,8 +12,8 @@ pub fn init(world: &mut World) {
     world.create_entity()
         .with(Panel::new(
                 "Console",
-                Vector2::new(50, 11),
-                Vector2::new(29, 38),
+                Vector2::new(50, 10),
+                Vector2::new(29, 39),
                 CharRenderer::new(' ', Color::new(12, 24, 32)),
                 CharRenderer::new(' ', Color::new(45, 42, 90)),
                 ))
