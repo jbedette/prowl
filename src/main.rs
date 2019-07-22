@@ -3,29 +3,43 @@ use specs::{
     Builder,
     World
 };
+// Console holds the console system and resource but
+// does not directly handle its own UI.
 mod console;
+
+// TODO should components module still be used for some components?
 mod components;
 use components::TileMap;
 
+// TODO move all systems into folders named by their usage.
 mod systems;
+
+// Handles all rendering.
 mod renderer;
 
+// TODO move all resources into folders named by their usage.
 mod resources;
 use resources::game_data::GameData;
 
+// Shared data types and utility functions.
 mod shared;
 use shared::Vector2;
 
+// Handles UI layout (still rendered within renderer)
 mod ui;
 
+// Contains helper functions to build entities of each type.
 mod entity_builder;
 use entity_builder::{
     ship::make_ship,
     player::make_player,
 };
 
+// Prepares dispatchers for later use.
 mod dispatcher_builder;
+// Handles user input.
 mod input;
+// Unused, yet. Testing a technique...
 mod event_channel;
 
 pub const MAP_SIZE: i32 = 500;
@@ -93,7 +107,7 @@ fn run_game(mut world: World) {
                     ui.dispatch(&world);
                 }
                 match state_change_request {
-                    // trigger next turn by breaking inner loop
+                    // trigger next turn with break
                     Some(NextTurn) => {
                         game_data.current_turn += 1;
                         break;
