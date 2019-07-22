@@ -22,7 +22,7 @@ use specs::{
     Dispatcher
 };
 
-// TODO not 'static?
+// TODO for all - can this happen without the 'static lifetimes?
 /// initialize systems in the loader state
 pub fn setup_dispatcher() -> Dispatcher<'static, 'static> {
     DispatcherBuilder::new()
@@ -32,6 +32,7 @@ pub fn setup_dispatcher() -> Dispatcher<'static, 'static> {
         .build()
 }
 
+/// Waits for user input
 pub fn input_dispatcher() -> Dispatcher<'static, 'static> {
     DispatcherBuilder::new()
         // system, "string id", &[dependencies]
@@ -42,6 +43,7 @@ pub fn input_dispatcher() -> Dispatcher<'static, 'static> {
         .build()
 }
 
+/// Executes a turn.
 pub fn turn_dispatcher() -> Dispatcher<'static, 'static> {
     DispatcherBuilder::new()
         // system, "string id", &[dependencies]
@@ -55,6 +57,7 @@ pub fn turn_dispatcher() -> Dispatcher<'static, 'static> {
         .build()
 }
 
+/// Used when UI is blocking, e.g. a menu.
 pub fn ui_dispatcher() -> Dispatcher<'static, 'static> {
     DispatcherBuilder::new()
         // system, "string id", &[dependencies]

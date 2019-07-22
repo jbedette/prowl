@@ -1,4 +1,5 @@
-// use tcod::colors::*;
+use tcod::colors::*;
+use specs::Entity;
 
 #[derive(Default)]
 pub struct Console {
@@ -28,16 +29,22 @@ impl Console {
 pub struct Log {
     pub level: LogLevel,
     pub message: String,
+    pub entity: Option<Entity>,
 }
 
 impl Log {
-    pub fn new<T: Into<String>>(level: LogLevel, message: T) -> Self {
+    pub fn new<T: Into<String>>(
+        level: LogLevel,
+        message: T) -> Self {
         let message = message.into();
-        Self { level, message }
+        Self {
+            level,
+            message,
+            entity: None,
+        }
     }
 
-    /*
-    // TODO log doesn't support color...
+    #[allow(unused)]
     pub fn get_color(&self) -> Color {
         use LogLevel::*;
         match self.level {
@@ -45,7 +52,6 @@ impl Log {
             Debug => Color::new(0x60, 0x60, 0x60),
         }
     }
-    */
 }
 
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]

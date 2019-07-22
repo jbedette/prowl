@@ -6,7 +6,7 @@ use crate::ui::{
     markers::{
         StatusUI,
         ConsoleUI,
-        // InteractiveUI,
+        InteractiveUI,
     },
 };
 use crate::components::{
@@ -71,7 +71,8 @@ impl<'a> System<'a> for StatusWindowSystem {
             _game_data,
             entities,
             ) = data;
-        for (panel, _status, entity) in (&mut panel, &status, &entities).join() {
+        for (panel, _status, entity) in
+            (&mut panel, &status, &entities).join() {
             // clear
             panel.widgets = vec![];
             /* NAME */ {
@@ -83,7 +84,7 @@ impl<'a> System<'a> for StatusWindowSystem {
                 let health = healths.get(entity);
                 if let Some(health) = health {
                     let health = format!(
-                        "HP: {} / {}",
+                        "HP: {}/{}",
                         health.current,
                         health.max,
                         );
@@ -94,18 +95,17 @@ impl<'a> System<'a> for StatusWindowSystem {
     }
 }
 
-/*
 pub struct InteractiveUISystem;
-impl<'a> System for InteractiveUISystem<'a> {
+impl<'a> System<'a> for InteractiveUISystem {
     type SystemData = (
         ReadStorage<'a, Panel>,
-        ReadStorage<'a, Status>,
-        ReadStorage<'a, InteractableUI>,
+        ReadStorage<'a, InteractiveUI>,
         );
-    fn run(world: &mut World, data: Self::SystemData) {
-        let (panels, status) = data;
 
+    fn run(&mut self, data: Self::SystemData) {
+        let (panels, interactives) = data;
 
+        for (_panel, _interactive) in (&panels, &interactives).join() {
+        }
     }
 }
-*/

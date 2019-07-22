@@ -26,13 +26,16 @@ use entity_builder::{
 
 mod dispatcher_builder;
 mod input;
+mod event_channel;
 
 pub const MAP_SIZE: i32 = 500;
 
 fn main() {
     // create an ECS "world"
     let mut world = World::new();
+    // register all the resources in the world
     resources::add_all(&mut world);
+    // register all the components in the world
     components::register(&mut world);
     ui::register(&mut world);
     // build a map (dumb af)
@@ -58,7 +61,7 @@ fn run_game(mut world: World) {
     let mut setup = dispatcher_builder::setup_dispatcher();
     // Turn: Calculates the logic of a turn happening.
     let mut turn = dispatcher_builder::turn_dispatcher();
-    // Input: Loops at the end of every turn, allowing user input and UI.
+    // Input: Blocks at the end of every turn, allowing user input and UI.
     let mut input = dispatcher_builder::input_dispatcher();
     // WaitForUI
     let mut ui = dispatcher_builder::ui_dispatcher();
@@ -85,7 +88,7 @@ fn run_game(mut world: World) {
                 // if state change requested, make it happen here.
                 // NOTE currently states are simple. not sure if we'll need more
                 // and might need to refactor this into a big "match" or maybe
-                // a primitive state machine?
+                // state machine?
                 while state_change_request == Some(WaitForUI) {
                     ui.dispatch(&world);
                 }

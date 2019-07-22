@@ -18,7 +18,10 @@ use crate::components::{
 #[allow(unused_imports)]
 use crate::resources::{
     Window,
-    game_data::GameData,
+    game_data::{
+        GameData,
+        StateChangeRequest,
+    },
 };
 // use crate::console::resource::{Log, LogLevel, Console};
 use crate::console::resource::Console;
@@ -51,7 +54,7 @@ impl<'a> System<'a> for RenderingSystem {
         ReadStorage<'a, Panel>,
         specs::Read<'a, Console>,
         specs::Write<'a, Window>,
-        specs::Read<'a, GameData>,
+        specs::Write<'a, GameData>,
         Entities<'a>,
     );
 
@@ -65,7 +68,7 @@ impl<'a> System<'a> for RenderingSystem {
              panels,
              _console,
              mut window,
-             _game_data,
+             mut game_data,
              entities,
              ) = data;
 
@@ -81,8 +84,7 @@ impl<'a> System<'a> for RenderingSystem {
         let offset = offset;
 
         if window.root.window_closed() {
-            // quit somehow?
-            panic!() // quit somehow!
+            game_data.state_change_request = Some(StateChangeRequest::QuitGame);
         }
 
         let mut root = Offscreen::new(window.size.x, window.size.y);
@@ -116,21 +118,19 @@ impl<'a> System<'a> for RenderingSystem {
                     &char_renderer,
                 );
             }
-
-        let (_screen_width, screen_height) = (*window).size.to_tuple();
-
+        // Render UI
         for panel in (&panels).join() {
             renderer::put_panel(&mut root, &panel)
         }
-        // INSTRUCTIONS TODO replace with panel
+        // INSTRUCTIONS TODO replace with panel?
         renderer::put_text(
             &mut root,
-            Vector2::new(2, screen_height - 2),
+            Vector2::new(2, (*window).size.y - 2),
             Vector2::new(200, 5),
             &Color::new(0x00, 0x50, 0x80),
             "[wasd] to move, [esc] to quit",
         );
-
+        // Draw to the screen
         window.blit(&root);
     }
 }
