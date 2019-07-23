@@ -16,7 +16,7 @@ impl<'a> System<'a> for OnTurnSystem {
                 LogLevel::Game,
                 "Time has passed...",
                 ));
-        console.y_offset = console.logs.len() as i32 - 1;
-
+        // puts most recent console log at bottom of window.
+        console.scroll_to_bottom();
     }
 }

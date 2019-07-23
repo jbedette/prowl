@@ -73,8 +73,8 @@ impl<'a> System<'a> for UserInputSystem {
                 // Quit
                 Quit => game_data.state_change_request = Some(QuitGame),
                 // Console
-                ConsoleSrollUp => console.y_offset -= 1,
-                ConsoleSrollDown => console.y_offset += 1,
+                ConsoleSrollUp => console.scroll(-1),
+                ConsoleSrollDown => console.scroll(1),
                 _ => (),
             }
             // Some inputs increment the current game turn

@@ -23,6 +23,17 @@ impl Console {
     pub fn clear(&mut self) {
         self.logs = vec![];
     }
+
+    pub fn scroll(&mut self, y: i32) {
+        self.y_offset += y;
+        if self.y_offset < 0 {
+            self.y_offset = 0;
+        }
+    }
+
+    pub fn scroll_to_bottom(&mut self) {
+        self.y_offset = self.logs.len() as i32 - 1;
+    }
 }
 
 #[derive(Clone)]

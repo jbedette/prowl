@@ -23,7 +23,7 @@ use specs::{
 };
 
 // TODO for all - can this happen without the 'static lifetimes?
-/// initialize systems in the loader state
+/// Initialize systems in the loader state.
 pub fn setup_dispatcher() -> Dispatcher<'static, 'static> {
     DispatcherBuilder::new()
         // system, "string id", &[dependencies]
@@ -32,7 +32,7 @@ pub fn setup_dispatcher() -> Dispatcher<'static, 'static> {
         .build()
 }
 
-/// Waits for user input
+/// Waits for user input.
 pub fn input_dispatcher() -> Dispatcher<'static, 'static> {
     DispatcherBuilder::new()
         // system, "string id", &[dependencies]
