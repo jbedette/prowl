@@ -52,6 +52,7 @@ fn main() {
     // register all the components in the world
     components::register(&mut world);
     ui::register(&mut world);
+    event_channel::register(&mut world);
     // build a map (dumb af)
     let mut map = TileMap::new(Vector2::new(MAP_SIZE, MAP_SIZE));
     map.generate();

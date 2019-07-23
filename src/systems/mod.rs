@@ -4,6 +4,7 @@ mod death_system;
 // mod print_stats_system;
 mod ai;
 mod execute_actions;
+mod interaction_system;
 // mod input;
 
 pub use death_system::DeathSystem;
@@ -12,3 +13,4 @@ pub use death_system::DeathSystem;
 // pub use print_entity_system::PrintEntitySystem;
 pub use ai::AISystem;
 pub use execute_actions::ExecuteActionSystem;
+pub use interaction_system::InteractionSystem;

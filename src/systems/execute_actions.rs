@@ -11,6 +11,11 @@ use crate::console::resource::{
     // LogLevel,
     Console
 };
+use crate::event_channel::{
+    EventChannel,
+    InteractionEvent,
+    Event,
+};
 
 use crate::shared::Vector2;
 
@@ -22,6 +27,7 @@ impl<'a> System<'a> for ExecuteActionSystem {
         WriteStorage<'a, PendingActions>,
         ReadStorage<'a, Named>,
         WriteStorage<'a, TileMap>,
+        Write<'a, EventChannel<InteractionEvent>>,
         Write<'a, Console>,
         Entities<'a>,
     );
@@ -32,6 +38,7 @@ impl<'a> System<'a> for ExecuteActionSystem {
              mut pending_actionses,
              _names,
              mut tilemaps,
+             mut interaction_events,
              mut _console,
              entities
         ) = data;
@@ -51,8 +58,13 @@ impl<'a> System<'a> for ExecuteActionSystem {
                         let mut move_allowed = true;
                         for tilemap in (&mut tilemaps).join() {
                             let tile_data = tilemap.passable_at(new_pos);
-                            if Some(entity) == tile_data.1 {
+                            if let Some(entity1) = tile_data.1 {
                                 // TODO interaction trigger
+                                (*interaction_events).push(Event {
+                                    entities: vec![entity, entity1],
+                                    text: String::from("COLLISION"),
+                                });
+                                move_allowed = false;
                             } else {
                                 if !tile_data.0 {
                                     move_allowed = false;

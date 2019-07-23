@@ -2,6 +2,7 @@ use crate::systems::{
     AISystem,
     DeathSystem,
     ExecuteActionSystem,
+    InteractionSystem,
 };
 use crate::input::{
     main_loop_system::UserInputSystem,
@@ -53,6 +54,7 @@ pub fn turn_dispatcher() -> Dispatcher<'static, 'static> {
         .with(ExecuteActionSystem, "execute_actions", &[])
         .with(DeathSystem, "deaths", &[])
         .with(StatusWindowSystem, "status", &[])
+        .with(InteractionSystem, "interactions", &["execute_actions"])
         .with(ConsoleWindowSystem, "console_window", &[])
         .build()
 }

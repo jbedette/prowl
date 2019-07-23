@@ -83,12 +83,6 @@ impl<'a> System<'a> for UserInputSystem {
             if delta != (0, 0) {
                 pending_actions.actions.push(Action::Move { delta });
                 increment_turn = true;
-                // TODO nix this once we log other shit
-                (*console).log(
-                    Log::new(
-                        LogLevel::Debug,
-                        format!("Input: {:?}", key)
-                    ));
             }
             // Triggers a turn
             if increment_turn {
