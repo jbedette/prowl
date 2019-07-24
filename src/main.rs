@@ -80,6 +80,8 @@ fn run_game(mut world: World) {
     let mut input = dispatcher_builder::input_dispatcher();
     // WaitForUI
     let mut ui = dispatcher_builder::ui_dispatcher();
+    // This is dumb, but makes UI work
+    let mut render = dispatcher_builder::render_dispatcher();
     // Register all the components used (setup isn't working correctly?)
     // run setup state (only does an initial render for now)
     setup.dispatch(&world);
@@ -91,25 +93,36 @@ fn run_game(mut world: World) {
         world.maintain();
         // input loop
         loop {
+            use resources::game_data::StateChangeRequest::*;
+            let mut state_change_request;
+            // open GameData resource
+            {
+                let game_data = &mut world.write_resource::<GameData>();
+                state_change_request = game_data.state_change_request;
+                game_data.state_change_request = None;
+            }
             // dispatch input system
+            // blocking UI happens before input, has own input.
+            if state_change_request == Some(WaitForUI) {
+                loop {
+                    ui.dispatch(&world);
+                    world.maintain();
+                    render.dispatch(&world);
+                    let game_data = &mut world.write_resource::<GameData>();
+                    if game_data.state_change_request == None { break; }
+                }
+            }
             input.dispatch(&world);
             // consider state change
             {
-                // open GameData resource
-                let game_data = &mut world.write_resource::<GameData>();
-                use resources::game_data::StateChangeRequest::*;
-                let state_change_request = game_data.state_change_request;
-                game_data.state_change_request = None;
                 // if state change requested, make it happen here.
                 // NOTE currently states are simple. not sure if we'll need more
                 // and might need to refactor this into a big "match" or maybe
                 // state machine?
-                while state_change_request == Some(WaitForUI) {
-                    ui.dispatch(&world);
-                }
                 match state_change_request {
                     // trigger next turn with break
                     Some(NextTurn) => {
+                        let game_data = &mut world.write_resource::<GameData>();
                         game_data.current_turn += 1;
                         break;
                     },

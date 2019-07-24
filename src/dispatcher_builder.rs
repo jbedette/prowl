@@ -11,7 +11,7 @@ use crate::renderer::{
     rendering_system::RenderingSystem,
 };
 use crate::ui::ui_systems::{
-    // InteractiveUISystem,
+    InteractiveUISystem,
     StatusWindowSystem,
     ConsoleWindowSystem,
 };
@@ -61,6 +61,15 @@ pub fn turn_dispatcher() -> Dispatcher<'static, 'static> {
 
 /// Used when UI is blocking, e.g. a menu.
 pub fn ui_dispatcher() -> Dispatcher<'static, 'static> {
+    DispatcherBuilder::new()
+        // system, "string id", &[dependencies]
+        .with(InteractiveUISystem, "interactive", &[])
+        .with_thread_local(RenderingSystem)
+        .build()
+}
+
+/// Stopgap solution to render after world.maintain() after UI input
+pub fn render_dispatcher() -> Dispatcher<'static, 'static> {
     DispatcherBuilder::new()
         // system, "string id", &[dependencies]
         .with_thread_local(RenderingSystem)

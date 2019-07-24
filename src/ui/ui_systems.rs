@@ -95,17 +95,62 @@ impl<'a> System<'a> for StatusWindowSystem {
     }
 }
 
+use crate::input::tcod_input;
+use crate::resources::{
+    Window,
+    game_data::StateChangeRequest,
+};
+
 pub struct InteractiveUISystem;
 impl<'a> System<'a> for InteractiveUISystem {
     type SystemData = (
         ReadStorage<'a, Panel>,
         ReadStorage<'a, InteractiveUI>,
+        Write<'a, Console>,
+        Write<'a, GameData>,
+        Write<'a, Window>,
+        Entities<'a>,
         );
 
     fn run(&mut self, data: Self::SystemData) {
-        let (panels, interactives) = data;
+        let (
+            panels,
+            interactives,
+            mut console,
+            mut game_data,
+            mut window,
+            entities,
+            ) = data;
 
-        for (_panel, _interactive) in (&panels, &interactives).join() {
+
+        let mut entities_to_remove = vec![];
+        for (_panel, _interactive, entity) in
+                (&panels, &interactives, &entities).join() {
+            println!("INTERACTIVE UI ACTIVE");
+            let key = tcod_input::get(&mut window.root);
+            use tcod_input::InputCode;
+            use InputCode::*;
+            game_data.state_change_request = Some(StateChangeRequest::WaitForUI);
+            let mut delta = (0, 0);
+            match key {
+                // Move
+                Up => delta.1 = -1,
+                Down => delta.1 = 1,
+                Left => delta.0 = -1,
+                Right => delta.0 = 1,
+                // ESCAPE TODO rename Quit to Escape
+                Quit => {
+                    game_data.state_change_request = Option::None;
+                    entities_to_remove.push(entity);
+                }
+                // Console
+                ConsoleSrollUp => console.scroll(-1),
+                ConsoleSrollDown => console.scroll(1),
+                _ => (),
+            }
+        }
+        for entity in entities_to_remove {
+            entities.delete(entity);
         }
     }
 }

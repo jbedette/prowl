@@ -4,6 +4,7 @@ use specs::prelude::*;
 // use crate::components::CharRenderer;
 use crate::components::{
     Named,
+    CharRenderer,
 };
 use crate::event_channel::{
     EventChannel,
@@ -17,26 +18,41 @@ use crate::console::resource::{
     Console,
 };
 use crate::components::Player;
-
+use crate::ui::{
+    Panel,
+    markers::InteractiveUI,
+};
+use crate::shared::Vector2;
+use crate::resources::game_data::{
+    GameData,
+    StateChangeRequest::WaitForUI,
+};
 
 pub struct InteractionSystem;
 
+#[allow(unused_must_use)]
 impl<'a> System<'a> for InteractionSystem {
     type SystemData = (
         ReadStorage<'a, Named>,
         ReadStorage<'a, Player>,
+        WriteStorage<'a, Panel>,
+        WriteStorage<'a, InteractiveUI>,
         Write<'a, Console>,
+        Write<'a, GameData>,
         Write<'a, EventChannel<InteractionEvent>>,
-        // Entities<'a>
+        Entities<'a>
         );
 
     fn run(&mut self, data: Self::SystemData) {
         let (
             names,
             players,
+            mut panels,
+            mut interactive_uis,
             mut console,
+            mut game_data,
             mut events,
-            // entities,
+            entities,
             ) = data;
 
         while let Some(event) = events.pop() {
@@ -51,6 +67,16 @@ impl<'a> System<'a> for InteractionSystem {
                         LogLevel::Game,
                         format!("{} has collided with {}", one, two),
                         ));
+                let window = entities.create();
+                panels.insert(window, Panel::new(
+                            "Interaction",
+                            Vector2::new(5,5),
+                            Vector2::new(20,20),
+                            CharRenderer::ui_body(),
+                            CharRenderer::ui_border(),
+                            ));
+                interactive_uis.insert(window, InteractiveUI::default());
+                game_data.state_change_request = Some(WaitForUI);
             }
         }
     }
