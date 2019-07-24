@@ -69,7 +69,7 @@ impl<'a> System<'a> for InteractionSystem {
                         ));
                 let window = entities.create();
                 panels.insert(window, Panel::new(
-                            "Interaction",
+                            "[ESC] to close",
                             Vector2::new(5,5),
                             Vector2::new(20,20),
                             CharRenderer::ui_body(),
