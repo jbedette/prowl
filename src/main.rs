@@ -94,7 +94,7 @@ fn run_game(mut world: World) {
         // input loop
         loop {
             use resources::game_data::StateChangeRequest::*;
-            let mut state_change_request;
+            let state_change_request;
             // open GameData resource
             {
                 let game_data = &mut world.write_resource::<GameData>();

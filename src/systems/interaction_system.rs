@@ -19,6 +19,7 @@ use crate::console::resource::{
 };
 use crate::components::Player;
 use crate::ui::{
+    panel::Widget,
     Panel,
     markers::InteractiveUI,
 };
@@ -37,7 +38,7 @@ impl<'a> System<'a> for InteractionSystem {
         ReadStorage<'a, Player>,
         WriteStorage<'a, Panel>,
         WriteStorage<'a, InteractiveUI>,
-        Write<'a, Console>,
+        // Write<'a, Console>,
         Write<'a, GameData>,
         Write<'a, EventChannel<InteractionEvent>>,
         Entities<'a>
@@ -49,7 +50,7 @@ impl<'a> System<'a> for InteractionSystem {
             players,
             mut panels,
             mut interactive_uis,
-            mut console,
+            // mut console,
             mut game_data,
             mut events,
             entities,
@@ -63,18 +64,25 @@ impl<'a> System<'a> for InteractionSystem {
             if players.get(event.entities[0]).is_some() ||
                     players.get(event.entities[1]).is_some() {
                 // TODO figure out how to spawn entities in this system...
+                        /*
                 console.log(Log::new(
                         LogLevel::Game,
                         format!("{} has collided with {}", one, two),
                         ));
+                        */
                 let window = entities.create();
-                panels.insert(window, Panel::new(
+                let mut panel = Panel::new(
                             "[ESC] to close",
                             Vector2::new(5,5),
                             Vector2::new(20,20),
                             CharRenderer::ui_body(),
                             CharRenderer::ui_border(),
-                            ));
+                            );
+                panel.widgets.push(
+                    Widget::text_box(&format!("{} has collided with {}", one, two))
+                    );
+
+                panels.insert(window, panel);
                 interactive_uis.insert(window, InteractiveUI::default());
                 game_data.state_change_request = Some(WaitForUI);
             }
