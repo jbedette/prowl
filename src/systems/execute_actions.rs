@@ -56,11 +56,14 @@ impl<'a> System<'a> for ExecuteActionSystem {
                         let y = position.value.y + delta.1;
                         let new_pos = Vector2::new(x, y);
                         let mut move_allowed = true;
+                        // for each map (only one right now)
                         for tilemap in (&mut tilemaps).join() {
+                            // if position is passable or contains an entity
                             let tile_data = tilemap.passable_at(new_pos);
                             if let Some(entity1) = tile_data.1 {
                                 // TODO interaction trigger
-                                (*interaction_events).push(Event {
+                                interaction_events.push(Event {
+                                // (*interaction_events).push(Event {
                                     entities: vec![entity, entity1],
                                     text: String::from("COLLISION"),
                                 });

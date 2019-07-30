@@ -20,6 +20,7 @@ pub struct TileMap {
     dynamic_map: Vec<Option<Entity>>,
     vec_size: usize,
 }
+use crate::actors::Island;
 
 impl TileMap {
     #[allow(dead_code)]
@@ -35,6 +36,7 @@ impl TileMap {
         }
     }
 
+    /*
     pub fn generate(&mut self) {
         for _ in 0..400 {
             self.place_island(Vector2::new(
@@ -45,7 +47,9 @@ impl TileMap {
                 );
         }
     }
+    */
 
+    /*
     pub fn place_island(&mut self, position: Vector2, size: Vector2) {
         for x in position.x..position.x + size.x {
             for y in position.y..position.y + size.y {
@@ -55,6 +59,27 @@ impl TileMap {
             }
         }
     }
+    */
+    // TODO this should check if island is valid (on map)
+    // and return some kind of fail if island is invalid.
+    pub fn place_island(
+        &mut self,
+        island: &Island,
+        position: Vector2,
+        entity: Entity)
+    {
+        //let size = island.size;
+        let size = Vector2::new(island.size, island.size);
+        for x in position.x..position.x + size.x {
+            for y in position.y..position.y + size.y {
+                if let Some(index) = self.vector2_to_index(Vector2::new(x, y)) {
+                    self.tiles[index] = Tile::land();
+                    self.dynamic_map[index] = Some(entity);
+                }
+            }
+        }
+    }
+
 
     // get ref to tile at x, y
     pub fn get_tile(&self, position: Vector2) -> Option<&Tile> {

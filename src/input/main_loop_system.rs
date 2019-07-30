@@ -66,10 +66,26 @@ impl<'a> System<'a> for UserInputSystem {
             use InputCode::*;
             match key {
                 // Move
-                Up => delta.1 = -1,
-                Down => delta.1 = 1,
-                Left => delta.0 = -1,
-                Right => delta.0 = 1,
+                Up => {
+                    delta.1 = -1;
+                    pending_actions.actions.push(Action::Move { delta });
+                    game_data.state_change_request = Some(NextTurn);
+                },
+                Down => {
+                    delta.1 = 1;
+                    pending_actions.actions.push(Action::Move { delta });
+                    game_data.state_change_request = Some(NextTurn);
+                },
+                Left => {
+                    delta.0 = -1;
+                    pending_actions.actions.push(Action::Move { delta });
+                    game_data.state_change_request = Some(NextTurn);
+                },
+                Right => {
+                    delta.0 = 1;
+                    pending_actions.actions.push(Action::Move { delta });
+                    game_data.state_change_request = Some(NextTurn);
+                },
                 // Quit
                 Quit => game_data.state_change_request = Some(QuitGame),
                 // Console
@@ -78,16 +94,6 @@ impl<'a> System<'a> for UserInputSystem {
                 _ => (),
             }
             // Some inputs increment the current game turn
-            // Others (like UI) don't.
-            let mut increment_turn = false;
-            if delta != (0, 0) {
-                pending_actions.actions.push(Action::Move { delta });
-                increment_turn = true;
-            }
-            // Triggers a turn
-            if increment_turn {
-                game_data.state_change_request = Some(NextTurn);
-            }
         }
     }
 }

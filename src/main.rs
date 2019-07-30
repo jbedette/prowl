@@ -23,10 +23,17 @@ use resources::game_data::GameData;
 
 // Shared data types and utility functions.
 mod shared;
-use shared::Vector2;
+use shared::{
+    Vector2,
+    random::random_range,
+};
 
 // Handles UI layout (still rendered within renderer)
 mod ui;
+
+// Contains all actor components and any systems that
+// only deal with actors (?) TODO move stuff into here.
+mod actors;
 
 // Contains helper functions to build entities of each type.
 mod entity_builder;
@@ -53,9 +60,26 @@ fn main() {
     components::register(&mut world);
     ui::register(&mut world);
     event_channel::register(&mut world);
+    actors::register(&mut world);
     // build a map (dumb af)
     let mut map = TileMap::new(Vector2::new(MAP_SIZE, MAP_SIZE));
-    map.generate();
+    // make islands
+    for _ in 0..100 {
+        world.create_entity()
+            .with(components::Named::new("YEET"))
+            .with(components::Position::new(
+                    Vector2::new(
+                        random_range(0, MAP_SIZE as usize) as i32,
+                        random_range(0, MAP_SIZE as usize) as i32,
+                    )
+                    ))
+            .with(actors::Island::new(
+                    random_range(2, 10) as i32,
+                    random_range(0, 100) as i32,
+                    ))
+            .build();
+    }
+    //map.generate();
      // player
     make_player(&mut world);
     // populate gameworld

@@ -22,6 +22,7 @@ use specs::{
     DispatcherBuilder,
     Dispatcher
 };
+use crate::actors::islands::island_setup::IslandSetupSystem;
 
 // TODO for all - can this happen without the 'static lifetimes?
 /// Initialize systems in the loader state.
@@ -29,6 +30,7 @@ pub fn setup_dispatcher() -> Dispatcher<'static, 'static> {
     DispatcherBuilder::new()
         // system, "string id", &[dependencies]
         // rendering must be on local thread
+        .with(IslandSetupSystem, "island_setup", &[])
         .with_thread_local(RenderingSystem)
         .build()
 }

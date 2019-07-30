@@ -63,7 +63,6 @@ impl<'a> System<'a> for InteractionSystem {
             let two = Named::name_or_noname(two);
             if players.get(event.entities[0]).is_some() ||
                     players.get(event.entities[1]).is_some() {
-                // TODO figure out how to spawn entities in this system...
                         /*
                 console.log(Log::new(
                         LogLevel::Game,
