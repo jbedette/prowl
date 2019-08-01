@@ -1,8 +1,4 @@
-use specs::{
-    prelude::*,
-    Builder,
-    World
-};
+use specs::{prelude::*, Builder, World};
 // Console holds the console system and resource but
 // does not directly handle its own UI.
 mod console;
@@ -23,10 +19,7 @@ use resources::game_data::GameData;
 
 // Shared data types and utility functions.
 mod shared;
-use shared::{
-    Vector2,
-    random::random_range,
-};
+use shared::{random::random_range, Vector2};
 
 // Handles UI layout (still rendered within renderer)
 mod ui;
@@ -37,10 +30,7 @@ mod actors;
 
 // Contains helper functions to build entities of each type.
 mod entity_builder;
-use entity_builder::{
-    ship::make_ship,
-    player::make_player,
-};
+use entity_builder::{player::make_player, ship::make_ship};
 
 // Prepares dispatchers for later use.
 mod dispatcher_builder;
@@ -65,30 +55,29 @@ fn main() {
     let mut map = TileMap::new(Vector2::new(MAP_SIZE, MAP_SIZE));
     // make islands
     for _ in 0..100 {
-        world.create_entity()
+        world
+            .create_entity()
             .with(components::Named::new("YEET"))
-            .with(components::Position::new(
-                    Vector2::new(
-                        random_range(0, MAP_SIZE as usize) as i32,
-                        random_range(0, MAP_SIZE as usize) as i32,
-                    )
-                    ))
+            .with(components::Position::new(Vector2::new(
+                random_range(0, MAP_SIZE as usize) as i32,
+                random_range(0, MAP_SIZE as usize) as i32,
+            )))
             .with(actors::Island::new(
-                    random_range(2, 10) as i32,
-                    random_range(0, 100) as i32,
-                    ))
+                random_range(2, 10) as i32,
+                random_range(0, 100) as i32,
+            ))
             .build();
     }
     //map.generate();
-     // player
+    // player
     make_player(&mut world);
     // populate gameworld
-    for _ in 0..2000 { make_ship(&mut world); }
+    for _ in 0..2000 {
+        make_ship(&mut world);
+    }
     // make ui windows
     ui::init::init(&mut world);
-    world.create_entity()
-        .with(map)
-        .build();
+    world.create_entity().with(map).build();
     // start game loop
     run_game(world);
 }
@@ -133,10 +122,14 @@ fn run_game(mut world: World) {
                     world.maintain();
                     render.dispatch(&world);
                     let game_data = &mut world.write_resource::<GameData>();
-                    if game_data.state_change_request == None { break; }
+                    if game_data.state_change_request == None {
+                        break;
+                    }
                 }
             }
+            eprintln!("====> oi fuck");
             input.dispatch(&world);
+            eprintln!("====> oi fuck");
             // consider state change
             {
                 // if state change requested, make it happen here.
@@ -149,7 +142,7 @@ fn run_game(mut world: World) {
                         let game_data = &mut world.write_resource::<GameData>();
                         game_data.current_turn += 1;
                         break;
-                    },
+                    }
                     // doesn't exist yet
                     Some(ResetMenu) => (),
                     // quit the game by returning

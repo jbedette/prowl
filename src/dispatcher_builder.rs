@@ -40,8 +40,8 @@ pub fn input_dispatcher() -> Dispatcher<'static, 'static> {
     DispatcherBuilder::new()
         // system, "string id", &[dependencies]
         .with_thread_local(RenderingSystem)
-        .with(UserInputSystem, "input", &[])
-        .with(StatusWindowSystem, "status", &[])
+        .with_thread_local(UserInputSystem)
+        .with(StatusWindowSystem, "status_window", &[])
         .with(ConsoleWindowSystem, "console_window", &[])
         .build()
 }
@@ -65,7 +65,7 @@ pub fn turn_dispatcher() -> Dispatcher<'static, 'static> {
 pub fn ui_dispatcher() -> Dispatcher<'static, 'static> {
     DispatcherBuilder::new()
         // system, "string id", &[dependencies]
-        .with(InteractiveUISystem, "interactive", &[])
+        .with_thread_local(InteractiveUISystem)
         .with_thread_local(RenderingSystem)
         .build()
 }
