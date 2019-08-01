@@ -127,9 +127,7 @@ fn run_game(mut world: World) {
                     }
                 }
             }
-            eprintln!("====> oi fuck");
             input.dispatch(&world);
-            eprintln!("====> oi fuck");
             // consider state change
             {
                 // if state change requested, make it happen here.
