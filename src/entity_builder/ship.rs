@@ -15,6 +15,7 @@ use crate::shared::{
 };
 use specs::prelude::*;
 use tcod::colors::*;
+use crate::file_io::read_file;
 // TODO maybe don't do this
 use crate::MAP_SIZE;
 
@@ -23,14 +24,8 @@ use crate::MAP_SIZE;
 // What can ships do?
 // This is all just placeholder!
 pub fn make_ship(world: &mut World) {
-    let names = [
-        "Mark", "Dumbo", "Kyle", "Jumbo", "Jarvis", "Cool Man", "Smarto",
-        "Dweebster", "Markov", "Callios", "Krun", "Eliza", "Thadd",
-        "Frigado", "Buttface", "MacGregor", "Envin", "Kuroga", "Shiela",
-        "Cicily", "Ness", "Endo", "Bendo", "Fry", "Leela", "Bender",
-        "Zoidberg", "Hermes", "Amy", "Zapp", "Scruffy"
-    ];
-    let name = names[random_range(0, names.len())];
+    let names = read_file("names.txt");
+    let name = names[random_range(0, names.len())].clone();
     let health = random_range(80, 200) as i64;
     let weapon = random_range(1, 10) as u64;
     let money = random_range(30, 300) as u64;
@@ -47,7 +42,7 @@ pub fn make_ship(world: &mut World) {
         ),
     );
     world.create_entity()
-        .with(Named::new(name))
+        .with(Named::new(&name))
         .with(Health::new(health, health))
         // does nothing yet
         .with(Weapon::new(weapon))

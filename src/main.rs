@@ -9,6 +9,7 @@ use components::TileMap;
 
 // TODO move all systems into folders named by their usage.
 mod systems;
+mod file_io;
 
 // Handles all rendering.
 mod renderer;

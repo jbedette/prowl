@@ -1,11 +1,9 @@
 use specs::prelude::*;
 
-use crate::components::{
-    Position,
-    map::TileMap,
-};
+use crate::components::{map::TileMap, Position};
 
 use crate::actors::Island;
+use crate::actors::Population;
 use crate::Vector2;
 
 pub struct IslandSetupSystem;
@@ -16,15 +14,10 @@ impl<'a> System<'a> for IslandSetupSystem {
         ReadStorage<'a, Position>,
         WriteStorage<'a, TileMap>,
         Entities<'a>,
-        );
+    );
 
     fn run(&mut self, data: Self::SystemData) {
-        let (
-            islands,
-            positions,
-            mut maps,
-            entities,
-            ) = data;
+        let (islands, positions, mut maps, entities) = data;
 
         // this is stupid. there is only one map.
         for map in (&mut maps).join() {
