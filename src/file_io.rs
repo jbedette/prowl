@@ -1,3 +1,4 @@
+//thank you rust by example https://doc.rust-lang.org/rust-by-example/std_misc/file/read_lines.html
 use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::Path;

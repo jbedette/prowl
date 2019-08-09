@@ -8,8 +8,8 @@ mod components;
 use components::TileMap;
 
 // TODO move all systems into folders named by their usage.
-mod systems;
 mod file_io;
+mod systems;
 
 // Handles all rendering.
 mod renderer;
@@ -54,11 +54,15 @@ fn main() {
     actors::register(&mut world);
     // build a map (dumb af)
     let mut map = TileMap::new(Vector2::new(MAP_SIZE, MAP_SIZE));
-    // make islands
+    // make islands, get island names
+    let isl_name_vec = file_io::read_file("isoles.txt");
     for _ in 0..100 {
         world
             .create_entity()
-            .with(components::Named::new("YEET"))
+            //island name generates from rand
+            .with(components::Named::new(
+                &(isl_name_vec[(random_range(0, isl_name_vec.len()))]),
+            ))
             .with(components::Position::new(Vector2::new(
                 random_range(0, MAP_SIZE as usize) as i32,
                 random_range(0, MAP_SIZE as usize) as i32,
