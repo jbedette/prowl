@@ -55,7 +55,7 @@ fn main() {
     event_channel::register(&mut world);
     actors::register(&mut world);
     // build a map (dumb af)
-    let mut map = TileMap::new(Vector2::new(MAP_SIZE, MAP_SIZE));
+    let map = TileMap::new(Vector2::new(MAP_SIZE, MAP_SIZE));
     // make islands, get island names
     let isl_name_vec = file_io::read_file("isoles.txt");
     for _ in 0..100 {

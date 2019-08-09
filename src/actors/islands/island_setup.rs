@@ -3,8 +3,8 @@ use specs::prelude::*;
 use crate::components::{map::TileMap, Position};
 
 use crate::actors::Island;
-use crate::actors::Population;
-use crate::Vector2;
+// use crate::actors::Population;
+// use crate::Vector2;
 
 pub struct IslandSetupSystem;
 

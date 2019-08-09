@@ -152,6 +152,7 @@ pub struct Tile {
 }
 
 impl Tile {
+    /*
     pub fn ocean() -> Self {
         let color = Color::new(0x20, 0x30, 0x70);
         let bg_color = Color::new(0x04, 0x10, 0x40);
@@ -160,6 +161,7 @@ impl Tile {
             passable: true,
         }
     }
+    */
     pub fn with_height(height: f64) -> Self {
         let mut height = height;
         let scale_value = 0.5;
@@ -168,7 +170,7 @@ impl Tile {
         if height < 0.0 { eprintln!("HEIGHT IS TOO LOW: {}", height ); height = 0.0; }
         else if height > 1.0 { eprintln!("HEIGHT IS TOO HIGH: {}", height ); height = 1.0 }
         // to blue value (todo scale darker)
-        let mut depth_color = (height * 256.0 * scale_value) as u8;
+        let depth_color = (height * 256.0 * scale_value) as u8;
         let color = Color::new(0x20, 0x30, 0x70);
         let bg_color = Color::new(0x04, 0x10, depth_color);
         Self {

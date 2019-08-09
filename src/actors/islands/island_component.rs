@@ -13,6 +13,7 @@ impl Island{
     pub fn new(size:i32, arable:i32) -> Self {
         Self { size, arable }
     }
+    #[allow(dead_code)]
     pub fn get_max_pop(&self)-> f32{
         //return a percentage of max pop
         self.size as f32/self.arable as f32

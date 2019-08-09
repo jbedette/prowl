@@ -1,4 +1,8 @@
-use noise::{NoiseFn, Perlin, OpenSimplex};
+use noise::{
+    NoiseFn,
+    // Perlin, // acting funny?
+    OpenSimplex
+};
 
 use crate::shared::{
     Vector2,
@@ -18,8 +22,9 @@ pub fn generate_heightmap(bounds: Vector2) -> Vec<f64> {
             let x = x / 10.0;
             let y = y / 10.0;
             let mut height = perlin.get([x, y]);
+            height /= 2.0;
             height += 0.5;
-            println!("noise: [{},{}]: {:?}", x, y, height);
+            // println!("noise: [{},{}]: {:?}", x, y, height);
             heightmap.push(height);
         }
     }
