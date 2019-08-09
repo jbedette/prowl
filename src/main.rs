@@ -37,8 +37,10 @@ use entity_builder::{player::make_player, ship::make_ship};
 mod dispatcher_builder;
 // Handles user input.
 mod input;
-// Unused, yet. Testing a technique...
+// Testing..
 mod event_channel;
+
+mod generators;
 
 pub const MAP_SIZE: i32 = 500;
 
