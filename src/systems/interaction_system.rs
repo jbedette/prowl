@@ -51,8 +51,7 @@ impl<'a> System<'a> for InteractionSystem {
             let two = names.get(parties.1);
             let one = Named::name_or_noname(one);
             let two = Named::name_or_noname(two);
-            if players.get(parties.0).is_some() || players.get(parties.1).is_some()
-            {
+            if players.get(parties.0).is_some() || players.get(parties.1).is_some() {
                 /*
                 console.log(Log::new(
                         LogLevel::Game,
@@ -67,18 +66,23 @@ impl<'a> System<'a> for InteractionSystem {
                     CharRenderer::ui_body(),
                     CharRenderer::ui_border(),
                 );
-                if ships.get(parties.0).is_some() && ships.get(parties.1).is_some(){
-                    panel.widgets.push(Widget::text_box(&format!("{} collided with another ship, {}!", one, two)));
+                if ships.get(parties.0).is_some() && ships.get(parties.1).is_some() {
+                    panel.widgets.push(Widget::text_box(&format!(
+                        "{} collided with another ship, {}!",
+                        one, two
+                    )));
+                } else {
+                    /*
+                    panel.widgets.push(Widget::text_box(&format!(
+                        "{} has docked at the island of {}",
+                        one, two
+                    )))
+                    */
+                    panel.widgets.push(Widget::menu(
+                        &format!("{} has docked at the island of {}", one, two),
+                        vec!["yabba".to_string(), "dabba".to_string(), "doo".to_string()],
+                    ));
                 }
-                else{
-                    panel.widgets.push(Widget::text_box(&format!("{} has docked at the island of {}", one, two)))
-                }
-                /*
-                panel.widgets.push(Widget::text_box(&get_menu(
-                    event.entities[0],
-                    event.entities[1],
-                )));
-                */
 
                 panels.insert(window, panel);
                 interactive_uis.insert(window, InteractiveUI::default());
@@ -87,11 +91,3 @@ impl<'a> System<'a> for InteractionSystem {
         }
     }
 }
-/*
-            //if players.get(event.entities[0]).is_some() || players.get(event.entities[1]).is_some()
-fn get_menu(one:Entity, two:Entity)-> String{
-    let ent_names = (names.get(one),names.get(two));
-    if ships.get(one).is_some(){
-    }
-}
-*/

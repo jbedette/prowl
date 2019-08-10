@@ -51,10 +51,9 @@ impl Widget {
         let text = String::from(text);
         Widget::TextBox { text }
     }
-    pub fn menu(text: &str, opts: Vec<String>) {
-        let mut text = String::from(text);
-        let mut num_opts = opts.len();
-        for opt in opts.enumerate() {
+    pub fn menu(text: &str, opts: Vec<String>) -> Self {
+        let mut text = format! {"{}{}",String::from(text),"\nWould you like to:"};
+        for opt in opts.iter().enumerate() {
             text = format! {"{}\n{}){}", text, opt.0,opt.1};
         }
         Widget::TextBox { text }
