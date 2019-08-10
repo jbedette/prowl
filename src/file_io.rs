@@ -27,9 +27,8 @@ where
 {
     // works from whatever directory in project you run it from, instead of just
     // if you run at root.
-    let file_path = application_root_dir()?;
-    file_path.join(filename);
-    // let file = File::open(filename)?;
+    let mut file_path = application_root_dir()?;
+    file_path = file_path.join(filename);
     let file = File::open(file_path)?;
     Ok(io::BufReader::new(file).lines())
 }
