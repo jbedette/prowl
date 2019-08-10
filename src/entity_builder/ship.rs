@@ -1,24 +1,16 @@
 /// Builds other ships.
 use crate::components::{
-    ai::{AI, Goal},
+    ai::{Goal, AI},
+    markers::Ship,
     pending_actions::PendingActions,
-    CharRenderer,
-    Health,
-    Money,
-    Named,
-    Position,
-    Weapon,
+    CharRenderer, Health, Money, Named, Position, Weapon,
 };
-use crate::shared::{
-    Vector2,
-    random::random_range,
-};
+use crate::file_io::read_file;
+use crate::shared::{random::random_range, Vector2};
 use specs::prelude::*;
 use tcod::colors::*;
-use crate::file_io::read_file;
 // TODO maybe don't do this
 use crate::MAP_SIZE;
-
 
 // TODO what determines parameters ? ?
 // What can ships do?
@@ -32,7 +24,7 @@ pub fn make_ship(world: &mut World) {
     let max = (MAP_SIZE - 1) as usize;
     let x = random_range(0, max) as i32;
     let y = random_range(0, max) as i32;
-    let position = Vector2::new(x,y);
+    let position = Vector2::new(x, y);
     let renderer = (
         &name.chars().next().unwrap().clone(),
         Color::new(
@@ -41,7 +33,8 @@ pub fn make_ship(world: &mut World) {
             random_range(0x88, 0xff) as u8,
         ),
     );
-    world.create_entity()
+    world
+        .create_entity()
         .with(Named::new(&name))
         .with(Health::new(health, health))
         // does nothing yet
@@ -52,5 +45,6 @@ pub fn make_ship(world: &mut World) {
         .with(CharRenderer::new(*renderer.0, renderer.1))
         .with(PendingActions::default())
         .with(AI::with_goal(Goal::MoveRandom))
+        .with(Ship::default())
         .build();
 }
