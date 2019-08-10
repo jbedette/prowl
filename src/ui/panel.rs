@@ -1,9 +1,6 @@
+use crate::{components::CharRenderer, shared::Vector2};
 use specs::{Component, VecStorage};
 use specs_derive::Component;
-use crate::{
-    shared::Vector2,
-    components::CharRenderer,
-};
 
 /// Panel Component
 #[derive(Component, Debug)]
@@ -14,7 +11,7 @@ pub struct Panel {
     pub bounds: Vector2,
     pub border: CharRenderer,
     pub background: CharRenderer,
-    pub widgets: Vec<Widget>
+    pub widgets: Vec<Widget>,
 }
 
 impl Panel {
@@ -24,7 +21,7 @@ impl Panel {
         bounds: Vector2,
         border: CharRenderer,
         background: CharRenderer,
-        ) -> Self {
+    ) -> Self {
         let title = String::from(title);
         Self {
             title,
@@ -39,12 +36,8 @@ impl Panel {
 
 #[derive(Debug)]
 pub enum Widget {
-    Label {
-        text: String,
-    },
-    TextBox {
-        text: String,
-    },
+    Label { text: String },
+    TextBox { text: String },
 }
 
 impl Widget {
@@ -56,6 +49,14 @@ impl Widget {
     // Multi-line, full line, to-fit
     pub fn text_box(text: &str) -> Self {
         let text = String::from(text);
+        Widget::TextBox { text }
+    }
+    pub fn menu(text: &str, opts: Vec<String>) {
+        let mut text = String::from(text);
+        let mut num_opts = opts.len();
+        for opt in opts.enumerate() {
+            text = format! {"{}\n{}){}", text, opt.0,opt.1};
+        }
         Widget::TextBox { text }
     }
 }
