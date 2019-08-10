@@ -148,6 +148,7 @@ impl TileMap {
 #[derive(Clone)]
 pub struct Tile {
     pub renderer: CharRenderer,
+    pub height: f64,
     pub passable: bool,
 }
 
@@ -164,18 +165,36 @@ impl Tile {
     */
     pub fn with_height(height: f64) -> Self {
         let mut height = height;
+        let height_cutoff = 0.65;
         let scale_value = 0.5;
-        // println!("height: {}", height);
-        // bounds checking
+        // bounds checking TODO are these good bounds? should it be an i32 like location?
         if height < 0.0 { eprintln!("HEIGHT IS TOO LOW: {}", height ); height = 0.0; }
         else if height > 1.0 { eprintln!("HEIGHT IS TOO HIGH: {}", height ); height = 1.0 }
         // to blue value (todo scale darker)
-        let depth_color = (height * 256.0 * scale_value) as u8;
-        let color = Color::new(0x20, 0x30, 0x70);
-        let bg_color = Color::new(0x04, 0x10, depth_color);
+        let (glyph, color, bg_color) = if height > height_cutoff {
+            // land
+            let land_color = (((height / 2.0) * 256.0)) as u8;
+            (
+                ' ',
+                Color::new(0x20, 0x30, 0x70),
+                Color::new(land_color, 0x40, 0x20)
+            )
+        } else {
+            // water
+            let depth_color = (height * 140.0) as u8;
+            let depth_color = depth_color + 40;
+            let land_color = (((height / 2.0) * 80.0)) as u8;
+            (
+                '~',
+                Color::new(0x20, 0x30, 0x70),
+                // Color::new(0x04, 0x10, depth_color)
+                Color::new(land_color, 0x10, depth_color)
+            )
+        };
         Self {
             // renderer: CharRenderer::with_bg('~', color, bg_color),
-            renderer: CharRenderer::with_bg('~', color, bg_color),
+            renderer: CharRenderer::with_bg(glyph, color, bg_color),
+            height,
             passable: true,
         }
     }
@@ -184,6 +203,7 @@ impl Tile {
         let bg_color = Color::new(0x50, 0x40, 0x20);
         Self {
             renderer: CharRenderer::with_bg(' ', color, bg_color),
+            height: 1.0,
             passable: false,
         }
     }
@@ -191,6 +211,7 @@ impl Tile {
         let color = Color::new(0x90, 0x70, 0x50);
         Self {
             renderer: CharRenderer::new(' ', color),
+            height: 0.0,
             passable: false,
         }
     }
