@@ -1,29 +1,29 @@
 use specs::prelude::*;
 
-#[derive(Debug, Default)]
-pub struct InteractionEvent;
-impl EventType for InteractionEvent {}
-
-#[derive(Debug, Default)]
-pub struct EventChannel<T: EventType> {
-    events: Vec<Event>,
-    event_type: Box<T>,
-}
-
-impl<T: EventType> EventChannel<T> {
-    pub fn push(&mut self, event: Event) { self.events.push(event); }
-    pub fn pop(&mut self) -> Option<Event> { self.events.pop() }
-}
-
-#[derive(Debug, Default)]
-pub struct Event {
-    pub text: String,
-    pub entities: Vec<Entity>,
-}
-pub trait EventType {}
-
+// Registers eveything with the world.
 #[allow(deprecated)]
 pub fn register(world: &mut World) {
     world.add_resource(EventChannel::<InteractionEvent>::default());
 }
 
+// An event channel holds a vec of events
+#[derive(Default)]
+pub struct EventChannel<E: Event> {
+    pub events: Vec<E>,
+}
+
+// Event is just a trait (for now?)
+pub trait Event {}
+
+#[derive(Default)]
+pub struct InteractionEvent {
+    pub text: String,
+    pub entities: Vec<Entity>,
+}
+impl Event for InteractionEvent {}
+
+#[derive(Default)]
+pub struct UserInputEvent {
+    // TODO what does this need???
+}
+impl Event for UserInputEvent {}

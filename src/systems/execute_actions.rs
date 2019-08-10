@@ -14,7 +14,6 @@ use crate::console::resource::{
 use crate::event_channel::{
     EventChannel,
     InteractionEvent,
-    Event,
 };
 
 use crate::shared::Vector2;
@@ -62,7 +61,7 @@ impl<'a> System<'a> for ExecuteActionSystem {
                             let tile_data = tilemap.passable_at(new_pos);
                             if let Some(entity1) = tile_data.1 {
                                 // TODO interaction trigger
-                                interaction_events.push(Event {
+                                interaction_events.events.push(InteractionEvent {
                                 // (*interaction_events).push(Event {
                                     entities: vec![entity, entity1],
                                     text: String::from("COLLISION"),

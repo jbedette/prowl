@@ -11,7 +11,7 @@ use crate::event_channel::{
 // use crate::console::{
 use crate::components::Player;
 use crate::components::Ship;
-use crate::console::resource::{Console, Log, LogLevel};
+// use crate::console::resource::{Console, Log, LogLevel};
 use crate::resources::game_data::{GameData, StateChangeRequest::WaitForUI};
 use crate::shared::Vector2;
 use crate::ui::{markers::InteractiveUI, panel::Widget, Panel};
@@ -26,7 +26,6 @@ impl<'a> System<'a> for InteractionSystem {
         ReadStorage<'a, Ship>,
         WriteStorage<'a, Panel>,
         WriteStorage<'a, InteractiveUI>,
-        // Write<'a, Console>,
         Write<'a, GameData>,
         Write<'a, EventChannel<InteractionEvent>>,
         Entities<'a>,
@@ -41,11 +40,11 @@ impl<'a> System<'a> for InteractionSystem {
             mut interactive_uis,
             // mut console,
             mut game_data,
-            mut events,
+            mut event_channel,
             entities,
         ) = data;
 
-        while let Some(event) = events.pop() {
+        while let Some(event) = event_channel.events.pop() {
             let parties = (event.entities[0], event.entities[1]);
             let one = names.get(parties.0);
             let two = names.get(parties.1);
@@ -53,12 +52,6 @@ impl<'a> System<'a> for InteractionSystem {
             let two = Named::name_or_noname(two);
             if players.get(parties.0).is_some() || players.get(parties.1).is_some()
             {
-                /*
-                console.log(Log::new(
-                        LogLevel::Game,
-                        format!("{} has collided with {}", one, two),
-                        ));
-                        */
                 let window = entities.create();
                 let mut panel = Panel::new(
                     "[ESC] to close",
@@ -73,12 +66,6 @@ impl<'a> System<'a> for InteractionSystem {
                 else{
                     panel.widgets.push(Widget::text_box(&format!("{} has docked at the island of {}", one, two)))
                 }
-                /*
-                panel.widgets.push(Widget::text_box(&get_menu(
-                    event.entities[0],
-                    event.entities[1],
-                )));
-                */
 
                 panels.insert(window, panel);
                 interactive_uis.insert(window, InteractiveUI::default());
