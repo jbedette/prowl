@@ -54,7 +54,7 @@ impl Widget {
     pub fn menu(text: &str, opts: Vec<String>) -> Self {
         let mut text = format! {"{}{}",String::from(text),"\nWould you like to:"};
         for opt in opts.iter().enumerate() {
-            text = format! {"{}\n{}){}", text, opt.0,opt.1};
+            text = format! {"{}\n{}){}", text, opt.0+1,opt.1};
         }
         Widget::TextBox { text }
     }

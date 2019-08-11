@@ -80,7 +80,7 @@ impl<'a> System<'a> for InteractionSystem {
                     */
                     panel.widgets.push(Widget::menu(
                         &format!("{} has docked at the island of {}", one, two),
-                        vec!["yabba".to_string(), "dabba".to_string(), "doo".to_string()],
+                        vec!["Say Hi".to_string(), "dabba".to_string(), "doo".to_string()],
                     ));
                 }
 
