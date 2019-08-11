@@ -1,10 +1,10 @@
 use crate::components::{CharRenderer, Health, Named};
 use crate::resources::game_data::GameData;
+use crate::shared::Vector2;
 use crate::ui::{
     markers::{ConsoleUI, InteractiveUI, StatusUI},
     panel::{Panel, Widget},
 };
-use crate::shared::Vector2;
 use specs::prelude::*;
 
 use crate::console::resource::Console;
@@ -74,12 +74,11 @@ impl<'a> System<'a> for StatusWindowSystem {
 
 use crate::input::tcod_input;
 use crate::resources::{game_data::StateChangeRequest, Window};
-
 pub struct InteractiveUISystem;
 impl<'a> System<'a> for InteractiveUISystem {
     type SystemData = (
-        ReadStorage<'a, Panel>,
-        ReadStorage<'a, InteractiveUI>,
+        WriteStorage<'a, Panel>,
+        WriteStorage<'a, InteractiveUI>,
         Write<'a, Console>,
         Write<'a, GameData>,
         Write<'a, Window>,
@@ -87,10 +86,12 @@ impl<'a> System<'a> for InteractiveUISystem {
     );
 
     fn run(&mut self, data: Self::SystemData) {
-        let (panels, interactives, mut console, mut game_data, mut window, entities) = data;
+        let (mut panels, mut interactive_uis, mut console, mut game_data, mut window, entities) =
+            data;
 
         let mut entities_to_remove = vec![];
-        for (_panel, _interactive, entity) in (&panels, &interactives, &entities).join() {
+        let mut create = false;
+        for (_panel, _interactive, entity) in (&panels, &interactive_uis, &entities).join() {
             println!("INTERACTIVE UI ACTIVE");
             let key = tcod_input::get(&mut window.root);
             use tcod_input::InputCode;
@@ -99,14 +100,8 @@ impl<'a> System<'a> for InteractiveUISystem {
             match key {
                 // ESCAPE TODO rename Quit to Escape
                 One => {
-                    let mut panel = Panel::new(
-                        "[ESC] to close",
-                        Vector2::new(5, 5),
-                        Vector2::new(20, 20),
-                        CharRenderer::ui_body(),
-                        CharRenderer::ui_border(),
-                    );
-                    panel.widgets.push(Widget::text_box("hi"));
+                    //entities_to_remove.push(entity);
+                    create = true;
                 }
                 Quit => {
                     game_data.state_change_request = Option::None;
@@ -117,6 +112,21 @@ impl<'a> System<'a> for InteractiveUISystem {
                 ConsoleSrollDown => console.scroll(1),
                 _ => (),
             }
+        }
+        if create {
+            let window = entities.create();
+            let mut panel = Panel::new(
+                "[ESC] to close",
+                Vector2::new(8, 7),
+                Vector2::new(20, 20),
+                CharRenderer::ui_body(),
+                CharRenderer::ui_border(),
+                0, //replace with smart id system
+            );
+            panel.widgets.push(Widget::text_box("hi"));
+            println!("one");
+            panels.insert(window, panel);
+            interactive_uis.insert(window, InteractiveUI::default());
         }
         for entity in entities_to_remove {
             entities.delete(entity);

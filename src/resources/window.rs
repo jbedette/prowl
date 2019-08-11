@@ -1,7 +1,9 @@
 #![allow(unused)]
 // Approach to interacting with TCOD inspired by
 // https://gist.github.com/AndrewJakubowicz/3cc636d10bd1dfe1abd08b990472b822
-use crate::shared::{application_root_dir, Vector2};
+use crate::shared::{
+    application_root_dir, 
+    Vector2};
 use tcod::{console::*, input::KeyCode};
 
 /// Contains the application window.
