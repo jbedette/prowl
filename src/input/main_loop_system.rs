@@ -78,6 +78,7 @@ impl<'a> System<'a> for UserInputSystem {
                     pending_actions.actions.push(Action::Move { delta });
                     game_data.state_change_request = Some(NextTurn);
                 }
+                /*
                 One => {
                     println!("1");
                     game_data.state_change_request = Some(NextTurn);
@@ -94,6 +95,7 @@ impl<'a> System<'a> for UserInputSystem {
                 Five => {
                     println!("5");
                 }
+                */
                 // Quit
                 Quit => game_data.state_change_request = Some(QuitGame),
                 // Console
