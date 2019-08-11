@@ -12,7 +12,7 @@ pub struct Panel {
     pub border: CharRenderer,
     pub background: CharRenderer,
     pub widgets: Vec<Widget>,
-    pub id: u64,
+    pub id: i32,
 }
 
 impl Panel {
@@ -22,7 +22,7 @@ impl Panel {
         bounds: Vector2,
         border: CharRenderer,
         background: CharRenderer,
-        id: u64
+        id: i32
     ) -> Self {
         let title = String::from(title);
         Self {

@@ -42,6 +42,7 @@ fn key_to_input(key: Key) -> InputCode {
             'd' => InputCode::Right,
             'k' => InputCode::ConsoleSrollUp,
             'j' => InputCode::ConsoleSrollDown,
+            'x' => InputCode::Back,
             _ => InputCode::None,
         },
         Key {
@@ -89,4 +90,5 @@ pub enum InputCode {
     Three,
     Four,
     Five,
+    Back,
 }
