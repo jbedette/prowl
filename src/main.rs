@@ -32,11 +32,13 @@ mod ui;
 // only deal with actors (?) TODO move stuff into here.
 mod actors;
 
+use actors::ships::make_ship;
+
 // Contains helper functions to build entities of each type.
 mod entity_builder;
 use entity_builder::{
     player::make_player,
-    ship::make_ship,
+    // ship::make_ship,
 };
 
 // Prepares dispatchers for later use.
@@ -48,7 +50,7 @@ mod event_channel;
 
 mod generators;
 
-pub const MAP_SIZE: i32 = 80;
+pub const MAP_SIZE: i32 = 400;
 
 fn main() {
     // create an ECS "world"
@@ -61,14 +63,12 @@ fn main() {
     event_channel::register(&mut world);
     actors::register(&mut world);
     // build a map (dumb af)
-    let water_level = 0.8;
+    let water_level = 0.7;
     let map = TileMap::new(Vector2::new(MAP_SIZE, MAP_SIZE), water_level);
     // player
     make_player(&mut world);
     // populate gameworld
-    for _ in 0..200 {
-        make_ship(&mut world);
-    }
+    for _ in 0..20 { make_ship(&mut world); }
     // make ui windows
     ui::init::init(&mut world);
     world.create_entity().with(map).build();

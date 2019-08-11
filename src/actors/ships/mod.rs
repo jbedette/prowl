@@ -48,3 +48,14 @@ pub fn make_ship(world: &mut World) {
         .with(Ship::default())
         .build();
 }
+
+pub fn make_ship_new<'a>(
+    entities: Entities<'a>,
+    names: ReadStorage<'a, Named>,
+    healths: ReadStorage<'a, Health>,
+    weapons: ReadStorage<'a, Weapon>,
+    renderers: ReadStorage<'a, CharRenderer>,
+) {
+    let possible_names = read_file("names.txt");
+    let name = possible_names[random_range(0, possible_names.len())].clone();
+}

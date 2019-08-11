@@ -19,6 +19,8 @@ use crate::console::resource::{Log, LogLevel, Console};
 
 use crate::input::tcod_input;
 
+use crate::shared::Vector2;
+
 #[derive(Default)]
 pub struct UserInputSystem;
 
@@ -59,7 +61,7 @@ impl<'a> System<'a> for UserInputSystem {
             // Has pending_action, can't take further input
             if !pending_actions.actions.is_empty() { continue; }
             // Delta movement (change to add to position)
-            let mut delta = (0, 0);
+            let delta;
             // Get user input
             let key = tcod_input::get(&mut window.root);
             use tcod_input::InputCode;
@@ -67,22 +69,22 @@ impl<'a> System<'a> for UserInputSystem {
             match key {
                 // Move
                 Up => {
-                    delta.1 = -1;
+                    delta = Vector2::north();
                     pending_actions.actions.push(Action::Move { delta });
                     game_data.state_change_request = Some(NextTurn);
                 },
                 Down => {
-                    delta.1 = 1;
+                    delta = Vector2::south();
                     pending_actions.actions.push(Action::Move { delta });
                     game_data.state_change_request = Some(NextTurn);
                 },
                 Left => {
-                    delta.0 = -1;
+                    delta = Vector2::west();
                     pending_actions.actions.push(Action::Move { delta });
                     game_data.state_change_request = Some(NextTurn);
                 },
                 Right => {
-                    delta.0 = 1;
+                    delta = Vector2::east();
                     pending_actions.actions.push(Action::Move { delta });
                     game_data.state_change_request = Some(NextTurn);
                 },
