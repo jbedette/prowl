@@ -108,15 +108,11 @@ impl<'a> System<'a> for InteractiveUISystem {
                 Back => {
                     println!("back");
                     println!("{}", _panel.id);
-                    if count-3 <= 0 {game_data.state_change_request = Option::None;}
+                    if count - 3 <= 0 {
+                        game_data.state_change_request = Option::None;
+                    }
                     entities_to_remove.push(entity);
                 }
-                /*
-                Quit => {
-                    game_data.state_change_request = Option::None;
-                    entities_to_remove.push(entity);
-                }
-                */
                 // Console
                 ConsoleSrollUp => console.scroll(-1),
                 ConsoleSrollDown => console.scroll(1),

@@ -54,7 +54,7 @@ impl<'a> System<'a> for InteractionSystem {
             if players.get(parties.0).is_some() || players.get(parties.1).is_some() {
                 let window = entities.create();
                 let mut panel = Panel::new(
-                    "[ESC] to close",
+                    "[X] to close",
                     Vector2::new(5, 5),
                     Vector2::new(20, 20),
                     CharRenderer::ui_body(),

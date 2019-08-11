@@ -14,5 +14,6 @@ pub enum Action {
         // Relative movement to complete action
         delta: (i32, i32),
     },
+    Buy,
     Die,
 }
