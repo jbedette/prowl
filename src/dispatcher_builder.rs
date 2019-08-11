@@ -17,12 +17,15 @@ use crate::ui::ui_systems::{
 };
 
 use crate::console;
-
 use specs::{
     DispatcherBuilder,
     Dispatcher
 };
-use crate::actors::islands::island_setup::IslandSetupSystem;
+use crate::actors::{
+    islands::island_setup::IslandSetupSystem,
+    islands::on_turn_system::IslandOnTurnSystem,
+    ships::ShipSpawnerSystem,
+};
 
 // TODO for all - can this happen without the 'static lifetimes?
 /// Initialize systems in the loader state.
@@ -53,11 +56,13 @@ pub fn turn_dispatcher() -> Dispatcher<'static, 'static> {
         .with_thread_local(RenderingSystem)
         .with(console::on_turn::OnTurnSystem, "console", &[])
         .with(AISystem, "ai", &[])
+        .with(IslandOnTurnSystem, "islands", &[])
         .with(ExecuteActionSystem, "execute_actions", &[])
         .with(DeathSystem, "deaths", &[])
         .with(StatusWindowSystem, "status", &[])
         .with(InteractionSystem, "interactions", &["execute_actions"])
         .with(ConsoleWindowSystem, "console_window", &[])
+        .with(ShipSpawnerSystem, "spawn_ships", &[])
         .build()
 }
 

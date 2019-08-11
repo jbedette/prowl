@@ -4,11 +4,14 @@ use specs::prelude::*;
 #[allow(deprecated)]
 pub fn register(world: &mut World) {
     world.add_resource(EventChannel::<InteractionEvent>::default());
+    world.add_resource(EventChannel::<SpawnShipEvent>::default());
 }
 
 // An event channel holds a vec of events
 #[derive(Default)]
-pub struct EventChannel<E: Event> {
+pub struct EventChannel<E>
+where E: Event
+{
     pub events: Vec<E>,
 }
 
@@ -27,3 +30,13 @@ pub struct UserInputEvent {
     // TODO what does this need???
 }
 impl Event for UserInputEvent {}
+
+use crate::components::{Named, Position};
+
+#[derive(Default)]
+pub struct SpawnShipEvent {
+    pub name: Named,
+    pub position: Position,
+}
+
+impl Event for SpawnShipEvent {}

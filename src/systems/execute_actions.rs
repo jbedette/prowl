@@ -62,7 +62,6 @@ impl<'a> System<'a> for ExecuteActionSystem {
                             if let Some(entity1) = tile_data.1 {
                                 // TODO interaction trigger
                                 interaction_events.events.push(InteractionEvent {
-                                // (*interaction_events).push(Event {
                                     entities: vec![entity, entity1],
                                     text: String::from("COLLISION"),
                                 });

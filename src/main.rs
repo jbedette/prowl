@@ -68,7 +68,7 @@ fn main() {
     // player
     make_player(&mut world);
     // populate gameworld
-    for _ in 0..2000 { make_ship(&mut world); }
+    // for _ in 0..2000 { make_ship(&mut world); }
     // make ui windows
     ui::init::init(&mut world);
     world.create_entity().with(map).build();
