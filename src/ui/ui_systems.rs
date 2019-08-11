@@ -91,6 +91,7 @@ impl<'a> System<'a> for InteractiveUISystem {
 
         let mut entities_to_remove = vec![];
         let mut create = false;
+        let mut count: i32 = panels.join().count() as i32;
         for (_panel, _interactive, entity) in (&panels, &interactive_uis, &entities).join() {
             println!("INTERACTIVE UI ACTIVE");
             let key = tcod_input::get(&mut window.root);
@@ -117,11 +118,11 @@ impl<'a> System<'a> for InteractiveUISystem {
             let window = entities.create();
             let mut panel = Panel::new(
                 "[ESC] to close",
-                Vector2::new(8, 7),
+                Vector2::new(5 + (count * 3), 5 + ((count - 1) * 3)),
                 Vector2::new(20, 20),
                 CharRenderer::ui_body(),
                 CharRenderer::ui_border(),
-                0, //replace with smart id system
+                count as u64, //replace with smart id system
             );
             panel.widgets.push(Widget::text_box("hi"));
             println!("one");
