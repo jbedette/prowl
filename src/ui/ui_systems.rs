@@ -92,8 +92,8 @@ impl<'a> System<'a> for InteractiveUISystem {
         let mut entities_to_remove = vec![];
         let mut create = false;
         let count = panels.join().count() as i32;
-        for (_panel, _interactive, entity) in (&panels, &interactive_uis, &entities).join() {
-            println!("INTERACTIVE UI ACTIVE");
+        for (_panel, _interactive, entity) in (&panels, &interactive_uis, &entities).join().last() {
+            //println!("INTERACTIVE UI ACTIVE");
             let key = tcod_input::get(&mut window.root);
             use tcod_input::InputCode;
             use InputCode::*;
@@ -107,16 +107,16 @@ impl<'a> System<'a> for InteractiveUISystem {
                 }
                 Back => {
                     println!("back");
-                    for panel in panels.join() {
-                        if panel.id == count {
-                            entities_to_remove.push(entity)
-                        }
-                    }
+                    println!("{}", _panel.id);
+                    if count-3 <= 0 {game_data.state_change_request = Option::None;}
+                    entities_to_remove.push(entity);
                 }
+                /*
                 Quit => {
                     game_data.state_change_request = Option::None;
                     entities_to_remove.push(entity);
                 }
+                */
                 // Console
                 ConsoleSrollUp => console.scroll(-1),
                 ConsoleSrollDown => console.scroll(1),
@@ -133,7 +133,9 @@ impl<'a> System<'a> for InteractiveUISystem {
                 CharRenderer::ui_border(),
                 count, //todo:replace with smart id system
             );
-            panel.widgets.push(Widget::text_box(&format!{"hi {}", count}));
+            panel
+                .widgets
+                .push(Widget::text_box(&format! {"hi {}", count}));
             panels.insert(window, panel);
             interactive_uis.insert(window, InteractiveUI::default());
         }

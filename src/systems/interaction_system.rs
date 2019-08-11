@@ -52,12 +52,6 @@ impl<'a> System<'a> for InteractionSystem {
             let one = Named::name_or_noname(one);
             let two = Named::name_or_noname(two);
             if players.get(parties.0).is_some() || players.get(parties.1).is_some() {
-                /*
-                console.log(Log::new(
-                        LogLevel::Game,
-                        format!("{} has collided with {}", one, two),
-                        ));
-                        */
                 let window = entities.create();
                 let mut panel = Panel::new(
                     "[ESC] to close",
@@ -65,7 +59,7 @@ impl<'a> System<'a> for InteractionSystem {
                     Vector2::new(20, 20),
                     CharRenderer::ui_body(),
                     CharRenderer::ui_border(),
-                    0
+                    2, // it's always gonna be two, yes magic numbers are bad
                 );
                 if ships.get(parties.0).is_some() && ships.get(parties.1).is_some() {
                     panel.widgets.push(Widget::text_box(&format!(
