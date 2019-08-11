@@ -11,7 +11,7 @@ use crate::event_channel::{
 // use crate::console::{
 use crate::components::Player;
 use crate::components::Ship;
-//use crate::console::resource::{Console, Log, LogLevel};
+// use crate::console::resource::{Console, Log, LogLevel};
 use crate::resources::game_data::{GameData, StateChangeRequest::WaitForUI};
 use crate::shared::Vector2;
 use crate::ui::{markers::InteractiveUI, panel::Widget, Panel};
@@ -26,7 +26,6 @@ impl<'a> System<'a> for InteractionSystem {
         ReadStorage<'a, Ship>,
         WriteStorage<'a, Panel>,
         WriteStorage<'a, InteractiveUI>,
-        // Write<'a, Console>,
         Write<'a, GameData>,
         Write<'a, EventChannel<InteractionEvent>>,
         Entities<'a>,
@@ -41,17 +40,22 @@ impl<'a> System<'a> for InteractionSystem {
             mut interactive_uis,
             // mut console,
             mut game_data,
-            mut events,
+            mut event_channel,
             entities,
         ) = data;
 
-        while let Some(event) = events.pop() {
+        while let Some(event) = event_channel.events.pop() {
             let parties = (event.entities[0], event.entities[1]);
             let one = names.get(parties.0);
             let two = names.get(parties.1);
             let one = Named::name_or_noname(one);
             let two = Named::name_or_noname(two);
+<<<<<<< HEAD
             if players.get(parties.0).is_some() || players.get(parties.1).is_some() {
+=======
+            if players.get(parties.0).is_some() || players.get(parties.1).is_some()
+            {
+>>>>>>> master
                 let window = entities.create();
                 let mut panel = Panel::new(
                     "[X] to close",
@@ -61,6 +65,7 @@ impl<'a> System<'a> for InteractionSystem {
                     CharRenderer::ui_border(),
                     2, // it's always gonna be two, yes magic numbers are bad
                 );
+<<<<<<< HEAD
                 if ships.get(parties.0).is_some() && ships.get(parties.1).is_some() {
                     panel.widgets.push(Widget::text_box(&format!(
                         "{} collided with another ship, {}!",
@@ -77,6 +82,12 @@ impl<'a> System<'a> for InteractionSystem {
                         &format!("{} has docked at the island of {}", one, two),
                         vec!["Say Hi".to_string(), "dabba".to_string(), "doo".to_string()],
                     ));
+=======
+                if ships.get(parties.0).is_some() && ships.get(parties.1).is_some(){
+                    panel.widgets.push(Widget::text_box(&format!("{} collided with another ship, {}!", one, two)));
+                } else {
+                    panel.widgets.push(Widget::text_box(&format!("{} has docked at the island of {}", one, two)))
+>>>>>>> master
                 }
 
                 panels.insert(window, panel);

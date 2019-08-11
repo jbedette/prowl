@@ -14,7 +14,6 @@ use crate::console::resource::{
 use crate::event_channel::{
     EventChannel,
     InteractionEvent,
-    Event,
 };
 
 use crate::shared::Vector2;
@@ -52,8 +51,8 @@ impl<'a> System<'a> for ExecuteActionSystem {
                     // pending move action
                     Action::Move { delta } => {
                         let position = positions.get(entity).unwrap();
-                        let x = position.value.x + delta.0;
-                        let y = position.value.y + delta.1;
+                        let x = position.value.x + delta.x;
+                        let y = position.value.y + delta.y;
                         let new_pos = Vector2::new(x, y);
                         let mut move_allowed = true;
                         // for each map (only one right now)
@@ -62,8 +61,7 @@ impl<'a> System<'a> for ExecuteActionSystem {
                             let tile_data = tilemap.passable_at(new_pos);
                             if let Some(entity1) = tile_data.1 {
                                 // TODO interaction trigger
-                                interaction_events.push(Event {
-                                // (*interaction_events).push(Event {
+                                interaction_events.events.push(InteractionEvent {
                                     entities: vec![entity, entity1],
                                     text: String::from("COLLISION"),
                                 });

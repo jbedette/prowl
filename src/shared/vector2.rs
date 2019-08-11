@@ -19,6 +19,22 @@ impl Vector2 {
         Self { x: 0, y: 0 }
     }
 
+    pub fn north() -> Self {
+        Self { x: 0, y: -1 }
+    }
+
+    pub fn south() -> Self {
+        Self { x: 0, y: 1 }
+    }
+
+    pub fn east() -> Self {
+        Self { x: 1, y: 0 }
+    }
+
+    pub fn west() -> Self {
+        Self { x: -1, y: 0 }
+    }
+
     pub fn to_tuple(&self) -> (i32, i32) {
         (self.x, self.y)
     }
@@ -59,34 +75,3 @@ impl ops::AddAssign for Vector2 {
         self.y += rhs.y;
     }
 }
-/*
-trait Num {}
-impl Num for usize {}
-impl Num for u8 {}
-impl Num for u16 {}
-impl Num for u32 {}
-impl Num for u64 {}
-impl Num for i8 {}
-impl Num for i16 {}
-impl Num for i32 {}
-impl Num for i64 {}
-impl Num for f32 {}
-impl Num for f64 {}
-
-#[derive(Default, Copy, Clone)]
-pub struct Vector2<N: Num> {
-    pub x: N,
-    pub y: N,
-}
-
-impl<N: Num> Vector2<N> {
-    pub fn new(x: N, y: N) -> Self {
-        Self { x, y }
-    }
-
-    pub fn to_tuple(&self) -> (N, N) {
-        let vector2 = self.to_owned();
-        (vector2.x, vector2.y)
-    }
-}
-*/
