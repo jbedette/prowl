@@ -60,12 +60,12 @@ impl<'a> System<'a> for InteractionSystem {
                         */
                 let window = entities.create();
                 let mut panel = Panel::new(
-                    "[X] to close",
+                    "[ESC] to close",
                     Vector2::new(5, 5),
                     Vector2::new(20, 20),
                     CharRenderer::ui_body(),
                     CharRenderer::ui_border(),
-                    0,
+                    0
                 );
                 if ships.get(parties.0).is_some() && ships.get(parties.1).is_some() {
                     panel.widgets.push(Widget::text_box(&format!(

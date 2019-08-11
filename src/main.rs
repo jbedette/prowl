@@ -112,30 +112,31 @@ fn run_game(mut world: World) {
         // clear removed entities
         world.maintain();
         // input loop
-        use resources::game_data::StateChangeRequest::*;
-        let mut state_change_request = None;
         loop {
+            use resources::game_data::StateChangeRequest::*;
+            let state_change_request;
             // open GameData resource
             {
                 let game_data = &mut world.write_resource::<GameData>();
-                //here we don't want to pop if state change request is
-                //stack change request stack will return none anyways if normal moving, if non standard you need to pop an extra
                 state_change_request = game_data.state_change_request;
-                if state_change_request != Some(WaitForUI) {
-                    game_data.state_change_request = None;
-                }
+                game_data.state_change_request = None;
             }
             // dispatch input system
             // blocking UI happens before input, has own input.
             if state_change_request == Some(WaitForUI) {
-                ui.dispatch(&world);
-                world.maintain();
-                render.dispatch(&world);
-                let game_data = &mut world.write_resource::<GameData>();
-                break;
+                loop {
+                    ui.dispatch(&world);
+                    world.maintain();
+                    render.dispatch(&world);
+                    let game_data = &mut world.write_resource::<GameData>();
+                    if game_data.state_change_request == None {
+                        break;
+                    }
+                }
             }
+            input.dispatch(&world);
             // consider state change
-            else {
+            {
                 // if state change requested, make it happen here.
                 // NOTE currently states are simple. not sure if we'll need more
                 // and might need to refactor this into a big "match" or maybe
@@ -154,7 +155,6 @@ fn run_game(mut world: World) {
                     _ => (),
                 }
             }
-            input.dispatch(&world);
         }
     }
 }
