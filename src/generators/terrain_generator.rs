@@ -1,7 +1,8 @@
 use noise::{
     NoiseFn,
     // Perlin, // acting funny?
-    OpenSimplex
+    OpenSimplex,
+    Seedable,
 };
 
 use crate::shared::{
@@ -9,9 +10,9 @@ use crate::shared::{
     normalize_vec,
 };
 
-pub fn generate_heightmap(bounds: Vector2) -> Vec<f64> {
+pub fn generate_heightmap(bounds: Vector2, seed: u32) -> Vec<f64> {
     // let perlin = Perlin::new();
-    let perlin = OpenSimplex::new();
+    let perlin = OpenSimplex::new().set_seed(seed);
     let (width, height) = bounds.to_tuple();
     // perlin::get([4.0, 4.0])
     // println!("size: [{},{}]", width, height);

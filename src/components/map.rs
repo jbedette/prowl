@@ -8,7 +8,7 @@ use specs_derive::Component;
 use tcod::colors::Color;
 use crate::shared::{
     Vector2,
-    // random::random_range,
+    random::random_range,
 };
 use crate::generators::generate_heightmap;
 
@@ -28,7 +28,9 @@ impl TileMap {
     pub fn new(size: Vector2, water_level: f64) -> Self {
         let vec_size: usize = (size.x * size.y) as usize;
         // let tile = Tile::ocean();
-        let heightmap = generate_heightmap(size);
+        let seed = random_range(0, 1000) as u32;
+        println!("MAP SEED: {}", seed);
+        let heightmap = generate_heightmap(size, seed);
         let mut tiles = vec![];
         for height in heightmap {
             tiles.push(Tile::with_height(height, water_level));

@@ -63,12 +63,12 @@ fn main() {
     event_channel::register(&mut world);
     actors::register(&mut world);
     // build a map (dumb af)
-    let water_level = 0.7;
+    let water_level = 0.75;
     let map = TileMap::new(Vector2::new(MAP_SIZE, MAP_SIZE), water_level);
     // player
     make_player(&mut world);
     // populate gameworld
-    for _ in 0..20 { make_ship(&mut world); }
+    for _ in 0..2000 { make_ship(&mut world); }
     // make ui windows
     ui::init::init(&mut world);
     world.create_entity().with(map).build();
