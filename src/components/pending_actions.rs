@@ -1,6 +1,8 @@
 use specs::{Component, VecStorage};
 use specs_derive::Component;
 
+use crate::shared::Vector2;
+
 #[derive(Component, Debug, Default)]
 #[storage(VecStorage)]
 pub struct PendingActions {
@@ -12,7 +14,16 @@ pub struct PendingActions {
 pub enum Action {
     Move {
         // Relative movement to complete action
-        delta: (i32, i32),
+        // delta: (i32, i32),
+        delta: Vector2,
+    },
+    Spawn {
+        object: SpawnableObject,
     },
     Die,
+}
+
+#[derive(Debug)]
+pub enum SpawnableObject {
+    Ship,
 }

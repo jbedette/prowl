@@ -23,7 +23,6 @@ use crate::resources::{
         StateChangeRequest,
     },
 };
-// use crate::console::resource::{Log, LogLevel, Console};
 use crate::console::resource::Console;
 
 use crate::ui::{
@@ -46,8 +45,6 @@ impl<'a> System<'a> for RenderingSystem {
     type SystemData = (
         ReadStorage<'a, Position>,
         ReadStorage<'a, CharRenderer>,
-        // ReadStorage<'a, Named>,
-        // ReadStorage<'a, Health>,
         ReadStorage<'a, Money>,
         ReadStorage<'a, Player>,
         ReadStorage<'a, TileMap>,

@@ -17,7 +17,6 @@ use crate::generators::generate_heightmap;
 pub struct TileMap {
     tiles: Vec<Tile>,
     pub size: Vector2,
-    // dynamic_passable_map: Vec<bool>,
     dynamic_map: Vec<Option<Entity>>,
     vec_size: usize,
     water_level: f64,
@@ -94,7 +93,22 @@ impl TileMap {
     }
     */
 
-    pub fn add_island(&mut self, position: Vector2, island_entity: Entity) {
+    pub fn add_island(
+        &mut self,
+        position: Vector2,
+        island_entity: Entity) -> Vec<Vector2>
+    {
+        let mut used_positions = vec![];
+        self.add_island_internal(position, island_entity, &mut used_positions);
+        used_positions
+    }
+
+    fn add_island_internal(
+        &mut self,
+        position: Vector2,
+        island_entity: Entity,
+        used_positions: &mut Vec<Vector2>)
+    {
         if self.get_entity(position).is_some() { return; }
         if let Some(tile) = self.get_tile(position) {
             if tile.height < self.water_level { return; }
@@ -102,6 +116,7 @@ impl TileMap {
         let distance = 2;
         // add self
         self.add_to_dynamic(position, island_entity);
+        used_positions.push(position);
         // try to add neighbors
         for x in -distance..distance {
             for y in -distance..distance {
@@ -109,7 +124,7 @@ impl TileMap {
                 let position = Vector2::new(position.x + x, position.y + y);
                 if let Some(tile) = self.get_tile(position) {
                     if tile.height >= self.water_level {
-                        self.add_island(position, island_entity);
+                        self.add_island_internal(position, island_entity, used_positions);
                     }
                 }
             }
@@ -216,9 +231,9 @@ impl Tile {
 
     fn land_tile(height: f64) -> Self {
         let glyph = ' ';
-        let r_color = (((height) * 100.0)) as u8;
-        let g_color = (((height) * 80.0)) as u8;
-        let b_color = (((height) * 40.0)) as u8;
+        let r_color = (((height * height) * 100.0)) as u8;
+        let g_color = (((height * height) * 80.0)) as u8;
+        let b_color = (((height * height) * 40.0)) as u8;
         let fg_color = Color::new(0x20, 0x30, 0x70);
         let bg_color = Color::new(r_color, g_color, b_color);
         Self {
@@ -230,9 +245,9 @@ impl Tile {
 
     fn water_tile(height: f64) -> Self {
         // water colors
-        let r = (height * 30.0) as u8;
-        let g = (((height) * 40.0)) as u8;
-        let b = ((height * 140.0) + 40.0) as u8;
+        let r = (height * height * 10.0) as u8;
+        let g = (height * height * 90.0) as u8;
+        let b = ((height * height * 200.0) + 20.0 * (1.0 - height)) as u8;
         let glyph = ' ';
         let fg_color = Color::new(0x20, 0x30, 0x70);
         let bg_color = Color::new(r, g, b);

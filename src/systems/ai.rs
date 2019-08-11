@@ -7,6 +7,8 @@ use crate::components::{
 
 use rand;
 
+use crate::shared::Vector2;
+
 pub struct AISystem;
 
 impl<'a> System<'a> for AISystem {
@@ -23,25 +25,19 @@ impl<'a> System<'a> for AISystem {
 
         for (ai, pending_actions) in (&mut ais, &mut pending_actionses).join() {
             match ai.goal {
-                // TODO make better lol
+                // Literally move in an entirely random direction
                 Some(Goal::MoveRandom) => {
-                    let mut delta = (0, 0);
+                    let delta;
                     if rand::random() {
                         if rand::random() {
-                            if rand::random() {
-                                delta.0 += 1;
-                            } else {
-                                delta.0 -= 1;
-                            }
-                        } else if rand::random() {
-                            if rand::random() {
-                                delta.1 += 1;
-                            } else {
-                                delta.1 -= 1;
-                            }
+                            if rand::random() { delta = Vector2::north(); }
+                            else { delta = Vector2::south(); }
+                        } else {
+                            if rand::random() { delta = Vector2::east(); }
+                            else { delta = Vector2::west(); }
                         }
+                        pending_actions.actions.push(Action::Move { delta });
                     }
-                    pending_actions.actions.push(Action::Move { delta });
                 }
                 _ => (),
             };

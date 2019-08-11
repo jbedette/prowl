@@ -43,38 +43,21 @@ impl<'a> System<'a> for IslandSetupSystem {
                     // otherwise check the tile.
                     if let Some(tile) = map.get_tile(position) {
                         if tile.height < water_level { continue; }
+                        // if island is above water,
                         // add island to tile
                         let island_entity = entities.create();
                         let name = &(island_names[(random_range(0, island_names.len()))]);
-                        islands.insert(
-                            island_entity,
-                            Island::new(
-                                random_range(2, 10) as i32,
-                                random_range(0, 100) as i32));
                         names.insert(island_entity, Named::new(name));
-                        map.add_island(position, island_entity);
+                        let island_positions = map.add_island(position, island_entity);
+                        islands.insert(island_entity,
+                            Island::new(island_positions));
+                                // random_range(2, 10) as i32,
+                                // random_range(0, 100) as i32));
                     } else {
                         eprintln!("ERROR: INVALID POSITION IN MAP GENERATION");
                     }
                 }
             }
         }
-
-        // this is stupid. there is only one map.
-        /*
-        for map in (&mut maps).join() {
-            for (island, position, entity) in (&islands, &positions, &entities).join() {
-                /*
-                map.place_island(
-                    position.value,
-                    Vector2::new(
-                        island.size,
-                        island.size
-                        ));
-                        */
-                map.place_island(island, position.value, entity);
-            }
-        }
-        */
     }
 }

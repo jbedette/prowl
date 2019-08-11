@@ -52,8 +52,8 @@ impl<'a> System<'a> for ExecuteActionSystem {
                     // pending move action
                     Action::Move { delta } => {
                         let position = positions.get(entity).unwrap();
-                        let x = position.value.x + delta.0;
-                        let y = position.value.y + delta.1;
+                        let x = position.value.x + delta.x;
+                        let y = position.value.y + delta.y;
                         let new_pos = Vector2::new(x, y);
                         let mut move_allowed = true;
                         // for each map (only one right now)
