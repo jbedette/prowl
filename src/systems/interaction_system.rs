@@ -11,7 +11,7 @@ use crate::event_channel::{
 // use crate::console::{
 use crate::components::Player;
 use crate::components::Ship;
-use crate::console::resource::{Console, Log, LogLevel};
+// use crate::console::resource::{Console, Log, LogLevel};
 use crate::resources::game_data::{GameData, StateChangeRequest::WaitForUI};
 use crate::shared::Vector2;
 use crate::ui::{markers::InteractiveUI, panel::Widget, Panel};
@@ -69,8 +69,7 @@ impl<'a> System<'a> for InteractionSystem {
                 );
                 if ships.get(parties.0).is_some() && ships.get(parties.1).is_some(){
                     panel.widgets.push(Widget::text_box(&format!("{} collided with another ship, {}!", one, two)));
-                }
-                else{
+                } else {
                     panel.widgets.push(Widget::text_box(&format!("{} has docked at the island of {}", one, two)))
                 }
                 /*

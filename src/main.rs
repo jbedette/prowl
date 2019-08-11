@@ -20,7 +20,10 @@ use resources::game_data::GameData;
 
 // Shared data types and utility functions.
 mod shared;
-use shared::{random::random_range, Vector2};
+use shared::{
+    // random::random_range,
+    Vector2
+};
 
 // Handles UI layout (still rendered within renderer)
 mod ui;
@@ -31,7 +34,10 @@ mod actors;
 
 // Contains helper functions to build entities of each type.
 mod entity_builder;
-use entity_builder::{player::make_player, ship::make_ship};
+use entity_builder::{
+    player::make_player,
+    ship::make_ship,
+};
 
 // Prepares dispatchers for later use.
 mod dispatcher_builder;
@@ -42,7 +48,7 @@ mod event_channel;
 
 mod generators;
 
-pub const MAP_SIZE: i32 = 500;
+pub const MAP_SIZE: i32 = 80;
 
 fn main() {
     // create an ECS "world"
@@ -55,31 +61,12 @@ fn main() {
     event_channel::register(&mut world);
     actors::register(&mut world);
     // build a map (dumb af)
-    let map = TileMap::new(Vector2::new(MAP_SIZE, MAP_SIZE));
-    // make islands, get island names
-    let isl_name_vec = file_io::read_file("isoles.txt");
-    for _ in 0..100 {
-        world
-            .create_entity()
-            //island name generates from rand
-            .with(components::Named::new(
-                &(isl_name_vec[(random_range(0, isl_name_vec.len()))]),
-            ))
-            .with(components::Position::new(Vector2::new(
-                random_range(0, MAP_SIZE as usize) as i32,
-                random_range(0, MAP_SIZE as usize) as i32,
-            )))
-            .with(actors::Island::new(
-                random_range(2, 10) as i32,
-                random_range(0, 100) as i32,
-            ))
-            .build();
-    }
-    //map.generate();
+    let water_level = 0.8;
+    let map = TileMap::new(Vector2::new(MAP_SIZE, MAP_SIZE), water_level);
     // player
     make_player(&mut world);
     // populate gameworld
-    for _ in 0..2000 {
+    for _ in 0..200 {
         make_ship(&mut world);
     }
     // make ui windows
@@ -109,6 +96,7 @@ fn run_game(mut world: World) {
     loop {
         // compute a turn
         turn.dispatch(&world);
+        // add created entities,
         // clear removed entities
         world.maintain();
         // input loop

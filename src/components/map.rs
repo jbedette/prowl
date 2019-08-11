@@ -20,27 +20,32 @@ pub struct TileMap {
     // dynamic_passable_map: Vec<bool>,
     dynamic_map: Vec<Option<Entity>>,
     vec_size: usize,
+    water_level: f64,
 }
-use crate::actors::Island;
+// use crate::actors::Island;
 
 impl TileMap {
     #[allow(dead_code)]
-    pub fn new(size: Vector2) -> Self {
+    pub fn new(size: Vector2, water_level: f64) -> Self {
         let vec_size: usize = (size.x * size.y) as usize;
         // let tile = Tile::ocean();
         let heightmap = generate_heightmap(size);
         let mut tiles = vec![];
         for height in heightmap {
-            tiles.push(Tile::with_height(height));
+            tiles.push(Tile::with_height(height, water_level));
         }
+        let dynamic_map = vec![None; vec_size];
         Self {
-            //tiles: vec![tile; vec_size],
             tiles,
             size,
-            //dynamic_passable_map: vec![false; vec_size],
-            dynamic_map: vec![None; vec_size],
+            dynamic_map,
             vec_size,
+            water_level,
         }
+    }
+
+    pub fn get_water_level(&self) -> f64 {
+        self.water_level
     }
 
     /*
@@ -69,6 +74,7 @@ impl TileMap {
     */
     // TODO this should check if island is valid (on map)
     // and return some kind of fail if island is invalid.
+    /*
     pub fn place_island(
         &mut self,
         island: &Island,
@@ -86,7 +92,37 @@ impl TileMap {
             }
         }
     }
+    */
 
+    pub fn add_island(&mut self, position: Vector2, island_entity: Entity) {
+        if self.get_entity(position).is_some() { return; }
+        if let Some(tile) = self.get_tile(position) {
+            if tile.height < self.water_level { return; }
+        }
+        let distance = 2;
+        // add self
+        self.add_to_dynamic(position, island_entity);
+        // try to add neighbors
+        for x in -distance..distance {
+            for y in -distance..distance {
+                if x == 0 && y == 0 { continue; }
+                let position = Vector2::new(position.x + x, position.y + y);
+                if let Some(tile) = self.get_tile(position) {
+                    if tile.height >= self.water_level {
+                        self.add_island(position, island_entity);
+                    }
+                }
+            }
+        }
+    }
+
+    pub fn get_entity(&self, position: Vector2) -> Option<Entity> {
+        if let Some(index) = self.vector2_to_index(position) {
+            self.dynamic_map[index]
+        } else {
+            None
+        }
+    }
 
     // get ref to tile at x, y
     pub fn get_tile(&self, position: Vector2) -> Option<&Tile> {
@@ -100,6 +136,7 @@ impl TileMap {
     // get index from x, y
     fn vector2_to_index(&self, vector: Vector2) -> Option<usize> {
         if vector.x < 0 || vector.y < 0 { return None }
+        if vector.x >= self.size.x || vector.y >= self.size.y { return None }
         let index = ((vector.x * self.size.x) + vector.y) as usize;
         if index < self.vec_size { Some(index) } else { None }
     }
@@ -163,50 +200,49 @@ impl Tile {
         }
     }
     */
-    pub fn with_height(height: f64) -> Self {
+    pub fn with_height(height: f64, water_level: f64) -> Self {
         let mut height = height;
-        let height_cutoff = 0.65;
-        let scale_value = 0.5;
+        let height_cutoff = water_level;
         // bounds checking TODO are these good bounds? should it be an i32 like location?
         if height < 0.0 { eprintln!("HEIGHT IS TOO LOW: {}", height ); height = 0.0; }
         else if height > 1.0 { eprintln!("HEIGHT IS TOO HIGH: {}", height ); height = 1.0 }
         // to blue value (todo scale darker)
-        let (glyph, color, bg_color) = if height > height_cutoff {
-            // land
-            let land_color = (((height / 2.0) * 256.0)) as u8;
-            (
-                ' ',
-                Color::new(0x20, 0x30, 0x70),
-                Color::new(land_color, 0x40, 0x20)
-            )
+        if height > height_cutoff {
+            Self::land_tile(height)
         } else {
-            // water
-            let depth_color = (height * 140.0) as u8;
-            let depth_color = depth_color + 40;
-            let land_color = (((height / 2.0) * 80.0)) as u8;
-            (
-                '~',
-                Color::new(0x20, 0x30, 0x70),
-                // Color::new(0x04, 0x10, depth_color)
-                Color::new(land_color, 0x10, depth_color)
-            )
-        };
+            Self::water_tile(height)
+        }
+    }
+
+    fn land_tile(height: f64) -> Self {
+        let glyph = ' ';
+        let r_color = (((height) * 100.0)) as u8;
+        let g_color = (((height) * 80.0)) as u8;
+        let b_color = (((height) * 40.0)) as u8;
+        let fg_color = Color::new(0x20, 0x30, 0x70);
+        let bg_color = Color::new(r_color, g_color, b_color);
         Self {
-            // renderer: CharRenderer::with_bg('~', color, bg_color),
-            renderer: CharRenderer::with_bg(glyph, color, bg_color),
+            renderer: CharRenderer::with_bg(glyph, fg_color, bg_color),
+            height,
+            passable: false,
+        }
+    }
+
+    fn water_tile(height: f64) -> Self {
+        // water colors
+        let r = (height * 30.0) as u8;
+        let g = (((height) * 40.0)) as u8;
+        let b = ((height * 140.0) + 40.0) as u8;
+        let glyph = ' ';
+        let fg_color = Color::new(0x20, 0x30, 0x70);
+        let bg_color = Color::new(r, g, b);
+        Self {
+            renderer: CharRenderer::with_bg(glyph, fg_color, bg_color),
             height,
             passable: true,
         }
     }
-    pub fn land() -> Self {
-        let color = Color::new(0x90, 0x70, 0x50);
-        let bg_color = Color::new(0x50, 0x40, 0x20);
-        Self {
-            renderer: CharRenderer::with_bg(' ', color, bg_color),
-            height: 1.0,
-            passable: false,
-        }
-    }
+
     pub fn void() -> Self {
         let color = Color::new(0x90, 0x70, 0x50);
         Self {
