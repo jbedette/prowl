@@ -32,7 +32,7 @@ mod ui;
 // only deal with actors (?) TODO move stuff into here.
 mod actors;
 
-use actors::ships::make_ship;
+//use actors::ships::make_ship;
 
 // Contains helper functions to build entities of each type.
 mod entity_builder;

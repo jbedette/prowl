@@ -10,12 +10,23 @@ pub struct Island{
     // pub arable: i32,//affect max pop
     pub tile_positions: Vec<Vector2>, // positions of island on map
     pub coast_tile_positions: Vec<Vector2>,
+    pub ship_spawn_timer: i32,
+    pub ship_spawn_timer_reset: i32,
 }
 
 impl Island{
     pub fn new(tile_positions: Vec<Vector2>) -> Self {
         let coast_tile_positions = Self::calculate_coastline(&tile_positions);
-        Self { tile_positions, coast_tile_positions }
+        let mut ship_spawn_timer_reset = 100 - tile_positions.len() as i32;
+        if ship_spawn_timer_reset < 10 {
+            ship_spawn_timer_reset = 10;
+        }
+        Self {
+            tile_positions,
+            coast_tile_positions,
+            ship_spawn_timer_reset,
+            ship_spawn_timer: ship_spawn_timer_reset,
+        }
     }
 
     fn calculate_coastline(tile_positions: &Vec<Vector2>) -> Vec<Vector2> {
