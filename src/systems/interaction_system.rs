@@ -50,12 +50,8 @@ impl<'a> System<'a> for InteractionSystem {
             let two = names.get(parties.1);
             let one = Named::name_or_noname(one);
             let two = Named::name_or_noname(two);
-<<<<<<< HEAD
-            if players.get(parties.0).is_some() || players.get(parties.1).is_some() {
-=======
             if players.get(parties.0).is_some() || players.get(parties.1).is_some()
             {
->>>>>>> master
                 let window = entities.create();
                 let mut panel = Panel::new(
                     "[X] to close",
@@ -65,29 +61,10 @@ impl<'a> System<'a> for InteractionSystem {
                     CharRenderer::ui_border(),
                     2, // it's always gonna be two, yes magic numbers are bad
                 );
-<<<<<<< HEAD
-                if ships.get(parties.0).is_some() && ships.get(parties.1).is_some() {
-                    panel.widgets.push(Widget::text_box(&format!(
-                        "{} collided with another ship, {}!",
-                        one, two
-                    )));
-                } else {
-                    /*
-                    panel.widgets.push(Widget::text_box(&format!(
-                        "{} has docked at the island of {}",
-                        one, two
-                    )))
-                    */
-                    panel.widgets.push(Widget::menu(
-                        &format!("{} has docked at the island of {}", one, two),
-                        vec!["Say Hi".to_string(), "dabba".to_string(), "doo".to_string()],
-                    ));
-=======
                 if ships.get(parties.0).is_some() && ships.get(parties.1).is_some(){
                     panel.widgets.push(Widget::text_box(&format!("{} collided with another ship, {}!", one, two)));
                 } else {
                     panel.widgets.push(Widget::text_box(&format!("{} has docked at the island of {}", one, two)))
->>>>>>> master
                 }
 
                 panels.insert(window, panel);
