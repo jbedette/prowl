@@ -27,8 +27,8 @@ pub use weapon::Weapon;
 pub use game_resources::{
     Food,
     Wood,
+    Water,
     Metal,
-    GameResource
 };
 
 pub fn register(world: &mut World) {
