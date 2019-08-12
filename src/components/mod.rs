@@ -10,6 +10,7 @@ pub mod position;
 pub mod renderer;
 pub mod weapon;
 pub mod markers;
+pub mod game_resources;
 
 pub use ai::AI;
 pub use health::Health;
@@ -23,6 +24,12 @@ pub use markers::{
 pub use position::Position;
 pub use renderer::CharRenderer;
 pub use weapon::Weapon;
+pub use game_resources::{
+    Food,
+    Wood,
+    Metal,
+    GameResource
+};
 
 pub fn register(world: &mut World) {
     world.register::<Named>();
@@ -36,4 +43,5 @@ pub fn register(world: &mut World) {
     world.register::<pending_actions::PendingActions>();
     world.register::<AI>();
     world.register::<TileMap>();
+    game_resources::register_all(world);
 }
