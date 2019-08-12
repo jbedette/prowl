@@ -1,20 +1,11 @@
+use crate::components::{CharRenderer, Health, Named};
+use crate::resources::game_data::GameData;
+use crate::shared::Vector2;
 use crate::ui::{
-    panel::{
-        Panel,
-        Widget,
-    },
-    markers::{
-        StatusUI,
-        ConsoleUI,
-        InteractiveUI,
-    },
-};
-use crate::components::{
-    Named,
-    Health,
+    markers::{ConsoleUI, InteractiveUI, StatusUI},
+    panel::{Panel, Widget},
 };
 use specs::prelude::*;
-use crate::resources::game_data::GameData;
 
 use crate::console::resource::Console;
 pub struct ConsoleWindowSystem;
@@ -23,13 +14,9 @@ impl<'a> System<'a> for ConsoleWindowSystem {
         Read<'a, Console>,
         WriteStorage<'a, Panel>,
         ReadStorage<'a, ConsoleUI>,
-        );
+    );
     fn run(&mut self, data: Self::SystemData) {
-        let (
-            console,
-            mut panels,
-            console_ui
-            ) = data;
+        let (console, mut panels, console_ui) = data;
 
         for (panel, _console_ui) in (&mut panels, &console_ui).join() {
             panel.widgets = vec![];
@@ -60,34 +47,24 @@ impl<'a> System<'a> for StatusWindowSystem {
         ReadStorage<'a, Health>,
         Read<'a, GameData>,
         Entities<'a>,
-        );
+    );
 
     fn run(&mut self, data: Self::SystemData) {
-        let (
-            mut panel,
-            status,
-            nameds,
-            healths,
-            _game_data,
-            entities,
-            ) = data;
-        for (panel, _status, entity) in
-            (&mut panel, &status, &entities).join() {
+        let (mut panel, status, nameds, healths, _game_data, entities) = data;
+        for (panel, _status, entity) in (&mut panel, &status, &entities).join() {
             // clear
             panel.widgets = vec![];
-            /* NAME */ {
+            /* NAME */
+            {
                 let name = nameds.get(entity);
                 let name = Named::name_or_noname(name);
                 let name = format!("Name: {}", name);
                 panel.widgets.push(Widget::label(&name));
-            } /* HEALTH */ {
+            } /* HEALTH */
+            {
                 let health = healths.get(entity);
                 if let Some(health) = health {
-                    let health = format!(
-                        "HP: {}/{}",
-                        health.current,
-                        health.max,
-                        );
+                    let health = format!("HP: {}/{}", health.current, health.max,);
                     panel.widgets.push(Widget::label(&health));
                 }
             }
@@ -96,51 +73,44 @@ impl<'a> System<'a> for StatusWindowSystem {
 }
 
 use crate::input::tcod_input;
-use crate::resources::{
-    Window,
-    game_data::StateChangeRequest,
-};
-
+use crate::resources::{game_data::StateChangeRequest, Window};
 pub struct InteractiveUISystem;
 impl<'a> System<'a> for InteractiveUISystem {
     type SystemData = (
-        ReadStorage<'a, Panel>,
-        ReadStorage<'a, InteractiveUI>,
+        WriteStorage<'a, Panel>,
+        WriteStorage<'a, InteractiveUI>,
         Write<'a, Console>,
         Write<'a, GameData>,
         Write<'a, Window>,
         Entities<'a>,
-        );
+    );
 
     fn run(&mut self, data: Self::SystemData) {
-        let (
-            panels,
-            interactives,
-            mut console,
-            mut game_data,
-            mut window,
-            entities,
-            ) = data;
-
+        let (mut panels, mut interactive_uis, mut console, mut game_data, mut window, entities) =
+            data;
 
         let mut entities_to_remove = vec![];
-        for (_panel, _interactive, entity) in
-                (&panels, &interactives, &entities).join() {
-            println!("INTERACTIVE UI ACTIVE");
+        let mut create = false;
+        let count = panels.join().count() as i32;
+        for (_panel, _interactive, entity) in (&panels, &interactive_uis, &entities).join().last() {
+            //println!("INTERACTIVE UI ACTIVE");
             let key = tcod_input::get(&mut window.root);
             use tcod_input::InputCode;
             use InputCode::*;
             game_data.state_change_request = Some(StateChangeRequest::WaitForUI);
-            let mut delta = (0, 0);
             match key {
-                // Move
-                Up => delta.1 = -1,
-                Down => delta.1 = 1,
-                Left => delta.0 = -1,
-                Right => delta.0 = 1,
                 // ESCAPE TODO rename Quit to Escape
-                Quit => {
-                    game_data.state_change_request = Option::None;
+                One => {
+                    //entities_to_remove.push(entity);
+                    create = true;
+                    println!("one");
+                }
+                Back => {
+                    println!("back");
+                    println!("{}", _panel.id);
+                    if count - 3 <= 0 {
+                        game_data.state_change_request = Option::None;
+                    }
                     entities_to_remove.push(entity);
                 }
                 // Console
@@ -148,6 +118,22 @@ impl<'a> System<'a> for InteractiveUISystem {
                 ConsoleSrollDown => console.scroll(1),
                 _ => (),
             }
+        }
+        if create {
+            let window = entities.create();
+            let mut panel = Panel::new(
+                "[X] to close",
+                Vector2::new(5 + (count * 3), 5 + ((count - 1) * 3)),
+                Vector2::new(20, 20),
+                CharRenderer::ui_body(),
+                CharRenderer::ui_border(),
+                count, //todo:replace with smart id system
+            );
+            panel
+                .widgets
+                .push(Widget::text_box(&format! {"hi {}", count}));
+            panels.insert(window, panel);
+            interactive_uis.insert(window, InteractiveUI::default());
         }
         for entity in entities_to_remove {
             entities.delete(entity);

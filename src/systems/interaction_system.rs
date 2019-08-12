@@ -54,11 +54,12 @@ impl<'a> System<'a> for InteractionSystem {
             {
                 let window = entities.create();
                 let mut panel = Panel::new(
-                    "[ESC] to close",
+                    "[X] to close",
                     Vector2::new(5, 5),
                     Vector2::new(20, 20),
                     CharRenderer::ui_body(),
                     CharRenderer::ui_border(),
+                    2, // it's always gonna be two, yes magic numbers are bad
                 );
                 if ships.get(parties.0).is_some() && ships.get(parties.1).is_some(){
                     panel.widgets.push(Widget::text_box(&format!("{} collided with another ship, {}!", one, two)));
@@ -73,11 +74,3 @@ impl<'a> System<'a> for InteractionSystem {
         }
     }
 }
-/*
-            //if players.get(event.entities[0]).is_some() || players.get(event.entities[1]).is_some()
-fn get_menu(one:Entity, two:Entity)-> String{
-    let ent_names = (names.get(one),names.get(two));
-    if ships.get(one).is_some(){
-    }
-}
-*/

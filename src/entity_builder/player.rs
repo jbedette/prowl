@@ -34,6 +34,7 @@ pub fn make_player(world: &mut World) {
                         Vector2::new(29, 10),
                         CharRenderer::ui_body(),
                         CharRenderer::ui_border(),
+                        0
                 ))
                 .with(StatusUI::default())
                 // special

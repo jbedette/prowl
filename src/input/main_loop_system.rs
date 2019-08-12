@@ -1,21 +1,18 @@
-use specs::{
-    Join,
-    ReadStorage,
-    System,
-    Write,
-    WriteStorage,
-};
+use specs::{Join, ReadStorage, System, Write, WriteStorage};
 
 use crate::components::{
-    pending_actions::{Action, PendingActions},
     markers::Player,
+    pending_actions::{Action, PendingActions},
 };
 
+use crate::console::resource::{Console, Log, LogLevel};
 use crate::resources::{
-    game_data::{GameData, StateChangeRequest::{QuitGame, NextTurn}},
+    game_data::{
+        GameData,
+        StateChangeRequest::{NextTurn, QuitGame},
+    },
     Window,
 };
-use crate::console::resource::{Log, LogLevel, Console};
 
 use crate::input::tcod_input;
 
@@ -35,13 +32,7 @@ impl<'a> System<'a> for UserInputSystem {
 
     /// Responds to user input
     fn run(&mut self, data: Self::SystemData) {
-        let (
-            players,
-            mut pending_actionses,
-            mut console,
-            mut game_data,
-            mut window,
-        ) = data;
+        let (players, mut pending_actionses, mut console, mut game_data, mut window) = data;
 
         // No player(s)
         if players.is_empty() {
@@ -56,10 +47,11 @@ impl<'a> System<'a> for UserInputSystem {
             return;
         }
         // 1 or more players
-        for (_player, pending_actions) in
-                (&players, &mut pending_actionses).join() {
+        for (_player, pending_actions) in (&players, &mut pending_actionses).join() {
             // Has pending_action, can't take further input
-            if !pending_actions.actions.is_empty() { continue; }
+            if !pending_actions.actions.is_empty() {
+                continue;
+            }
             // Delta movement (change to add to position)
             let delta;
             // Get user input
@@ -72,22 +64,38 @@ impl<'a> System<'a> for UserInputSystem {
                     delta = Vector2::north();
                     pending_actions.actions.push(Action::Move { delta });
                     game_data.state_change_request = Some(NextTurn);
-                },
+                }
                 Down => {
                     delta = Vector2::south();
                     pending_actions.actions.push(Action::Move { delta });
                     game_data.state_change_request = Some(NextTurn);
-                },
+                }
                 Left => {
                     delta = Vector2::west();
                     pending_actions.actions.push(Action::Move { delta });
                     game_data.state_change_request = Some(NextTurn);
-                },
+                }
                 Right => {
                     delta = Vector2::east();
                     pending_actions.actions.push(Action::Move { delta });
                     game_data.state_change_request = Some(NextTurn);
-                },
+                }
+                One => {
+                    println!("1");
+                    game_data.state_change_request = Some(NextTurn);
+                }
+                Two => {
+                    println!("2");
+                }
+                Three => {
+                    println!("3");
+                }
+                Four => {
+                    println!("4");
+                }
+                Five => {
+                    println!("5");
+                }
                 // Quit
                 Quit => game_data.state_change_request = Some(QuitGame),
                 // Console

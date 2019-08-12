@@ -16,7 +16,7 @@ pub fn init(world: &mut World) {
                 Vector2::new(29, 39),
                 CharRenderer::new(' ', Color::new(12, 24, 32)),
                 CharRenderer::new(' ', Color::new(45, 42, 90)),
-                ))
+                0))
         .with(ConsoleUI)
         .build();
 }
