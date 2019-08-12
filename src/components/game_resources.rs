@@ -1,36 +1,70 @@
 use specs::prelude::*;
 use specs_derive::Component;
-// use std::ops::{Add, Sub};
+use std::fmt::Debug;
+
 
 #[derive(Component, Debug, Default)]
-pub struct Food {
-    pub count: i32,
+#[storage(VecStorage)]
+pub struct GameResource<T>
+where T: GameResourceType + Component + Send + Sync + Debug + Default
+{
+    resource_type: T,
+    count: u32,
+    pub max: Option<u32>,
 }
-impl GameResource for Food {}
+
+impl<T> GameResource<T>
+where T: GameResourceType + Component + Send + Sync + Debug + Default
+{
+    pub fn new() -> Self {
+        Self {
+            resource_type: T::default(),
+            count: 0,
+            max: None,
+        }
+    }
+    pub fn get_count(&self) -> u32 { self.count }
+    pub fn set_count(&mut self, new_count: u32) { self.count = new_count; }
+    pub fn adjust_count(&mut self, delta_count: u32) {
+        if self.count > delta_count {
+            self.count += delta_count;
+        } else {
+            self.count = 0;
+        }
+    }
+    pub fn get_name(&self) -> String {
+        if let Some(name) = self.resource_type.get_name() {
+            name.to_owned()
+        } else {
+            format!("{:?}", self.resource_type).to_string()
+        }
+    }
+}
+
+pub trait GameResourceType {
+    fn get_name(&self) -> Option<String> { None }
+}
 
 #[derive(Component, Debug, Default)]
-pub struct Water {
-    pub count: i32,
-}
-impl GameResource for Water {}
-
+#[storage(VecStorage)]
+pub struct Wood {}
+impl GameResourceType for Wood {}
 #[derive(Component, Debug, Default)]
-pub struct Metal {
-    pub count: i32,
-}
-impl GameResource for Metal {}
-
+#[storage(VecStorage)]
+pub struct Metal {}
+impl GameResourceType for Metal {}
 #[derive(Component, Debug, Default)]
-pub struct Wood {
-    pub count: i32,
-}
-impl GameResource for Wood {}
+#[storage(VecStorage)]
+pub struct Food {}
+impl GameResourceType for Food {}
+#[derive(Component, Debug, Default)]
+#[storage(VecStorage)]
+pub struct Water {}
+impl GameResourceType for Water {}
 
 pub fn register_all(world: &mut World) {
-    world.register::<Food>();
-    world.register::<Water>();
-    world.register::<Metal>();
-    world.register::<Wood>();
+    world.register::<GameResource<Food>>();
+    world.register::<GameResource<Water>>();
+    world.register::<GameResource<Metal>>();
+    world.register::<GameResource<Wood>>();
 }
-
-trait GameResource {}

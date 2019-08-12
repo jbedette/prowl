@@ -94,7 +94,8 @@ impl<'a> System<'a> for ShipSpawnerSystem {
             let money = Money::new(random_range(1, 10) as u64);
             let position = event.position;
             let renderer = CharRenderer::new(
-                name.value.chars().next().unwrap().clone(),
+                // name.value.chars().next().unwrap().clone(),
+                's',
                 Color::new(
                     random_range(0x88, 0xff) as u8,
                     random_range(0x88, 0xff) as u8,

@@ -10,7 +10,7 @@ use crate::{
             Metal,
             Food,
             Water,
-            // GameResource,
+            GameResource,
         }
     },
     actors::Island,
@@ -30,10 +30,10 @@ impl<'a> System<'a> for IslandSetupSystem {
         WriteStorage<'a, Named>,
         WriteStorage<'a, TileMap>,
         // resources
-        WriteStorage<'a, Wood>,
-        WriteStorage<'a, Metal>,
-        WriteStorage<'a, Food>,
-        WriteStorage<'a, Water>,
+        WriteStorage<'a, GameResource<Wood>>,
+        WriteStorage<'a, GameResource<Metal>>,
+        WriteStorage<'a, GameResource<Food>>,
+        WriteStorage<'a, GameResource<Water>>,
         Entities<'a>,
     );
 
@@ -70,40 +70,40 @@ impl<'a> System<'a> for IslandSetupSystem {
                         {
                             let size = island_positions.len();
                             let resource_count = size / random_range(6, 12);
-                            for i in 0..resource_count {
+                            for _ in 0..resource_count {
                                 let position = island_positions[random_range(0, size)];
                                 let which_resource = random_range(0, 4);
                                 match which_resource {
                                     0 => {
                                         map.add_wood(position);
                                         if let Some(wood) = woods.get_mut(island_entity) {
-                                            wood.count += 1000;
+                                            wood.adjust_count(1000);
                                         } else {
-                                            woods.insert(island_entity, Wood { count: 1000 });
+                                            woods.insert(island_entity, GameResource::<Wood>::new());
                                         }
                                     },
                                     1 => {
                                         map.add_metal(position);
                                         if let Some(metal) = metals.get_mut(island_entity) {
-                                            metal.count += 1000;
+                                            metal.adjust_count(1000);
                                         } else {
-                                            metals.insert(island_entity, Metal { count: 1000 });
+                                            metals.insert(island_entity, GameResource::<Metal>::new());
                                         }
                                     },
                                     2 => {
                                         map.add_food(position);
                                         if let Some(food) = foods.get_mut(island_entity) {
-                                            food.count += 1000;
+                                            food.adjust_count(1000);
                                         } else {
-                                            foods.insert(island_entity, Food { count: 1000 });
+                                            foods.insert(island_entity, GameResource::<Food>::new());
                                         }
                                     },
                                     3 => {
                                         map.add_water(position);
                                         if let Some(water) = waters.get_mut(island_entity) {
-                                            water.count += 1000;
+                                            water.adjust_count(1000);
                                         } else {
-                                            waters.insert(island_entity, Water { count: 1000 });
+                                            waters.insert(island_entity, GameResource::<Water>::new());
                                         }
                                     },
                                     _ => (),

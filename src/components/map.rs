@@ -266,7 +266,7 @@ impl Tile {
 
     fn water_tile(height: f64) -> Self {
         // water colors
-        let glyph = '~';
+        let glyph = ' ';
         let r = (height * height * 10.0) as u8;
         let g = (height * height * 90.0) as u8;
         let b = ((height * height * 200.0) + 20.0 * (1.0 - height)) as u8;
@@ -281,7 +281,7 @@ impl Tile {
 
 
     fn wood_tile(height: f64) -> Self {
-        let glyph = 'T';
+        let glyph = ' ';
         let r_color = (((height * height) * 20.0)) as u8;
         let g_color = (((height * height) * 80.0)) as u8;
         let b_color = (((height * height) * 40.0)) as u8;
@@ -295,7 +295,7 @@ impl Tile {
     }
 
     fn food_tile(height: f64) -> Self {
-        let glyph = 'F';
+        let glyph = ' ';
         let r_color = (((height * height) * 200.0)) as u8;
         let g_color = (((height * height) * 200.0)) as u8;
         let b_color = (((height * height) * 40.0)) as u8;
@@ -309,7 +309,7 @@ impl Tile {
     }
 
     fn metal_tile(height: f64) -> Self {
-        let glyph = 'M';
+        let glyph = ' ';
         let r_color = (((height * height) * 100.0)) as u8;
         let g_color = (((height * height) * 100.0)) as u8;
         let b_color = (((height * height) * 100.0)) as u8;
