@@ -6,21 +6,25 @@ use specs_derive::Component;
 pub struct Food {
     pub count: i32,
 }
+impl GameResource for Food {}
 
 #[derive(Component, Debug, Default)]
 pub struct Water {
     pub count: i32,
 }
+impl GameResource for Water {}
 
 #[derive(Component, Debug, Default)]
 pub struct Metal {
     pub count: i32,
 }
+impl GameResource for Metal {}
 
 #[derive(Component, Debug, Default)]
 pub struct Wood {
     pub count: i32,
 }
+impl GameResource for Wood {}
 
 pub fn register_all(world: &mut World) {
     world.register::<Food>();
@@ -28,3 +32,5 @@ pub fn register_all(world: &mut World) {
     world.register::<Metal>();
     world.register::<Wood>();
 }
+
+trait GameResource {}

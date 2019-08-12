@@ -49,52 +49,6 @@ impl TileMap {
         self.water_level
     }
 
-    /*
-    pub fn generate(&mut self) {
-        for _ in 0..400 {
-            self.place_island(Vector2::new(
-                    random_range(0, self.size.x as usize) as i32,
-                    random_range(0, self.size.y as usize) as i32),
-                    Vector2::new(random_range(3,10) as i32,
-                        random_range(3,10) as i32)
-                );
-        }
-    }
-    */
-
-    /*
-    pub fn place_island(&mut self, position: Vector2, size: Vector2) {
-        for x in position.x..position.x + size.x {
-            for y in position.y..position.y + size.y {
-                if let Some(index) = self.vector2_to_index(Vector2::new(x, y)) {
-                    self.tiles[index] = Tile::land();
-                }
-            }
-        }
-    }
-    */
-    // TODO this should check if island is valid (on map)
-    // and return some kind of fail if island is invalid.
-    /*
-    pub fn place_island(
-        &mut self,
-        island: &Island,
-        position: Vector2,
-        entity: Entity)
-    {
-        //let size = island.size;
-        let size = Vector2::new(island.size, island.size);
-        for x in position.x..position.x + size.x {
-            for y in position.y..position.y + size.y {
-                if let Some(index) = self.vector2_to_index(Vector2::new(x, y)) {
-                    self.tiles[index] = Tile::land();
-                    self.dynamic_map[index] = Some(entity);
-                }
-            }
-        }
-    }
-    */
-
     pub fn add_island(
         &mut self,
         position: Vector2,
@@ -141,12 +95,21 @@ impl TileMap {
         }
     }
 
-    // get ref to tile at x, y
     pub fn get_tile(&self, position: Vector2) -> Option<&Tile> {
         let index = self.vector2_to_index(position);
         match index {
             Some(index) => Some(&self.tiles[index]),
             None => None
+        }
+    }
+
+    fn set_tile(&mut self, position: Vector2, tile: Tile) -> Result<(),()> {
+        let index = self.vector2_to_index(position);
+        if let Some(index) = index {
+            self.tiles[index] = tile;
+            Ok(())
+        } else {
+            Err(())
         }
     }
 
@@ -183,6 +146,47 @@ impl TileMap {
         self.dynamic_map = vec![None; self.vec_size];
     }
     */
+
+    // TODO MAKE GENERIC SOMEHOW DANGIT
+    pub fn add_wood(&mut self, position: Vector2) -> Result<(), ()> {
+        let height;
+        if let Some(tile) = self.get_tile(position) {
+            height = tile.height;
+            let wood_tile = Tile::wood_tile(height);
+            return self.set_tile(position, wood_tile)
+        }
+        Err(())
+    }
+    // TODO MAKE GENERIC SOMEHOW DANGIT
+    pub fn add_metal(&mut self, position: Vector2) -> Result<(), ()> {
+        let height;
+        if let Some(tile) = self.get_tile(position) {
+            height = tile.height;
+            let metal_tile = Tile::metal_tile(height);
+            return self.set_tile(position, metal_tile)
+        }
+        Err(())
+    }
+    // TODO MAKE GENERIC SOMEHOW DANGIT
+    pub fn add_food(&mut self, position: Vector2) -> Result<(), ()> {
+        let height;
+        if let Some(tile) = self.get_tile(position) {
+            height = tile.height;
+            let food_tile = Tile::food_tile(height);
+            return self.set_tile(position, food_tile)
+        }
+        Err(())
+    }
+    // TODO MAKE GENERIC SOMEHOW DANGIT
+    pub fn add_water(&mut self, position: Vector2) -> Result<(), ()> {
+        let height;
+        if let Some(tile) = self.get_tile(position) {
+            height = tile.height;
+            let water_tile = Tile::water_tile(height);
+            return self.set_tile(position, water_tile)
+        }
+        Err(())
+    }
 
     pub fn add_to_dynamic(&mut self, position: Vector2, entity: Entity) {
         let index = self.vector2_to_index(position);
@@ -227,7 +231,7 @@ impl Tile {
         if height > height_cutoff {
             Self::land_tile(height)
         } else {
-            Self::water_tile(height)
+            Self::ocean_tile(height)
         }
     }
 
@@ -245,12 +249,12 @@ impl Tile {
         }
     }
 
-    fn water_tile(height: f64) -> Self {
+    fn ocean_tile(height: f64) -> Self {
         // water colors
+        let glyph = ' ';
         let r = (height * height * 10.0) as u8;
         let g = (height * height * 90.0) as u8;
         let b = ((height * height * 200.0) + 20.0 * (1.0 - height)) as u8;
-        let glyph = ' ';
         let fg_color = Color::new(0x20, 0x30, 0x70);
         let bg_color = Color::new(r, g, b);
         Self {
@@ -259,6 +263,65 @@ impl Tile {
             passable: true,
         }
     }
+
+    fn water_tile(height: f64) -> Self {
+        // water colors
+        let glyph = '~';
+        let r = (height * height * 10.0) as u8;
+        let g = (height * height * 90.0) as u8;
+        let b = ((height * height * 200.0) + 20.0 * (1.0 - height)) as u8;
+        let fg_color = Color::new(0x20, 0x30, 0x70);
+        let bg_color = Color::new(r, g, b);
+        Self {
+            renderer: CharRenderer::with_bg(glyph, fg_color, bg_color),
+            height,
+            passable: true,
+        }
+    }
+
+
+    fn wood_tile(height: f64) -> Self {
+        let glyph = 'T';
+        let r_color = (((height * height) * 20.0)) as u8;
+        let g_color = (((height * height) * 80.0)) as u8;
+        let b_color = (((height * height) * 40.0)) as u8;
+        let fg_color = Color::new(0x10, 0x50, 0x20);
+        let bg_color = Color::new(r_color, g_color, b_color);
+        Self {
+            renderer: CharRenderer::with_bg(glyph, fg_color, bg_color),
+            height,
+            passable: true,
+        }
+    }
+
+    fn food_tile(height: f64) -> Self {
+        let glyph = 'F';
+        let r_color = (((height * height) * 200.0)) as u8;
+        let g_color = (((height * height) * 200.0)) as u8;
+        let b_color = (((height * height) * 40.0)) as u8;
+        let fg_color = Color::new(0x40, 0x40, 0x04);
+        let bg_color = Color::new(r_color, g_color, b_color);
+        Self {
+            renderer: CharRenderer::with_bg(glyph, fg_color, bg_color),
+            height,
+            passable: true,
+        }
+    }
+
+    fn metal_tile(height: f64) -> Self {
+        let glyph = 'M';
+        let r_color = (((height * height) * 100.0)) as u8;
+        let g_color = (((height * height) * 100.0)) as u8;
+        let b_color = (((height * height) * 100.0)) as u8;
+        let fg_color = Color::new(0xee, 0xee, 0xee);
+        let bg_color = Color::new(r_color, g_color, b_color);
+        Self {
+            renderer: CharRenderer::with_bg(glyph, fg_color, bg_color),
+            height,
+            passable: true,
+        }
+    }
+
 
     pub fn void() -> Self {
         let color = Color::new(0x90, 0x70, 0x50);

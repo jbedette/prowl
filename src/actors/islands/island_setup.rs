@@ -1,26 +1,39 @@
 use specs::prelude::*;
 use crate::file_io;
 
-use crate::components::{
-    map::TileMap,
-    Named
-};
-
-use crate::actors::Island;
-// use crate::actors::Population;
-use crate::shared::{
-    Vector2,
-    random::random_range,
+use crate::{
+    components::{
+        map::TileMap,
+        Named,
+        game_resources::{
+            Wood,
+            Metal,
+            Food,
+            Water,
+            // GameResource,
+        }
+    },
+    actors::Island,
+    shared::{
+        Vector2,
+        random::random_range,
+    }
 };
 
 pub struct IslandSetupSystem;
 
 #[allow(unused_must_use)]
+#[allow(dead_code)]
 impl<'a> System<'a> for IslandSetupSystem {
     type SystemData = (
         WriteStorage<'a, Island>,
         WriteStorage<'a, Named>,
         WriteStorage<'a, TileMap>,
+        // resources
+        WriteStorage<'a, Wood>,
+        WriteStorage<'a, Metal>,
+        WriteStorage<'a, Food>,
+        WriteStorage<'a, Water>,
         Entities<'a>,
     );
 
@@ -29,6 +42,10 @@ impl<'a> System<'a> for IslandSetupSystem {
             mut islands,
             mut names,
             mut maps,
+            mut woods,
+            mut metals,
+            mut foods,
+            mut waters,
             entities
         ) = data;
         let island_names = file_io::read_file("isoles.txt");
@@ -49,10 +66,56 @@ impl<'a> System<'a> for IslandSetupSystem {
                         let name = &(island_names[(random_range(0, island_names.len()))]);
                         names.insert(island_entity, Named::new(name));
                         let island_positions = map.add_island(position, island_entity);
-                        islands.insert(island_entity,
-                            Island::new(island_positions));
-                                // random_range(2, 10) as i32,
-                                // random_range(0, 100) as i32));
+                        // Resources -- TODO clean me up
+                        {
+                            let size = island_positions.len();
+                            let resource_count = size / random_range(6, 12);
+                            for i in 0..resource_count {
+                                let position = island_positions[random_range(0, size)];
+                                let which_resource = random_range(0, 4);
+                                match which_resource {
+                                    0 => {
+                                        map.add_wood(position);
+                                        if let Some(wood) = woods.get_mut(island_entity) {
+                                            wood.count += 1000;
+                                        } else {
+                                            woods.insert(island_entity, Wood { count: 1000 });
+                                        }
+                                    },
+                                    1 => {
+                                        map.add_metal(position);
+                                        if let Some(metal) = metals.get_mut(island_entity) {
+                                            metal.count += 1000;
+                                        } else {
+                                            metals.insert(island_entity, Metal { count: 1000 });
+                                        }
+                                    },
+                                    2 => {
+                                        map.add_food(position);
+                                        if let Some(food) = foods.get_mut(island_entity) {
+                                            food.count += 1000;
+                                        } else {
+                                            foods.insert(island_entity, Food { count: 1000 });
+                                        }
+                                    },
+                                    3 => {
+                                        map.add_water(position);
+                                        if let Some(water) = waters.get_mut(island_entity) {
+                                            water.count += 1000;
+                                        } else {
+                                            waters.insert(island_entity, Water { count: 1000 });
+                                        }
+                                    },
+                                    _ => (),
+                                    /*
+                                    1 => map.add_metal(position),
+                                    2 => map.add_food(position),
+                                    3 => map.add_water(position),
+                                    */
+                                }
+                            }
+                        }
+                        islands.insert(island_entity, Island::new(island_positions));
                     } else {
                         eprintln!("ERROR: INVALID POSITION IN MAP GENERATION");
                     }
