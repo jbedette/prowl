@@ -296,8 +296,8 @@ impl Tile {
 
     fn food_tile(height: f64) -> Self {
         let glyph = ' ';
-        let r_color = (((height * height) * 200.0)) as u8;
-        let g_color = (((height * height) * 200.0)) as u8;
+        let r_color = (((height * height) * 100.0)) as u8;
+        let g_color = (((height * height) * 100.0)) as u8;
         let b_color = (((height * height) * 40.0)) as u8;
         let fg_color = Color::new(0x40, 0x40, 0x04);
         let bg_color = Color::new(r_color, g_color, b_color);
@@ -310,9 +310,9 @@ impl Tile {
 
     fn metal_tile(height: f64) -> Self {
         let glyph = ' ';
-        let r_color = (((height * height) * 100.0)) as u8;
-        let g_color = (((height * height) * 100.0)) as u8;
-        let b_color = (((height * height) * 100.0)) as u8;
+        let r_color = (((height * height) * 80.0)) as u8;
+        let g_color = (((height * height) * 80.0)) as u8;
+        let b_color = (((height * height) * 80.0)) as u8;
         let fg_color = Color::new(0xee, 0xee, 0xee);
         let bg_color = Color::new(r_color, g_color, b_color);
         Self {

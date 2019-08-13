@@ -11,6 +11,7 @@ use crate::{
             Food,
             Water,
             GameResource,
+            GameResourceType,
         }
     },
     actors::Island,
@@ -66,7 +67,18 @@ impl<'a> System<'a> for IslandSetupSystem {
                         let name = &(island_names[(random_range(0, island_names.len()))]);
                         names.insert(island_entity, Named::new(name));
                         let island_positions = map.add_island(position, island_entity);
-                        // Resources -- TODO clean me up
+                        {
+                            let size = island_positions.len();
+                            let resource_spaces = size / random_range(6, 12);
+                            const total_count : usize = 4;
+                            let mut resource_counts = [0; total_count];
+                            for _ in 0..resource_spaces {
+                                let which = random_range(0, 4);
+                                resource_counts[which] += 1;
+                            }
+                            // TODO add resources to island in clumps
+                        }
+                        /*
                         {
                             let size = island_positions.len();
                             let resource_count = size / random_range(6, 12);
@@ -107,14 +119,10 @@ impl<'a> System<'a> for IslandSetupSystem {
                                         }
                                     },
                                     _ => (),
-                                    /*
-                                    1 => map.add_metal(position),
-                                    2 => map.add_food(position),
-                                    3 => map.add_water(position),
-                                    */
                                 }
                             }
                         }
+                        */
                         islands.insert(island_entity, Island::new(island_positions));
                     } else {
                         eprintln!("ERROR: INVALID POSITION IN MAP GENERATION");
