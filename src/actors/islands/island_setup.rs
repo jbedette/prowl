@@ -11,7 +11,7 @@ use crate::{
             Food,
             Water,
             GameResource,
-            GameResourceType,
+            // GameResourceType,
         }
     },
     actors::Island,
@@ -31,10 +31,10 @@ impl<'a> System<'a> for IslandSetupSystem {
         WriteStorage<'a, Named>,
         WriteStorage<'a, TileMap>,
         // resources
-        WriteStorage<'a, GameResource<Wood>>,
-        WriteStorage<'a, GameResource<Metal>>,
-        WriteStorage<'a, GameResource<Food>>,
         WriteStorage<'a, GameResource<Water>>,
+        WriteStorage<'a, GameResource<Food>>,
+        WriteStorage<'a, GameResource<Metal>>,
+        WriteStorage<'a, GameResource<Wood>>,
         Entities<'a>,
     );
 
@@ -43,13 +43,20 @@ impl<'a> System<'a> for IslandSetupSystem {
             mut islands,
             mut names,
             mut maps,
-            mut woods,
-            mut metals,
-            mut foods,
-            mut waters,
+            waters,
+            foods,
+            metals,
+            woods,
             entities
         ) = data;
         let island_names = file_io::read_file("isoles.txt");
+
+        let mut resources = (
+            waters,
+            foods,
+            metals,
+            woods
+            );
 
         for map in (&mut maps).join() {
             let water_level = map.get_water_level();
@@ -67,62 +74,46 @@ impl<'a> System<'a> for IslandSetupSystem {
                         let name = &(island_names[(random_range(0, island_names.len()))]);
                         names.insert(island_entity, Named::new(name));
                         let island_positions = map.add_island(position, island_entity);
+                        // Add resources in clusters.
+                        // TODO this is super gross and kind of broken
                         {
                             let size = island_positions.len();
-                            let resource_spaces = size / random_range(6, 12);
-                            const total_count : usize = 4;
-                            let mut resource_counts = [0; total_count];
+                            let resource_spaces = size / random_range(8, 12);
+                            const TOTAL_COUNT : usize = 4;
+                            let mut resource_counts = [0; TOTAL_COUNT];
                             for _ in 0..resource_spaces {
                                 let which = random_range(0, 4);
                                 resource_counts[which] += 1;
                             }
-                            // TODO add resources to island in clumps
-                        }
-                        /*
-                        {
-                            let size = island_positions.len();
-                            let resource_count = size / random_range(6, 12);
-                            for _ in 0..resource_count {
-                                let position = island_positions[random_range(0, size)];
-                                let which_resource = random_range(0, 4);
-                                match which_resource {
-                                    0 => {
-                                        map.add_wood(position);
-                                        if let Some(wood) = woods.get_mut(island_entity) {
-                                            wood.adjust_count(1000);
-                                        } else {
-                                            woods.insert(island_entity, GameResource::<Wood>::new());
+                            // let all_visited = vec![];
+                            for i in 0..TOTAL_COUNT {
+                                for _ in 0..(resource_counts[i]) {
+                                    let root_position = island_positions[random_range(0, size)];
+                                    add_resource(map, root_position, i, &mut resources, island_entity);
+                                    let mut visited = vec![root_position];
+                                    let spread_to = [
+                                        Vector2::north(),
+                                        Vector2::south(),
+                                        Vector2::east(),
+                                        Vector2::west()
+                                    ];
+                                    for _ in 0..resource_counts[i] {
+                                        // horribly hacky do..while loop
+                                        // since rust doesn't have them
+                                        let mut pos;
+                                        while {
+                                            pos = visited[random_range(0, visited.len())];
+                                            pos = pos + spread_to[random_range(0, spread_to.len())];
+                                            visited.contains(&pos)
+                                        } {}
+                                        if island_positions.contains(&pos) {
+                                            add_resource(map, pos, i, &mut resources, island_entity);
+                                            visited.push(pos);
                                         }
-                                    },
-                                    1 => {
-                                        map.add_metal(position);
-                                        if let Some(metal) = metals.get_mut(island_entity) {
-                                            metal.adjust_count(1000);
-                                        } else {
-                                            metals.insert(island_entity, GameResource::<Metal>::new());
-                                        }
-                                    },
-                                    2 => {
-                                        map.add_food(position);
-                                        if let Some(food) = foods.get_mut(island_entity) {
-                                            food.adjust_count(1000);
-                                        } else {
-                                            foods.insert(island_entity, GameResource::<Food>::new());
-                                        }
-                                    },
-                                    3 => {
-                                        map.add_water(position);
-                                        if let Some(water) = waters.get_mut(island_entity) {
-                                            water.adjust_count(1000);
-                                        } else {
-                                            waters.insert(island_entity, GameResource::<Water>::new());
-                                        }
-                                    },
-                                    _ => (),
+                                    }
                                 }
                             }
                         }
-                        */
                         islands.insert(island_entity, Island::new(island_positions));
                     } else {
                         eprintln!("ERROR: INVALID POSITION IN MAP GENERATION");
@@ -131,4 +122,43 @@ impl<'a> System<'a> for IslandSetupSystem {
             }
         }
     }
+}
+
+// TODO any way to make this less repetitive?? ugh
+fn add_resource(
+    map: &mut TileMap,
+    position: Vector2,
+    identifier: usize,
+    resources: &mut (
+        WriteStorage<'_, GameResource<Water>>,
+        WriteStorage<'_, GameResource<Food>>,
+        WriteStorage<'_, GameResource<Metal>>,
+        WriteStorage<'_, GameResource<Wood>>,
+    ),
+    entity: Entity,
+    )
+{
+    match identifier {
+        0 => {
+            if map.add_water(position).is_ok() {
+                resources.0.insert(entity, GameResource::<Water>::new());
+            }
+        },
+        1 => {
+            if map.add_food(position).is_ok() {
+                resources.1.insert(entity, GameResource::<Food>::new());
+            }
+        },
+        2 => {
+            if map.add_metal(position).is_ok() {
+                resources.2.insert(entity, GameResource::<Metal>::new());
+            }
+        },
+        3 => {
+            if map.add_wood(position).is_ok() {
+                resources.3.insert(entity, GameResource::<Wood>::new());
+            }
+        },
+        _ => (),
+    };
 }

@@ -237,9 +237,9 @@ impl Tile {
 
     fn land_tile(height: f64) -> Self {
         let glyph = ' ';
-        let r_color = (((height * height) * 100.0)) as u8;
-        let g_color = (((height * height) * 80.0)) as u8;
-        let b_color = (((height * height) * 40.0)) as u8;
+        let r_color = (((height * height) * 120.0)) as u8;
+        let g_color = (((height * height) * 90.0)) as u8;
+        let b_color = (((height * height) * 50.0)) as u8;
         let fg_color = Color::new(0x20, 0x30, 0x70);
         let bg_color = Color::new(r_color, g_color, b_color);
         Self {
@@ -266,11 +266,14 @@ impl Tile {
 
     fn water_tile(height: f64) -> Self {
         // water colors
-        let glyph = ' ';
-        let r = (height * height * 10.0) as u8;
-        let g = (height * height * 90.0) as u8;
-        let b = ((height * height * 200.0) + 20.0 * (1.0 - height)) as u8;
-        let fg_color = Color::new(0x20, 0x30, 0x70);
+        let glyph = '~';
+        let r = (height * height * 20.0) as u8;
+        let g = (height * height * 110.0) as u8;
+        let b = ((height * height * 220.0) + 20.0 * (1.0 - height)) as u8;
+        let fg_r_color = (((height * height) * 80.0)) as u8;
+        let fg_g_color = (((height * height) * 140.0)) as u8;
+        let fg_b_color = (((height * height) * 240.0)) as u8;
+        let fg_color = Color::new(fg_r_color, fg_g_color, fg_b_color);
         let bg_color = Color::new(r, g, b);
         Self {
             renderer: CharRenderer::with_bg(glyph, fg_color, bg_color),
@@ -281,11 +284,14 @@ impl Tile {
 
 
     fn wood_tile(height: f64) -> Self {
-        let glyph = ' ';
+        let glyph = '^';
         let r_color = (((height * height) * 20.0)) as u8;
         let g_color = (((height * height) * 80.0)) as u8;
         let b_color = (((height * height) * 40.0)) as u8;
-        let fg_color = Color::new(0x10, 0x50, 0x20);
+        let fg_r_color = (((height * height) * 30.0)) as u8;
+        let fg_g_color = (((height * height) * 100.0)) as u8;
+        let fg_b_color = (((height * height) * 55.0)) as u8;
+        let fg_color = Color::new(fg_r_color, fg_g_color, fg_b_color);
         let bg_color = Color::new(r_color, g_color, b_color);
         Self {
             renderer: CharRenderer::with_bg(glyph, fg_color, bg_color),
@@ -295,11 +301,14 @@ impl Tile {
     }
 
     fn food_tile(height: f64) -> Self {
-        let glyph = ' ';
-        let r_color = (((height * height) * 100.0)) as u8;
+        let glyph = '"';
+        let r_color = (((height * height) * 60.0)) as u8;
         let g_color = (((height * height) * 100.0)) as u8;
         let b_color = (((height * height) * 40.0)) as u8;
-        let fg_color = Color::new(0x40, 0x40, 0x04);
+        let fg_r_color = (((height * height) * 80.0)) as u8;
+        let fg_g_color = (((height * height) * 120.0)) as u8;
+        let fg_b_color = (((height * height) * 80.0)) as u8;
+        let fg_color = Color::new(fg_r_color, fg_g_color, fg_b_color);
         let bg_color = Color::new(r_color, g_color, b_color);
         Self {
             renderer: CharRenderer::with_bg(glyph, fg_color, bg_color),
@@ -309,11 +318,14 @@ impl Tile {
     }
 
     fn metal_tile(height: f64) -> Self {
-        let glyph = ' ';
+        let glyph = '#';
         let r_color = (((height * height) * 80.0)) as u8;
         let g_color = (((height * height) * 80.0)) as u8;
         let b_color = (((height * height) * 80.0)) as u8;
-        let fg_color = Color::new(0xee, 0xee, 0xee);
+        let fg_r_color = (((height * height) * 100.0)) as u8;
+        let fg_g_color = (((height * height) * 100.0)) as u8;
+        let fg_b_color = (((height * height) * 100.0)) as u8;
+        let fg_color = Color::new(fg_r_color, fg_g_color, fg_b_color);
         let bg_color = Color::new(r_color, g_color, b_color);
         Self {
             renderer: CharRenderer::with_bg(glyph, fg_color, bg_color),

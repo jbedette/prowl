@@ -17,9 +17,9 @@ pub struct Island{
 impl Island{
     pub fn new(tile_positions: Vec<Vector2>) -> Self {
         let coast_tile_positions = Self::calculate_coastline(&tile_positions);
-        let mut ship_spawn_timer_reset = 100 - tile_positions.len() as i32;
-        if ship_spawn_timer_reset < 10 {
-            ship_spawn_timer_reset = 10;
+        let mut ship_spawn_timer_reset = 500 - tile_positions.len() as i32;
+        if ship_spawn_timer_reset < 100 {
+            ship_spawn_timer_reset = 100;
         }
         Self {
             tile_positions,
