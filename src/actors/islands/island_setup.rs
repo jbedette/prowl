@@ -85,6 +85,15 @@ impl<'a> System<'a> for IslandSetupSystem {
                                 let which = random_range(0, 4);
                                 resource_counts[which] += 1;
                             }
+                            // scarcity TODO this is a total nasty hack...
+                            // water
+                            resource_counts[0] = (resource_counts[0] as f32 * 1.1) as i32;
+                            // food
+                            resource_counts[1] = (resource_counts[1] as f32 * 1.0) as i32;
+                            // metal
+                            resource_counts[2] = (resource_counts[2] as f32 * 0.3) as i32;
+                            // wood
+                            resource_counts[3] = (resource_counts[3] as f32 * 1.4) as i32;
                             // let all_visited = vec![];
                             for i in 0..TOTAL_COUNT {
                                 for _ in 0..(resource_counts[i]) {
@@ -141,22 +150,46 @@ fn add_resource(
     match identifier {
         0 => {
             if map.add_water(position).is_ok() {
-                resources.0.insert(entity, GameResource::<Water>::new());
+                if let Some(resource) = resources.0.get_mut(entity) {
+                    resource.adjust_count(1000);
+                } else {
+                    let mut resource = GameResource::<Water>::new();
+                    resource.adjust_count(1000);
+                    resources.0.insert(entity, resource);
+                }
             }
         },
         1 => {
             if map.add_food(position).is_ok() {
-                resources.1.insert(entity, GameResource::<Food>::new());
+                if let Some(resource) = resources.1.get_mut(entity) {
+                    resource.adjust_count(1000);
+                } else {
+                    let mut resource = GameResource::<Food>::new();
+                    resource.adjust_count(1000);
+                    resources.1.insert(entity, resource);
+                }
             }
         },
         2 => {
             if map.add_metal(position).is_ok() {
-                resources.2.insert(entity, GameResource::<Metal>::new());
+                if let Some(resource) = resources.2.get_mut(entity) {
+                    resource.adjust_count(1000);
+                } else {
+                    let mut resource = GameResource::<Metal>::new();
+                    resource.adjust_count(1000);
+                    resources.2.insert(entity, resource);
+                }
             }
         },
         3 => {
             if map.add_wood(position).is_ok() {
-                resources.3.insert(entity, GameResource::<Wood>::new());
+                if let Some(resource) = resources.3.get_mut(entity) {
+                    resource.adjust_count(1000);
+                } else {
+                    let mut resource = GameResource::<Wood>::new();
+                    resource.adjust_count(1000);
+                    resources.3.insert(entity, resource);
+                }
             }
         },
         _ => (),

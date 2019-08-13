@@ -237,9 +237,10 @@ impl Tile {
 
     fn land_tile(height: f64) -> Self {
         let glyph = ' ';
-        let r_color = (((height * height) * 120.0)) as u8;
-        let g_color = (((height * height) * 90.0)) as u8;
-        let b_color = (((height * height) * 50.0)) as u8;
+        let height3 = height * height * height * height;
+        let r_color = (height3 * 120.0) as u8;
+        let g_color = (height3 * 90.0) as u8;
+        let b_color = (height3 * 50.0) as u8;
         let fg_color = Color::new(0x20, 0x30, 0x70);
         let bg_color = Color::new(r_color, g_color, b_color);
         Self {
@@ -252,9 +253,10 @@ impl Tile {
     fn ocean_tile(height: f64) -> Self {
         // water colors
         let glyph = ' ';
-        let r = (height * height * 10.0) as u8;
-        let g = (height * height * 90.0) as u8;
-        let b = ((height * height * 200.0) + 20.0 * (1.0 - height)) as u8;
+        let height2 = height * height;
+        let r = (height2 * 10.0) as u8;
+        let g = (height2 * 90.0) as u8;
+        let b = ((height2 * 200.0) + 20.0 * (1.0 - height)) as u8;
         let fg_color = Color::new(0x20, 0x30, 0x70);
         let bg_color = Color::new(r, g, b);
         Self {
@@ -267,12 +269,13 @@ impl Tile {
     fn water_tile(height: f64) -> Self {
         // water colors
         let glyph = '~';
-        let r = (height * height * 20.0) as u8;
-        let g = (height * height * 110.0) as u8;
-        let b = ((height * height * 220.0) + 20.0 * (1.0 - height)) as u8;
-        let fg_r_color = (((height * height) * 80.0)) as u8;
-        let fg_g_color = (((height * height) * 140.0)) as u8;
-        let fg_b_color = (((height * height) * 240.0)) as u8;
+        let height3 = height * height * height;
+        let r = (height3 * 20.0) as u8;
+        let g = (height3 * 110.0) as u8;
+        let b = (height3 * 220.0) as u8;
+        let fg_r_color = (height3 * 40.0) as u8;
+        let fg_g_color = (height3 * 160.0) as u8;
+        let fg_b_color = (height3 * 250.0) as u8;
         let fg_color = Color::new(fg_r_color, fg_g_color, fg_b_color);
         let bg_color = Color::new(r, g, b);
         Self {
@@ -285,12 +288,13 @@ impl Tile {
 
     fn wood_tile(height: f64) -> Self {
         let glyph = '^';
-        let r_color = (((height * height) * 20.0)) as u8;
-        let g_color = (((height * height) * 80.0)) as u8;
-        let b_color = (((height * height) * 40.0)) as u8;
-        let fg_r_color = (((height * height) * 30.0)) as u8;
-        let fg_g_color = (((height * height) * 100.0)) as u8;
-        let fg_b_color = (((height * height) * 55.0)) as u8;
+        let height4 = height * height * height * height;
+        let r_color = (height4 * 20.0) as u8;
+        let g_color = (height4 * 80.0) as u8;
+        let b_color = (height4 * 40.0) as u8;
+        let fg_r_color = (height4 * 30.0) as u8;
+        let fg_g_color = (height4 * 100.0) as u8;
+        let fg_b_color = (height4 * 55.0) as u8;
         let fg_color = Color::new(fg_r_color, fg_g_color, fg_b_color);
         let bg_color = Color::new(r_color, g_color, b_color);
         Self {
@@ -302,12 +306,13 @@ impl Tile {
 
     fn food_tile(height: f64) -> Self {
         let glyph = '"';
-        let r_color = (((height * height) * 60.0)) as u8;
-        let g_color = (((height * height) * 100.0)) as u8;
-        let b_color = (((height * height) * 40.0)) as u8;
-        let fg_r_color = (((height * height) * 80.0)) as u8;
-        let fg_g_color = (((height * height) * 120.0)) as u8;
-        let fg_b_color = (((height * height) * 80.0)) as u8;
+        let height4 = height * height * height * height;
+        let r_color = (height4 * 80.0) as u8;
+        let g_color = (height4 * 110.0) as u8;
+        let b_color = (height4 * 50.0) as u8;
+        let fg_r_color = (height4 * 100.0) as u8;
+        let fg_g_color = (height4 * 140.0) as u8;
+        let fg_b_color = (height4 * 90.0) as u8;
         let fg_color = Color::new(fg_r_color, fg_g_color, fg_b_color);
         let bg_color = Color::new(r_color, g_color, b_color);
         Self {
@@ -319,12 +324,13 @@ impl Tile {
 
     fn metal_tile(height: f64) -> Self {
         let glyph = '#';
-        let r_color = (((height * height) * 80.0)) as u8;
-        let g_color = (((height * height) * 80.0)) as u8;
-        let b_color = (((height * height) * 80.0)) as u8;
-        let fg_r_color = (((height * height) * 100.0)) as u8;
-        let fg_g_color = (((height * height) * 100.0)) as u8;
-        let fg_b_color = (((height * height) * 100.0)) as u8;
+        let height4 = height * height * height * height;
+        let r_color = (height4 * 80.0) as u8;
+        let g_color = (height4 * 80.0) as u8;
+        let b_color = (height4 * 80.0) as u8;
+        let fg_r_color = (height4 * 100.0) as u8;
+        let fg_g_color = (height4 * 100.0) as u8;
+        let fg_b_color = (height4 * 100.0) as u8;
         let fg_color = Color::new(fg_r_color, fg_g_color, fg_b_color);
         let bg_color = Color::new(r_color, g_color, b_color);
         Self {

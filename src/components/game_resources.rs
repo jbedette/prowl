@@ -23,8 +23,11 @@ where T: GameResourceType + Component + Send + Sync + Debug + Default
             max: None,
         }
     }
+
     pub fn get_count(&self) -> u32 { self.count }
+
     pub fn set_count(&mut self, new_count: u32) { self.count = new_count; }
+
     pub fn adjust_count(&mut self, delta_count: u32) {
         if self.count > delta_count {
             self.count += delta_count;
@@ -32,6 +35,7 @@ where T: GameResourceType + Component + Send + Sync + Debug + Default
             self.count = 0;
         }
     }
+
     pub fn get_name(&self) -> String {
         if let Some(name) = self.resource_type.get_name() {
             name.to_owned()
