@@ -167,6 +167,7 @@ impl<'a> System<'a> for InteractiveUISystem {
             entities,
         ) = data;
 
+        //ui opts are the main menu manager
         let mut ui_opts = 0;
         let count = panels.join().count() as i32;
         //println!("INTERACTIVE UI ACTIVE");
