@@ -42,16 +42,6 @@ impl<'a> System<'a> for ConsoleWindowSystem {
     }
 }
 
-use crate::components::{
-    game_resources::{
-        Wood,
-        Metal,
-        Food,
-        Water,
-        GameResource,
-    }
-};
-
 pub struct StatusWindowSystem;
 impl<'a> System<'a> for StatusWindowSystem {
     type SystemData = (
@@ -59,18 +49,11 @@ impl<'a> System<'a> for StatusWindowSystem {
         ReadStorage<'a, StatusUI>,
         ReadStorage<'a, Named>,
         ReadStorage<'a, Health>,
-<<<<<<< HEAD
         ReadStorage<'a, Money>,
         WriteStorage<'a, GameResource<Water>>,
         WriteStorage<'a, GameResource<Food>>,
         WriteStorage<'a, GameResource<Metal>>,
         WriteStorage<'a, GameResource<Wood>>,
-=======
-        ReadStorage<'a, GameResource<Water>>,
-        ReadStorage<'a, GameResource<Food>>,
-        ReadStorage<'a, GameResource<Metal>>,
-        ReadStorage<'a, GameResource<Wood>>,
->>>>>>> master
         Read<'a, GameData>,
         Entities<'a>,
     );
@@ -81,21 +64,14 @@ impl<'a> System<'a> for StatusWindowSystem {
             status,
             nameds,
             healths,
-<<<<<<< HEAD
             moneys,
-=======
->>>>>>> master
             waters,
             foods,
             metals,
             woods,
             _game_data,
-<<<<<<< HEAD
             entities,
         ) = data;
-=======
-            entities) = data;
->>>>>>> master
         for (panel, _status, entity) in (&mut panel, &status, &entities).join() {
             // clear
             panel.widgets = vec![];
@@ -112,40 +88,6 @@ impl<'a> System<'a> for StatusWindowSystem {
                     let health = format!("HP: {}/{}", health.current, health.max,);
 
                     panel.widgets.push(Widget::label(&health));
-                }
-            } /* RESOURCES */
-            {
-                let food = foods.get(entity);
-                if let Some(food) = food {
-                    let food = format!(
-                        "{} : {}",
-                        food.get_name(),
-                        food.get_count());
-                    panel.widgets.push(Widget::label(&food));
-                }
-                let water = waters.get(entity);
-                if let Some(water) = water {
-                    let water = format!(
-                        "{}: {}",
-                        water.get_name(),
-                        water.get_count());
-                    panel.widgets.push(Widget::label(&water));
-                }
-                let wood = woods.get(entity);
-                if let Some(wood) = wood {
-                    let wood = format!(
-                        "{} : {}",
-                        wood.get_name(),
-                        wood.get_count());
-                    panel.widgets.push(Widget::label(&wood));
-                }
-                let metal = metals.get(entity);
-                if let Some(metal) = metal {
-                    let metal = format!(
-                        "{}: {}",
-                        metal.get_name(),
-                        metal.get_count());
-                    panel.widgets.push(Widget::label(&metal));
                 }
             }
             {
@@ -186,9 +128,7 @@ impl<'a> System<'a> for StatusWindowSystem {
 
 use crate::input::tcod_input;
 use crate::resources::{game_data::StateChangeRequest, Window};
-
 pub struct InteractiveUISystem;
-#[allow(unused_must_use)]
 impl<'a> System<'a> for InteractiveUISystem {
     type SystemData = (
         ReadStorage<'a, Named>,
