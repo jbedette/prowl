@@ -3,7 +3,7 @@ use crate::components::{
         game_resources::{Food, GameResource, Metal, Water, Wood},
         markers::{Player, Ship},
         pending_actions::PendingActions,
-        CharRenderer, Health, Money, Named, Position, Weapon, Active
+        Active, CharRenderer, Health, Money, Named, Position, Weapon,
 };
 use crate::shared::{random::random_range, Vector2};
 use crate::ui::{markers::StatusUI, Panel};
@@ -43,7 +43,7 @@ pub fn make_player(world: &mut World) {
                 .with(GameResource::<Water>::new(random_range(3, 500) as u32))
                 .with(GameResource::<Wood>::new(random_range(3, 500) as u32))
                 .with(GameResource::<Metal>::new(random_range(3, 500) as u32))
-                //.with(Active::default())
+                .with(Active::new())
                 .with(Player::default())
                 .with(Ship::default())
                 .build();

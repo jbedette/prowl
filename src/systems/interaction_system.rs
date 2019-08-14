@@ -73,9 +73,11 @@ impl<'a> System<'a> for InteractionSystem {
                         one, two
                     )));
                 } else {
+                    actives.get_mut(parties.0).unwrap().flip();
+                    actives.get_mut(parties.1).unwrap().flip();
                     event_channel.events.push(InteractionEvent {
                         entities: vec![parties.0, parties.1],
-                        text: String::from("COLLISION"),
+                        menu_code: 1,
                     });
                     let mut res = Vec::new();
                     for (food, water, wood, metal, entity) in

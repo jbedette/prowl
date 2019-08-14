@@ -203,10 +203,17 @@ impl<'a> System<'a> for InteractiveUISystem {
         if ui_opts.0 {
             while let Some(event) = event_channel.events.pop() {
                 let parties = (event.entities[0], event.entities[1]);
-                let food_a = foods.get_mut(parties.0);
-                //let food_b = foods.get_mut(parties.1);
-                if let Some(food_a) = food_a {
-                    food_a.transaction(-50);
+                match event.menu_code{
+                for (food, water, wood, metal, entity) in
+                    (&mut foods, &mut waters, &mut woods, &mut metals, &entities).join()
+                {
+                    let active = actives.get(entity).unwrap().yes;
+                    let is_player = _player.get(entity).is_some();
+                    if active && is_player {
+                        food.transaction(25);
+                    } else if active {
+                        food.transaction(-25);
+                    }
                 }
                 let window = entities.create();
                 let mut panel = Panel::new(
@@ -224,9 +231,10 @@ impl<'a> System<'a> for InteractiveUISystem {
                 interactive_uis.insert(window, InteractiveUI::default());
                 event_channel.events.push(InteractionEvent {
                     entities: vec![parties.0, parties.1],
-                    text: String::from("COLLISION"),
+                    menu_code: 1,
                 });
                 break;
+                }
             }
         }
         if ui_opts.1 {

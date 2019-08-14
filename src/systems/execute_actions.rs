@@ -71,7 +71,7 @@ impl<'a> System<'a> for ExecuteActionSystem {
                                 // TODO interaction trigger
                                 interaction_events.events.push(InteractionEvent {
                                     entities: vec![entity, entity1],
-                                    text: String::from("COLLISION"),
+                                    menu_code: 0,
                                 });
                                 move_allowed = false;
                             } else {
