@@ -80,7 +80,7 @@ impl<'a> System<'a> for InteractionSystem {
                         menu_code: 1,
                     });
                     let mut res = Vec::new();
-                    for (food, water, wood, metal, entity) in
+                    for (food, water, wood, metal, _entity) in
                         (&foods, &waters, &woods, &metals, &entities).join()
                     {
                         res.push(format!(

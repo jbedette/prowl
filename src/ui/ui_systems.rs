@@ -129,6 +129,7 @@ impl<'a> System<'a> for StatusWindowSystem {
 use crate::input::tcod_input;
 use crate::resources::{game_data::StateChangeRequest, Window};
 pub struct InteractiveUISystem;
+#[allow(unused_must_use)]
 impl<'a> System<'a> for InteractiveUISystem {
     type SystemData = (
         ReadStorage<'a, Named>,
@@ -148,9 +149,10 @@ impl<'a> System<'a> for InteractiveUISystem {
         Entities<'a>,
     );
 
+    #[allow(unused_must_use)]
     fn run(&mut self, data: Self::SystemData) {
         let (
-            names,
+            _names,
             _player,
             mut moneys,
             mut waters,
@@ -236,7 +238,7 @@ impl<'a> System<'a> for InteractiveUISystem {
                     }
                     _ => (),
                 };
-                for (food, water, wood, metal, entity, panel) in (
+                for (food, water, wood, metal, entity, _panel) in (
                     &mut foods,
                     &mut waters,
                     &mut woods,
@@ -304,7 +306,8 @@ impl<'a> System<'a> for InteractiveUISystem {
                     for active in (&mut actives).join() {
                         active.yes = false;
                     }
-                    while let Some(event) = event_channel.events.pop() {}
+                    // TODO @john is this just to clear the event channel?
+                    while let Some(_event) = event_channel.events.pop() {}
                     game_data.state_change_request = Option::None;
                 }
                 let mut entities_to_remove = Vec::new();

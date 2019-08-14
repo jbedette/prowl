@@ -23,6 +23,7 @@ use crate::shared::Vector2;
 
 pub struct ExecuteActionSystem;
 
+#[allow(unused)]
 impl<'a> System<'a> for ExecuteActionSystem {
     type SystemData = (
         WriteStorage<'a, Position>,

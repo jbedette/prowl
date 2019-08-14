@@ -97,12 +97,11 @@ impl<'a> System<'a> for PlayerSetupSystem {
         actives.insert(ship,Active::new());
         statusuis.insert(ship, StatusUI::default());
         // Resources
-        let mut water = GameResource::<Water>::new(200);
+        let water = GameResource::<Water>::new(200);
         waters.insert(ship, water);
-        let mut food = GameResource::<Food>::new(200);
+        let food = GameResource::<Food>::new(200);
         foods.insert(ship, food);
-        let mut wood = GameResource::<Wood>::new(200);
-        wood.set_count(20);
+        let wood = GameResource::<Wood>::new(20);
         woods.insert(ship, wood);
         metals.insert(ship, GameResource::<Metal>::new(10));
         // Info Panel

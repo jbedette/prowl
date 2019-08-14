@@ -38,6 +38,7 @@ where
         }
     }
 
+    #[allow(dead_code)]
     pub fn set_count(&mut self, new_count: u32) {
         self.count = new_count;
     }

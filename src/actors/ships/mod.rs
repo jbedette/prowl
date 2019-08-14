@@ -3,7 +3,12 @@ use crate::components::{
     ai::{Goal, AI},
     markers::Ship,
     pending_actions::PendingActions,
-    CharRenderer, Health, Money, Named, Position, Weapon,
+    CharRenderer,
+    Health,
+    Money,
+    Named,
+    Position,
+    Weapon,
     game_resources::{
         GameResource,
         Water,
@@ -32,7 +37,7 @@ impl<'a> System<'a> for ShipSpawnerSystem {
         WriteStorage<'a, Named>,
         WriteStorage<'a, Health>,
         WriteStorage<'a, Weapon>,
-        //WriteStorage<'a, Money>,
+        WriteStorage<'a, Money>,
         WriteStorage<'a, Position>,
         WriteStorage<'a, CharRenderer>,
         WriteStorage<'a, AI>,
@@ -52,7 +57,7 @@ impl<'a> System<'a> for ShipSpawnerSystem {
             mut names,
             mut healths,
             mut weapons,
-            //mut moneys,
+            mut moneys,
             mut positions,
             mut renderers,
             mut ais,
@@ -70,7 +75,7 @@ impl<'a> System<'a> for ShipSpawnerSystem {
             let health_max = random_range(40, 350) as i64;
             let health = Health::new(health_max, health_max);
             let weapon = Weapon::new(random_range(1, 10) as u64);
-            //let money = Money::new(random_range(1, 10) as u64);
+            let money = Money::new(random_range(10, 2000) as u64);
             let position = event.position;
             let renderer = CharRenderer::new(
                 'S',
@@ -83,20 +88,20 @@ impl<'a> System<'a> for ShipSpawnerSystem {
             names.insert(ship, name);
             healths.insert(ship, health);
             weapons.insert(ship, weapon);
-            //moneys.insert(ship, money);
+            moneys.insert(ship, money);
             positions.insert(ship, position);
             renderers.insert(ship, renderer);
             ais.insert(ship, AI::with_goal(Goal::MoveRandom));
             ships.insert(ship, Ship::default());
             pending_actionses.insert(ship, PendingActions::default());
             // RESOURCES
-            let mut water = GameResource::<Water>::new(random_range(0,80) as u32);
+            let water = GameResource::<Water>::new(random_range(0,80) as u32);
             waters.insert(ship, water);
-            let mut food = GameResource::<Food>::new(random_range(0,80) as u32);
+            let food = GameResource::<Food>::new(random_range(0,80) as u32);
             foods.insert(ship, food);
-            let mut wood = GameResource::<Wood>::new(random_range(0,80) as u32);
+            let wood = GameResource::<Wood>::new(random_range(0,80) as u32);
             woods.insert(ship, wood);
-            let mut metal = GameResource::<Metal>::new(random_range(0,80) as u32);
+            let metal = GameResource::<Metal>::new(random_range(0,80) as u32);
             metals.insert(ship, metal);
             /*
             let mut water = GameResource::<Water>::new();
