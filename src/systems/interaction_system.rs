@@ -67,11 +67,8 @@ impl<'a> System<'a> for InteractionSystem {
                     CharRenderer::ui_border(),
                     2, // it's always gonna be two, yes magic numbers are bad
                 );
-                if ships.get(parties.0).is_some() && ships.get(parties.1).is_some() {
-                    panel.widgets.push(Widget::text_box(&format!(
-                        "{} collided with another ship, {}!",
-                        one, two
-                    )));
+                if ships.get(parties.0).is_some() && ships.get(parties.1).is_some(){
+                    panel.widgets.push(Widget::text_box(&format!("The {} collided with The {}!", one, two)));
                 } else {
                     actives.get_mut(parties.0).unwrap().yes = true;
                     actives.get_mut(parties.1).unwrap().yes = true;

@@ -28,7 +28,7 @@ impl<'a> System<'a> for DeathSystem {
                 let _result = entities.delete(entity);
                 (*console).log(Log::new(
                     LogLevel::Debug,
-                    &format!("{} has died.", name),
+                    &format!("The {} has sunk.", name),
                 ));
             }
         }

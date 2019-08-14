@@ -6,6 +6,7 @@ mod ai;
 mod execute_actions;
 mod interaction_system;
 // mod input;
+mod food_system;
 
 pub use death_system::DeathSystem;
 // pub use rival_system::RivalSystem;
@@ -14,3 +15,4 @@ pub use death_system::DeathSystem;
 pub use ai::AISystem;
 pub use execute_actions::ExecuteActionSystem;
 pub use interaction_system::InteractionSystem;
+pub use food_system::FoodSystem;

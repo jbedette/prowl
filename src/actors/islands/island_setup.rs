@@ -138,6 +138,7 @@ impl<'a> System<'a> for IslandSetupSystem {
 }
 
 // TODO any way to make this less repetitive?? ugh
+#[allow(unused_must_use)]
 fn add_resource(
     map: &mut TileMap,
     position: Vector2,

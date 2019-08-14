@@ -34,13 +34,6 @@ mod actors;
 
 //use actors::ships::make_ship;
 
-// Contains helper functions to build entities of each type.
-mod entity_builder;
-use entity_builder::{
-    player::make_player,
-    // ship::make_ship,
-};
-
 // Prepares dispatchers for later use.
 mod dispatcher_builder;
 // Handles user input.
@@ -66,7 +59,7 @@ fn main() {
     let water_level = 0.75;
     let map = TileMap::new(Vector2::new(MAP_SIZE, MAP_SIZE), water_level);
     // player
-    make_player(&mut world);
+    // make_player(&mut world);
     // populate gameworld
     // for _ in 0..2000 { make_ship(&mut world); }
     // make ui windows
