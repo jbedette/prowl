@@ -252,34 +252,34 @@ impl<'a> System<'a> for InteractiveUISystem {
                     match ui_opts {
                         1 => {
                             if active && is_player {
-                                food.transaction(25 * flip);
-                                money.transaction((-25 * flip) as i64);
+                                food.transaction(10 * flip);
+                                money.transaction((-8 * flip) as i64);
                             } else if active {
-                                food.transaction(-25 * flip);
+                                food.transaction(-10 * flip);
                             }
                         }
                         2 => {
                             if active && is_player {
-                                water.transaction(25 * flip);
-                                money.transaction((-25 * flip) as i64);
+                                water.transaction(15 * flip);
+                                money.transaction((-10 * flip) as i64);
                             } else if active {
-                                water.transaction(-25 * flip);
+                                water.transaction(-15 * flip);
                             }
                         }
                         3 => {
                             if active && is_player {
-                                wood.transaction(25 * flip);
-                                money.transaction((-25 * flip) as i64);
+                                wood.transaction(10 * flip);
+                                money.transaction((-15 * flip) as i64);
                             } else if active {
-                                wood.transaction(-25 * flip);
+                                wood.transaction(-10 * flip);
                             }
                         }
                         4 => {
                             if active && is_player {
-                                metal.transaction(25 * flip);
-                                money.transaction((-25 * flip) as i64);
+                                metal.transaction(15 * flip);
+                                money.transaction((-20 * flip) as i64);
                             } else if active {
-                                metal.transaction(-25 * flip);
+                                metal.transaction(-15 * flip);
                             }
                         }
                         _ => (),
