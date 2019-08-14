@@ -70,11 +70,11 @@ impl<'a> System<'a> for PlayerSetupSystem {
         let health = Health::new(100, 100);
         let weapon = Weapon::new(random_range(1, 10) as u64);
         let money = Money::new(random_range(1, 10) as u64);
-        // position
-        let island = islands.join()
+        // position - find a large island and spawn from random spot
+        let islands: Vec<&Island> = islands.join()
             .filter(|island| island.tile_positions.len() > 200)
-            .next();
-        let island = island.unwrap();
+            .collect();
+        let island = islands[random_range(0, islands.len())];
         let position = island.coast_tile_positions[
             random_range(0, island.coast_tile_positions.len())];
         let position = Position::new(position);
