@@ -4,6 +4,13 @@ use crate::components::{
     markers::Ship,
     pending_actions::PendingActions,
     CharRenderer, Health, Money, Named, Position, Weapon,
+    game_resources::{
+        GameResource,
+        Water,
+        Food,
+        Metal,
+        Wood,
+    }
 };
 // use crate::file_io::read_file;
 use crate::shared::{random::random_range};
@@ -31,6 +38,10 @@ impl<'a> System<'a> for ShipSpawnerSystem {
         WriteStorage<'a, AI>,
         WriteStorage<'a, PendingActions>,
         WriteStorage<'a, Ship>,
+        WriteStorage<'a, GameResource<Water>>,
+        WriteStorage<'a, GameResource<Food>>,
+        WriteStorage<'a, GameResource<Metal>>,
+        WriteStorage<'a, GameResource<Wood>>,
         Entities<'a>,
         );
 
@@ -47,12 +58,17 @@ impl<'a> System<'a> for ShipSpawnerSystem {
             mut ais,
             mut pending_actionses,
             mut ships,
+            mut waters,
+            mut foods,
+            mut metals,
+            mut woods,
             entities,
             ) = data;
         while let Some(event) = event_channel.events.pop() {
             let ship = entities.create();
             let name = event.name;
-            let health = Health::new(100, 100);
+            let health_max = random_range(40, 350) as i64;
+            let health = Health::new(health_max, health_max);
             let weapon = Weapon::new(random_range(1, 10) as u64);
             let money = Money::new(random_range(1, 10) as u64);
             let position = event.position;
@@ -73,6 +89,19 @@ impl<'a> System<'a> for ShipSpawnerSystem {
             ais.insert(ship, AI::with_goal(Goal::MoveRandom));
             ships.insert(ship, Ship::default());
             pending_actionses.insert(ship, PendingActions::default());
+            // RESOURCES
+            let mut water = GameResource::<Water>::new();
+            water.set_count(random_range(0, 80) as u32);
+            waters.insert(ship, water);
+            let mut food = GameResource::<Food>::new();
+            food.set_count(random_range(0, 80) as u32);
+            foods.insert(ship, food);
+            let mut wood = GameResource::<Wood>::new();
+            wood.set_count(random_range(0, 40) as u32);
+            woods.insert(ship, wood);
+            let mut metal = GameResource::<Metal>::new();
+            metal.set_count(random_range(0, 20) as u32);
+            metals.insert(ship, metal);
         }
     }
 }
