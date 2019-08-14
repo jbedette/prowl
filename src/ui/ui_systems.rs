@@ -292,7 +292,7 @@ impl<'a> System<'a> for InteractiveUISystem {
                     menu_code: 0,
                 });
                 */
-                //break;
+                break;
             }
         }
         if ui_opts == 5 {
