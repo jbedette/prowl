@@ -75,6 +75,7 @@ pub fn ui_dispatcher() -> Dispatcher<'static, 'static> {
     DispatcherBuilder::new()
         // system, "string id", &[dependencies]
         .with_thread_local(InteractiveUISystem)
+        .with(StatusWindowSystem, "status_window", &[])
         .with_thread_local(RenderingSystem)
         .build()
 }

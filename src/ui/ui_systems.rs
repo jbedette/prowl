@@ -299,7 +299,7 @@ impl<'a> System<'a> for InteractiveUISystem {
             for (_panel, _interactive, entity) in
                 (&panels, &interactive_uis, &entities).join().last()
             {
-                println!("here{} ", count);
+                // println!("here{} ", count);
                 if count - 3 <= 0 {
                     for active in (&mut actives).join() {
                         active.yes = false;

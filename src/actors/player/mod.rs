@@ -73,7 +73,7 @@ impl<'a> System<'a> for PlayerSetupSystem {
         let name = Named::new("Imona Bote");
         let health = Health::new(100, 100);
         let weapon = Weapon::new(random_range(1, 10) as u64);
-        let money = Money::new(random_range(1, 10) as u64);
+        let money = Money::new(random_range(100, 500) as u64);
         // position - find a large island and spawn from random spot
         let islands: Vec<&Island> = islands.join()
             .filter(|island| island.tile_positions.len() > 200)
