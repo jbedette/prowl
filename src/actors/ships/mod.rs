@@ -24,7 +24,7 @@ pub fn make_ship(world: &mut World) {
     let name = names[random_range(0, names.len())].clone();
     let health = random_range(80, 200) as i64;
     let weapon = random_range(1, 10) as u64;
-    let money = random_range(30, 300) as u64;
+    //let money = random_range(30, 300) as u64;
     let max = (MAP_SIZE - 1) as usize;
     let x = random_range(0, max) as i32;
     let y = random_range(0, max) as i32;
@@ -44,7 +44,7 @@ pub fn make_ship(world: &mut World) {
         // does nothing yet
         .with(Weapon::new(weapon))
         // does nothing yet
-        .with(Money::new(money))
+        //.with(Money::new(money))
         .with(Position::new(position))
         .with(CharRenderer::new(*renderer.0, renderer.1))
         .with(PendingActions::default())
@@ -62,7 +62,7 @@ impl<'a> System<'a> for ShipSpawnerSystem {
         WriteStorage<'a, Named>,
         WriteStorage<'a, Health>,
         WriteStorage<'a, Weapon>,
-        WriteStorage<'a, Money>,
+        //WriteStorage<'a, Money>,
         WriteStorage<'a, Position>,
         WriteStorage<'a, CharRenderer>,
         WriteStorage<'a, AI>,
@@ -78,7 +78,7 @@ impl<'a> System<'a> for ShipSpawnerSystem {
             mut names,
             mut healths,
             mut weapons,
-            mut moneys,
+            //mut moneys,
             mut positions,
             mut renderers,
             mut ais,
@@ -91,7 +91,7 @@ impl<'a> System<'a> for ShipSpawnerSystem {
             let name = event.name;
             let health = Health::new(100, 100);
             let weapon = Weapon::new(random_range(1, 10) as u64);
-            let money = Money::new(random_range(1, 10) as u64);
+            //let money = Money::new(random_range(1, 10) as u64);
             let position = event.position;
             let renderer = CharRenderer::new(
                 // name.value.chars().next().unwrap().clone(),
@@ -105,7 +105,7 @@ impl<'a> System<'a> for ShipSpawnerSystem {
             names.insert(ship, name);
             healths.insert(ship, health);
             weapons.insert(ship, weapon);
-            moneys.insert(ship, money);
+            //moneys.insert(ship, money);
             positions.insert(ship, position);
             renderers.insert(ship, renderer);
             ais.insert(ship, AI::with_goal(Goal::MoveRandom));

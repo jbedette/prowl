@@ -73,8 +73,8 @@ impl<'a> System<'a> for InteractionSystem {
                         one, two
                     )));
                 } else {
-                    actives.get_mut(parties.0).unwrap().flip();
-                    actives.get_mut(parties.1).unwrap().flip();
+                    actives.get_mut(parties.0).unwrap().yes = true;
+                    actives.get_mut(parties.1).unwrap().yes = true;
                     event_channel.events.push(InteractionEvent {
                         entities: vec![parties.0, parties.1],
                         menu_code: 1,

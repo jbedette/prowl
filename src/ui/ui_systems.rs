@@ -169,47 +169,35 @@ impl<'a> System<'a> for InteractiveUISystem {
 
         let mut ui_opts = 0;
         let count = panels.join().count() as i32;
-        for (_panel, _interactive, entity) in (&panels, &interactive_uis, &entities).join().last() {
-            //println!("INTERACTIVE UI ACTIVE");
-            let key = tcod_input::get(&mut window.root);
-            use tcod_input::InputCode;
-            use InputCode::*;
-            game_data.state_change_request = Some(StateChangeRequest::WaitForUI);
-            match key {
-                // ESCAPE TODO rename Quit to Escape
-                One => {
-                    //entities_to_remove.push(entity);
-                    ui_opts = 1;
-                    //println!("one");
-                }
-                Two => {
-                    ui_opts = 2;
-                }
-                Back => {
-                    ui_opts = 5;
-                }
-                // Console
-                ConsoleSrollUp => console.scroll(-1),
-                ConsoleSrollDown => console.scroll(1),
-                _ => (),
+        //println!("INTERACTIVE UI ACTIVE");
+        let key = tcod_input::get(&mut window.root);
+        use tcod_input::InputCode;
+        use InputCode::*;
+        game_data.state_change_request = Some(StateChangeRequest::WaitForUI);
+        match key {
+            One => {
+                ui_opts = 1;
+            }
+            Two => {
+                ui_opts = 2;
+            }
+            Three => {
+                ui_opts = 3;
+            }
+            Four => {
+                ui_opts = 4;
+            }
+            Back => {
+                ui_opts = 5;
+            }
+            // Console
+            ConsoleSrollUp => console.scroll(-1),
+            ConsoleSrollDown => console.scroll(1),
+            _ => {
+                ui_opts = 5;
             }
         }
-        if ui_opts == 5 {
-            for (_panel, _interactive, entity) in
-                (&panels, &interactive_uis, &entities).join().last()
-            {
-                let mut entities_to_remove = vec![];
-                //println!("INTERACTIVE UI ACTIVE");
-                println!("{}", _panel.id);
-                if count - 3 <= 0 {
-                    game_data.state_change_request = Option::None;
-                }
-                entities_to_remove.push(entity);
-                for entity in entities_to_remove {
-                    entities.delete(entity);
-                }
-            }
-        } else {
+        if ui_opts != 5 {
             while let Some(event) = event_channel.events.pop() {
                 let parties = (event.entities[0], event.entities[1]);
                 let mut flip = 1;
@@ -260,10 +248,12 @@ impl<'a> System<'a> for InteractiveUISystem {
                 {
                     let active = actives.get(entity).unwrap().yes;
                     let is_player = _player.get(entity).is_some();
+                    let money = moneys.get_mut(entity).unwrap();
                     match ui_opts {
                         1 => {
                             if active && is_player {
                                 food.transaction(25 * flip);
+                                money.transaction((-25 * flip) as i64);
                             } else if active {
                                 food.transaction(-25 * flip);
                             }
@@ -271,6 +261,7 @@ impl<'a> System<'a> for InteractiveUISystem {
                         2 => {
                             if active && is_player {
                                 water.transaction(25 * flip);
+                                money.transaction((-25 * flip) as i64);
                             } else if active {
                                 water.transaction(-25 * flip);
                             }
@@ -278,6 +269,7 @@ impl<'a> System<'a> for InteractiveUISystem {
                         3 => {
                             if active && is_player {
                                 wood.transaction(25 * flip);
+                                money.transaction((-25 * flip) as i64);
                             } else if active {
                                 wood.transaction(-25 * flip);
                             }
@@ -285,28 +277,42 @@ impl<'a> System<'a> for InteractiveUISystem {
                         4 => {
                             if active && is_player {
                                 metal.transaction(25 * flip);
+                                money.transaction((-25 * flip) as i64);
                             } else if active {
                                 metal.transaction(-25 * flip);
                             }
                         }
                         _ => (),
+                    };
+                    ui_opts = 5;
+                }
+                /*
+                event_channel.events.push(InteractionEvent {
+                    entities: vec![parties.0, parties.1],
+                    menu_code: 0,
+                });
+                */
+                //break;
+            }
+        }
+        if ui_opts == 5 {
+            for (_panel, _interactive, entity) in
+                (&panels, &interactive_uis, &entities).join().last()
+            {
+                println!("here{} ", count);
+                if count - 3 <= 0 {
+                    for active in (&mut actives).join() {
+                        active.yes = false;
                     }
-                    event_channel.events.push(InteractionEvent {
-                        entities: vec![parties.0, parties.1],
-                        menu_code: 0,
-                    });
-                    for (_panel, _interactive, entity) in
-                        (&panels, &interactive_uis, &entities).join().last()
-                    {
-                        let mut entities_to_remove = vec![];
-                        entities_to_remove.push(entity);
-                        for entity in entities_to_remove {
-                            entities.delete(entity);
-                        }
-                    }
+                    while let Some(event) = event_channel.events.pop() {}
+                    game_data.state_change_request = Option::None;
+                }
+                let mut entities_to_remove = Vec::new();
+                entities_to_remove.push(entity);
+                for entity in entities_to_remove {
+                    entities.delete(entity);
                 }
             }
-            break;
         }
     }
 }
