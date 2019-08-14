@@ -11,6 +11,7 @@ pub mod renderer;
 pub mod weapon;
 pub mod markers;
 pub mod game_resources;
+pub mod active;
 
 pub use ai::AI;
 pub use health::Health;
@@ -30,6 +31,7 @@ pub use game_resources::{
     Water,
     Metal,
 };
+pub use active::Active;
 
 pub fn register(world: &mut World) {
     world.register::<Named>();
@@ -43,5 +45,6 @@ pub fn register(world: &mut World) {
     world.register::<pending_actions::PendingActions>();
     world.register::<AI>();
     world.register::<TileMap>();
+    world.register::<Active>();
     game_resources::register_all(world);
 }

@@ -2,11 +2,11 @@ use specs::prelude::*;
 use specs_derive::Component;
 use std::fmt::Debug;
 
-
 #[derive(Component, Debug, Default)]
 #[storage(VecStorage)]
 pub struct GameResource<T>
-where T: GameResourceType + Component + Send + Sync + Debug + Default
+where
+    T: GameResourceType + Component + Send + Sync + Debug + Default,
 {
     resource_type: T,
     count: u32,
@@ -14,19 +14,33 @@ where T: GameResourceType + Component + Send + Sync + Debug + Default
 }
 
 impl<T> GameResource<T>
-where T: GameResourceType + Component + Send + Sync + Debug + Default
+where
+    T: GameResourceType + Component + Send + Sync + Debug + Default,
 {
-    pub fn new() -> Self {
+    pub fn new(count: u32) -> Self {
         Self {
             resource_type: T::default(),
-            count: 0,
+            count: count,
             max: None,
         }
     }
 
-    pub fn get_count(&self) -> u32 { self.count }
+    pub fn get_count(&self) -> u32 {
+        self.count
+    }
 
-    pub fn set_count(&mut self, new_count: u32) { self.count = new_count; }
+    pub fn transaction(&mut self, val: i32) {
+        let curr = self.count as i32;
+        if curr + val < 0 {
+            self.count = 0;
+        } else {
+            self.count = (curr + val) as u32;
+        }
+    }
+
+    pub fn set_count(&mut self, new_count: u32) {
+        self.count = new_count;
+    }
 
     pub fn adjust_count(&mut self, delta_count: u32) {
         if self.count > delta_count {
@@ -46,7 +60,9 @@ where T: GameResourceType + Component + Send + Sync + Debug + Default
 }
 
 pub trait GameResourceType {
-    fn get_name(&self) -> Option<String> { None }
+    fn get_name(&self) -> Option<String> {
+        None
+    }
 }
 
 #[derive(Component, Debug, Default)]

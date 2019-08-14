@@ -5,6 +5,9 @@ use crate::components::{
     pending_actions::{Action, PendingActions},
     Position,
     TileMap,
+    Money,
+    Player
+    
 };
 use crate::console::resource::{
     // Log,
@@ -29,6 +32,8 @@ impl<'a> System<'a> for ExecuteActionSystem {
         Write<'a, EventChannel<InteractionEvent>>,
         Write<'a, Console>,
         Entities<'a>,
+        WriteStorage<'a, Player>,
+        WriteStorage<'a, Money>,
     );
 
     fn run(&mut self, data: Self::SystemData) {
@@ -39,7 +44,10 @@ impl<'a> System<'a> for ExecuteActionSystem {
              mut tilemaps,
              mut interaction_events,
              mut _console,
-             entities
+             entities,
+             player,
+             moneys
+
         ) = data;
 
         for (pending_actions, entity) in (&mut pending_actionses, &entities).join() {
@@ -84,6 +92,14 @@ impl<'a> System<'a> for ExecuteActionSystem {
                             false
                         }
                     }
+                    /*
+                    Action::Buy => {
+                        for (_player, _money, _entity) in (&mut player, &mut moneys, &entities).join(){
+
+                        }
+                        true
+                    }
+                    */
                     _ => false,
                 };
                 if !took_action { break; }

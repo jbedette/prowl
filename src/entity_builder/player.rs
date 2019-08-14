@@ -1,8 +1,9 @@
 /// Builds player ship(s?)
 use crate::components::{
+        game_resources::{Food, GameResource, Metal, Water, Wood},
         markers::{Player, Ship},
         pending_actions::PendingActions,
-        CharRenderer, Health, Money, Named, Position, Weapon,
+        CharRenderer, Health, Money, Named, Position, Weapon, Active
 };
 use crate::shared::{random::random_range, Vector2};
 use crate::ui::{markers::StatusUI, Panel};
@@ -34,10 +35,15 @@ pub fn make_player(world: &mut World) {
                         Vector2::new(29, 10),
                         CharRenderer::ui_body(),
                         CharRenderer::ui_border(),
-                        0
+                        0,
                 ))
                 .with(StatusUI::default())
                 // special
+                .with(GameResource::<Food>::new(random_range(3, 500) as u32))
+                .with(GameResource::<Water>::new(random_range(3, 500) as u32))
+                .with(GameResource::<Wood>::new(random_range(3, 500) as u32))
+                .with(GameResource::<Metal>::new(random_range(3, 500) as u32))
+                //.with(Active::default())
                 .with(Player::default())
                 .with(Ship::default())
                 .build();
