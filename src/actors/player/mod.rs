@@ -1,24 +1,22 @@
 /// Builds main character's ship
 use crate::components::{
+    game_resources::{
+        Food,
+        GameResource,
+        // GameResourceType,
+        Metal,
+        Water,
+        Wood,
+    },
     markers::Ship,
     pending_actions::PendingActions,
-    CharRenderer, Health, Money, Named, Position, Weapon, Player,
-    game_resources::{
-        Wood,
-        Metal,
-        Food,
-        Water,
-        GameResource,
-        
-        // GameResourceType,
-    },
-    Active,
+    Active, CharRenderer, Health, Money, Named, Player, Position, Weapon,
 };
 // use crate::file_io::read_file;
-use crate::shared::{Vector2, random::random_range};
+use crate::shared::{random::random_range, Vector2};
+use crate::ui::{markers::StatusUI, Panel};
 use specs::prelude::*;
 use tcod::colors::*;
-use crate::ui::{markers::StatusUI, Panel};
 
 use crate::actors::Island;
 
@@ -45,7 +43,7 @@ impl<'a> System<'a> for PlayerSetupSystem {
         WriteStorage<'a, Active>,
         ReadStorage<'a, Island>,
         Entities<'a>,
-        );
+    );
 
     fn run(&mut self, data: Self::SystemData) {
         // use specs::Join;
@@ -68,25 +66,23 @@ impl<'a> System<'a> for PlayerSetupSystem {
             mut actives,
             islands,
             entities,
-            ) = data;
+        ) = data;
         let ship = entities.create();
         let name = Named::new("Imona Bote");
         let health = Health::new(100, 100);
         let weapon = Weapon::new(random_range(1, 10) as u64);
         let money = Money::new(random_range(1, 10) as u64);
         // position - find a large island and spawn from random spot
-        let islands: Vec<&Island> = islands.join()
+        let islands: Vec<&Island> = islands
+            .join()
             .filter(|island| island.tile_positions.len() > 200)
             .collect();
         let island = islands[random_range(0, islands.len())];
-        let position = island.coast_tile_positions[
-            random_range(0, island.coast_tile_positions.len())];
+        let position =
+            island.coast_tile_positions[random_range(0, island.coast_tile_positions.len())];
         let position = Position::new(position);
         // renderer
-        let renderer = CharRenderer::new(
-            '@',
-            Color::new(0x00, 0x95, 0xff),
-        );
+        let renderer = CharRenderer::new('@', Color::new(0x00, 0x95, 0xff));
         names.insert(ship, name);
         healths.insert(ship, health);
         weapons.insert(ship, weapon);
@@ -94,7 +90,7 @@ impl<'a> System<'a> for PlayerSetupSystem {
         positions.insert(ship, position);
         renderers.insert(ship, renderer);
         players.insert(ship, Player::default());
-        actives.insert(ship,Active::new());
+        actives.insert(ship, Active::new());
         statusuis.insert(ship, StatusUI::default());
         // Resources
         let mut water = GameResource::<Water>::new(200);
@@ -106,14 +102,17 @@ impl<'a> System<'a> for PlayerSetupSystem {
         woods.insert(ship, wood);
         metals.insert(ship, GameResource::<Metal>::new(10));
         // Info Panel
-        panels.insert(ship, Panel::new(
-                        "Stats",
-                        Vector2::new(50, 1),
-                        Vector2::new(29, 10),
-                        CharRenderer::ui_body(),
-                        CharRenderer::ui_border(),
-                        0
-                ));
+        panels.insert(
+            ship,
+            Panel::new(
+                "Stats",
+                Vector2::new(50, 1),
+                Vector2::new(29, 10),
+                CharRenderer::ui_body(),
+                CharRenderer::ui_border(),
+                0,
+            ),
+        );
 
         ships.insert(ship, Ship::default());
         pending_actionses.insert(ship, PendingActions::default());
