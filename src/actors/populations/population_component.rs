@@ -9,6 +9,7 @@ pub struct Population {
     pub max: f32,  //affect max pop
 }
 
+#[allow(dead_code)]
 impl Population {
     pub fn new(size: i32, max: f32) -> Self {
         Self { size, max }

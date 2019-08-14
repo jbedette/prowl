@@ -3,6 +3,7 @@ use crate::systems::{
     DeathSystem,
     ExecuteActionSystem,
     InteractionSystem,
+    FoodSystem,
 };
 use crate::input::{
     main_loop_system::UserInputSystem,
@@ -25,6 +26,7 @@ use crate::actors::{
     islands::island_setup::IslandSetupSystem,
     islands::on_turn_system::IslandOnTurnSystem,
     ships::ShipSpawnerSystem,
+    player::PlayerSetupSystem,
 };
 
 // TODO for all - can this happen without the 'static lifetimes?
@@ -34,6 +36,7 @@ pub fn setup_dispatcher() -> Dispatcher<'static, 'static> {
         // system, "string id", &[dependencies]
         // rendering must be on local thread
         .with(IslandSetupSystem, "island_setup", &[])
+        .with(PlayerSetupSystem, "player_setup", &["island_setup"])
         .with_thread_local(RenderingSystem)
         .build()
 }
@@ -58,9 +61,10 @@ pub fn turn_dispatcher() -> Dispatcher<'static, 'static> {
         .with(AISystem, "ai", &[])
         .with(IslandOnTurnSystem, "islands", &[])
         .with(ExecuteActionSystem, "execute_actions", &[])
-        .with(DeathSystem, "deaths", &[])
         .with(StatusWindowSystem, "status", &[])
+        .with(FoodSystem, "food", &[])
         .with(InteractionSystem, "interactions", &["execute_actions"])
+        .with(DeathSystem, "deaths", &["interactions", "food"])
         .with(ConsoleWindowSystem, "console_window", &[])
         .with(ShipSpawnerSystem, "spawn_ships", &[])
         .build()

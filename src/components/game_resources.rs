@@ -24,18 +24,33 @@ where T: GameResourceType + Component + Send + Sync + Debug + Default
         }
     }
 
+    #[allow(unused)]
     pub fn get_count(&self) -> u32 { self.count }
 
+    #[allow(unused)]
     pub fn set_count(&mut self, new_count: u32) { self.count = new_count; }
 
-    pub fn adjust_count(&mut self, delta_count: u32) {
+    pub fn adjust_count(&mut self, delta_count: i32) {
+        /*
         if self.count > delta_count {
             self.count += delta_count;
         } else {
             self.count = 0;
         }
+        */
+        if delta_count >= 0 {
+            self.count += delta_count as u32;
+        } else {
+            let delta_minus = -delta_count as u32;
+            if self.count > delta_minus {
+                self.count -= delta_minus;
+            } else {
+                self.count = 0;
+            }
+        }
     }
 
+    #[allow(unused)]
     pub fn get_name(&self) -> String {
         if let Some(name) = self.resource_type.get_name() {
             name.to_owned()

@@ -62,7 +62,7 @@ impl<'a> System<'a> for InteractionSystem {
                     2, // it's always gonna be two, yes magic numbers are bad
                 );
                 if ships.get(parties.0).is_some() && ships.get(parties.1).is_some(){
-                    panel.widgets.push(Widget::text_box(&format!("{} collided with another ship, {}!", one, two)));
+                    panel.widgets.push(Widget::text_box(&format!("The {} collided with The {}!", one, two)));
                 } else {
                     panel.widgets.push(Widget::text_box(&format!("{} has docked at the island of {}", one, two)))
                 }
