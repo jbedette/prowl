@@ -9,8 +9,10 @@ use crate::components::{
         Food,
         Water,
         GameResource,
+        
         // GameResourceType,
-    }
+    },
+    Active,
 };
 // use crate::file_io::read_file;
 use crate::shared::{Vector2, random::random_range};
@@ -40,6 +42,7 @@ impl<'a> System<'a> for PlayerSetupSystem {
         WriteStorage<'a, GameResource<Food>>,
         WriteStorage<'a, GameResource<Metal>>,
         WriteStorage<'a, GameResource<Wood>>,
+        WriteStorage<'a, Active>,
         ReadStorage<'a, Island>,
         Entities<'a>,
         );
@@ -62,6 +65,7 @@ impl<'a> System<'a> for PlayerSetupSystem {
             mut foods,
             mut metals,
             mut woods,
+            mut actives,
             islands,
             entities,
             ) = data;
@@ -90,6 +94,7 @@ impl<'a> System<'a> for PlayerSetupSystem {
         positions.insert(ship, position);
         renderers.insert(ship, renderer);
         players.insert(ship, Player::default());
+        actives.insert(ship,Active::new());
         statusuis.insert(ship, StatusUI::default());
         // Resources
         let mut water = GameResource::<Water>::new(200);

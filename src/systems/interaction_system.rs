@@ -73,10 +73,6 @@ impl<'a> System<'a> for InteractionSystem {
                         one, two
                     )));
                 } else {
-                    let TEST = (
-                        actives.get_mut(parties.0).is_some(),
-                        actives.get_mut(parties.1).is_some(),
-                    );
                     actives.get_mut(parties.0).unwrap().yes = true;
                     actives.get_mut(parties.1).unwrap().yes = true;
                     event_channel.events.push(InteractionEvent {
