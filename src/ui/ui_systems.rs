@@ -167,8 +167,7 @@ impl<'a> System<'a> for InteractiveUISystem {
             entities,
         ) = data;
 
-        let mut entities_to_remove = vec![];
-        let mut ui_opts = (false, false);
+        let mut ui_opts = 0;
         let count = panels.join().count() as i32;
         for (_panel, _interactive, entity) in (&panels, &interactive_uis, &entities).join().last() {
             //println!("INTERACTIVE UI ACTIVE");
@@ -180,19 +179,14 @@ impl<'a> System<'a> for InteractiveUISystem {
                 // ESCAPE TODO rename Quit to Escape
                 One => {
                     //entities_to_remove.push(entity);
-                    ui_opts.0 = true;
+                    ui_opts = 1;
                     //println!("one");
                 }
                 Two => {
-                    ui_opts.1 = true;
+                    ui_opts = 2;
                 }
                 Back => {
-                    //println!("back");
-                    println!("{}", _panel.id);
-                    if count - 3 <= 0 {
-                        game_data.state_change_request = Option::None;
-                    }
-                    entities_to_remove.push(entity);
+                    ui_opts = 5;
                 }
                 // Console
                 ConsoleSrollUp => console.scroll(-1),
@@ -200,80 +194,118 @@ impl<'a> System<'a> for InteractiveUISystem {
                 _ => (),
             }
         }
-        if ui_opts.0 {
+        if ui_opts == 5 {
+            for (_panel, _interactive, entity) in
+                (&panels, &interactive_uis, &entities).join().last()
+            {
+                let mut entities_to_remove = vec![];
+                //println!("INTERACTIVE UI ACTIVE");
+                println!("{}", _panel.id);
+                if count - 3 <= 0 {
+                    game_data.state_change_request = Option::None;
+                }
+                entities_to_remove.push(entity);
+                for entity in entities_to_remove {
+                    entities.delete(entity);
+                }
+            }
+        } else {
             while let Some(event) = event_channel.events.pop() {
                 let parties = (event.entities[0], event.entities[1]);
-                match event.menu_code{
-                for (food, water, wood, metal, entity) in
-                    (&mut foods, &mut waters, &mut woods, &mut metals, &entities).join()
+                let mut flip = 1;
+                match event.menu_code {
+                    1 => {
+                        let mut buy_sell = "Buy";
+                        let mut first_layer_choice = 2;
+                        let window = entities.create();
+                        let mut panel = Panel::new(
+                            "[X] to close",
+                            Vector2::new(5 + (count * 3), 5 + ((count - 1) * 3)),
+                            Vector2::new(20, 20),
+                            CharRenderer::ui_body(),
+                            CharRenderer::ui_border(),
+                            count, //todo:replace with smart id system
+                        );
+                        if ui_opts == 2 {
+                            first_layer_choice = 3;
+                            buy_sell = "Sell";
+                        }
+                        panel
+                            .widgets
+                            .push(Widget::text_box(&format! {"{} for 25 Gold:\n\n1)Food\n2)Water\n3)Wood\n4)Metal",buy_sell}));
+                        panels.insert(window, panel);
+                        interactive_uis.insert(window, InteractiveUI::default());
+                        event_channel.events.push(InteractionEvent {
+                            entities: vec![parties.0, parties.1],
+                            menu_code: first_layer_choice,
+                        });
+                        break;
+                    }
+                    //buy
+                    3 => {
+                        flip *= -1;
+                    }
+                    _ => (),
+                };
+                for (food, water, wood, metal, entity, panel) in (
+                    &mut foods,
+                    &mut waters,
+                    &mut woods,
+                    &mut metals,
+                    &entities,
+                    &mut panels,
+                )
+                    .join()
                 {
                     let active = actives.get(entity).unwrap().yes;
                     let is_player = _player.get(entity).is_some();
-                    if active && is_player {
-                        food.transaction(25);
-                    } else if active {
-                        food.transaction(-25);
+                    match ui_opts {
+                        0 => {
+                            if active && is_player {
+                                food.transaction(25 * flip);
+                            } else if active {
+                                food.transaction(-25 * flip);
+                            }
+                        }
+                        1 => {
+                            if active && is_player {
+                                water.transaction(25 * flip);
+                            } else if active {
+                                water.transaction(-25 * flip);
+                            }
+                        }
+                        2 => {
+                            if active && is_player {
+                                wood.transaction(25 * flip);
+                            } else if active {
+                                wood.transaction(-25 * flip);
+                            }
+                        }
+                        3 => {
+                            if active && is_player {
+                                metal.transaction(25 * flip);
+                            } else if active {
+                                metal.transaction(-25 * flip);
+                            }
+                        }
+                        _ => (),
                     }
-                }
-                let window = entities.create();
-                let mut panel = Panel::new(
-                    "[X] to close",
-                    Vector2::new(5 + (count * 3), 5 + ((count - 1) * 3)),
-                    Vector2::new(20, 20),
-                    CharRenderer::ui_body(),
-                    CharRenderer::ui_border(),
-                    count, //todo:replace with smart id system
-                );
-                panel
-                    .widgets
-                    .push(Widget::text_box(&format! {"hi {}", count}));
-                panels.insert(window, panel);
-                interactive_uis.insert(window, InteractiveUI::default());
-                event_channel.events.push(InteractionEvent {
-                    entities: vec![parties.0, parties.1],
-                    menu_code: 1,
-                });
-                break;
+                    event_channel.events.push(InteractionEvent {
+                        entities: vec![parties.0, parties.1],
+                        menu_code: 0,
+                    });
+                    for (_panel, _interactive, entity) in
+                        (&panels, &interactive_uis, &entities).join().last()
+                    {
+                        let mut entities_to_remove = vec![];
+                        entities_to_remove.push(entity);
+                        for entity in entities_to_remove {
+                            entities.delete(entity);
+                        }
+                    }
+                    break;
                 }
             }
         }
-        if ui_opts.1 {
-            println!("opt2");
-        }
-        for entity in entities_to_remove {
-            entities.delete(entity);
-        }
     }
 }
-/*
-fn transaction(
-    identifier: usize,
-    resources: &mut (
-        WriteStorage<'_, GameResource<Food>>,
-        WriteStorage<'_, GameResource<Water>>,
-        WriteStorage<'_, GameResource<Metal>>,
-        WriteStorage<'_, GameResource<Wood>>,
-        WriteStorage<'_, Money>,
-    ),
-    parties: WriteStorage<'_,Active>
-) {
-    let mut active_parties = Vec::new();
-    for active in &mut parties.join(){
-        if let Some(party) = active.get_mut(entity){};
-    }
-    /*
-    let money = resources.4.get_mut(parties);
-    let player_resource = resources.0.get_mut(parties.0);
-    //let island_resource = resources.1.get_mut(parties.1);
-    if let Some(money) = money {
-        if let Some(player_resource) = player_resource {
-            //if let Some(island_resource) = island_resource {
-                money.current -= 1;
-                player_resource.transaction(50);
-            //    island_resource.transaction(-50);
-            //}
-        }
-    }
-    */
-}
-*/
