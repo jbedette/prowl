@@ -213,7 +213,8 @@ impl<'a> System<'a> for InteractiveUISystem {
             while let Some(event) = event_channel.events.pop() {
                 let parties = (event.entities[0], event.entities[1]);
                 let mut flip = 1;
-                match event.menu_code {
+                let code = event.menu_code;
+                match code {
                     1 => {
                         let mut buy_sell = "Buy";
                         let mut first_layer_choice = 2;
@@ -260,28 +261,28 @@ impl<'a> System<'a> for InteractiveUISystem {
                     let active = actives.get(entity).unwrap().yes;
                     let is_player = _player.get(entity).is_some();
                     match ui_opts {
-                        0 => {
+                        1 => {
                             if active && is_player {
                                 food.transaction(25 * flip);
                             } else if active {
                                 food.transaction(-25 * flip);
                             }
                         }
-                        1 => {
+                        2 => {
                             if active && is_player {
                                 water.transaction(25 * flip);
                             } else if active {
                                 water.transaction(-25 * flip);
                             }
                         }
-                        2 => {
+                        3 => {
                             if active && is_player {
                                 wood.transaction(25 * flip);
                             } else if active {
                                 wood.transaction(-25 * flip);
                             }
                         }
-                        3 => {
+                        4 => {
                             if active && is_player {
                                 metal.transaction(25 * flip);
                             } else if active {
@@ -303,9 +304,9 @@ impl<'a> System<'a> for InteractiveUISystem {
                             entities.delete(entity);
                         }
                     }
-                    break;
                 }
             }
+            break;
         }
     }
 }
