@@ -20,7 +20,7 @@ pub trait Event {}
 
 #[derive(Default)]
 pub struct InteractionEvent {
-    pub text: String,
+    pub menu_code: u32,
     pub entities: Vec<Entity>,
 }
 impl Event for InteractionEvent {}

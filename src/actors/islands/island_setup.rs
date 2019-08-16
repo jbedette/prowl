@@ -12,7 +12,8 @@ use crate::{
             Water,
             GameResource,
             // GameResourceType,
-        }
+        },
+        Active
     },
     actors::Island,
     shared::{
@@ -35,6 +36,7 @@ impl<'a> System<'a> for IslandSetupSystem {
         WriteStorage<'a, GameResource<Food>>,
         WriteStorage<'a, GameResource<Metal>>,
         WriteStorage<'a, GameResource<Wood>>,
+        WriteStorage<'a, Active>,
         Entities<'a>,
     );
 
@@ -47,6 +49,7 @@ impl<'a> System<'a> for IslandSetupSystem {
             foods,
             metals,
             woods,
+            mut actives,
             entities
         ) = data;
         let island_names = file_io::read_file("isoles.txt");
@@ -124,6 +127,7 @@ impl<'a> System<'a> for IslandSetupSystem {
                             }
                         }
                         islands.insert(island_entity, Island::new(island_positions));
+                        actives.insert(island_entity,Active::new());
                     } else {
                         eprintln!("ERROR: INVALID POSITION IN MAP GENERATION");
                     }
@@ -154,7 +158,7 @@ fn add_resource(
                 if let Some(resource) = resources.0.get_mut(entity) {
                     resource.adjust_count(1000);
                 } else {
-                    let mut resource = GameResource::<Water>::new();
+                    let mut resource = GameResource::<Water>::new(random_range(3, 500) as u32);
                     resource.adjust_count(1000);
                     resources.0.insert(entity, resource);
                 }
@@ -165,7 +169,7 @@ fn add_resource(
                 if let Some(resource) = resources.1.get_mut(entity) {
                     resource.adjust_count(1000);
                 } else {
-                    let mut resource = GameResource::<Food>::new();
+                    let mut resource = GameResource::<Food>::new(random_range(3, 500) as u32);
                     resource.adjust_count(1000);
                     resources.1.insert(entity, resource);
                 }
@@ -176,7 +180,7 @@ fn add_resource(
                 if let Some(resource) = resources.2.get_mut(entity) {
                     resource.adjust_count(1000);
                 } else {
-                    let mut resource = GameResource::<Metal>::new();
+                    let mut resource = GameResource::<Metal>::new(random_range(3, 500) as u32);
                     resource.adjust_count(1000);
                     resources.2.insert(entity, resource);
                 }
@@ -187,7 +191,7 @@ fn add_resource(
                 if let Some(resource) = resources.3.get_mut(entity) {
                     resource.adjust_count(1000);
                 } else {
-                    let mut resource = GameResource::<Wood>::new();
+                    let mut resource = GameResource::<Wood>::new(random_range(3, 500) as u32);
                     resource.adjust_count(1000);
                     resources.3.insert(entity, resource);
                 }

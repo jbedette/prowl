@@ -22,6 +22,7 @@ pub enum Action {
         object: SpawnableObject,
     },
     */
+    Buy,
     Die,
 }
 

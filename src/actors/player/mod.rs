@@ -9,8 +9,10 @@ use crate::components::{
         Food,
         Water,
         GameResource,
+        
         // GameResourceType,
-    }
+    },
+    Active,
 };
 // use crate::file_io::read_file;
 use crate::shared::{Vector2, random::random_range};
@@ -40,6 +42,7 @@ impl<'a> System<'a> for PlayerSetupSystem {
         WriteStorage<'a, GameResource<Food>>,
         WriteStorage<'a, GameResource<Metal>>,
         WriteStorage<'a, GameResource<Wood>>,
+        WriteStorage<'a, Active>,
         ReadStorage<'a, Island>,
         Entities<'a>,
         );
@@ -62,6 +65,7 @@ impl<'a> System<'a> for PlayerSetupSystem {
             mut foods,
             mut metals,
             mut woods,
+            mut actives,
             islands,
             entities,
             ) = data;
@@ -69,7 +73,7 @@ impl<'a> System<'a> for PlayerSetupSystem {
         let name = Named::new("Imona Bote");
         let health = Health::new(100, 100);
         let weapon = Weapon::new(random_range(1, 10) as u64);
-        let money = Money::new(random_range(1, 10) as u64);
+        let money = Money::new(random_range(100, 500) as u64);
         // position - find a large island and spawn from random spot
         let islands: Vec<&Island> = islands.join()
             .filter(|island| island.tile_positions.len() > 200)
@@ -90,18 +94,16 @@ impl<'a> System<'a> for PlayerSetupSystem {
         positions.insert(ship, position);
         renderers.insert(ship, renderer);
         players.insert(ship, Player::default());
+        actives.insert(ship,Active::new());
         statusuis.insert(ship, StatusUI::default());
         // Resources
-        let mut water = GameResource::<Water>::new();
-        water.set_count(200);
+        let water = GameResource::<Water>::new(200);
         waters.insert(ship, water);
-        let mut food = GameResource::<Food>::new();
-        food.set_count(200);
+        let food = GameResource::<Food>::new(200);
         foods.insert(ship, food);
-        let mut wood = GameResource::<Wood>::new();
-        wood.set_count(20);
+        let wood = GameResource::<Wood>::new(20);
         woods.insert(ship, wood);
-        metals.insert(ship, GameResource::<Metal>::new());
+        metals.insert(ship, GameResource::<Metal>::new(10));
         // Info Panel
         panels.insert(ship, Panel::new(
                         "Stats",
