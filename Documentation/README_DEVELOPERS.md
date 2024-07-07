@@ -13,7 +13,8 @@ This is a very stripped down version of the full concept. For future development
 This project is written in rust, runs the game in a terminal instance using a tcod library, and is organized with an entity component system using the specs library for rust. 
 
 An Entity Component System(ECS) is a common organizational paradigm in game development, but will be unfamiliar to a developer used to an Object Oriented or Tagged Union organization of code. ECS orgization can be boiled down to a core organizational paradigm of all game objects are Entities, Entities have ids, ids are used to associate an id with components that contain functionality. Entities are essentially a grouping of components. Where an OOP system would have increasingly more specific objects as they inherit functionality from their parents, an ECS has increasing object specificity via association between an Entity and existing Components. It's a division between crafting an object as a relation to other similar structures in OOP and crafting an object that is extremely general and then associating with game systems in ECS. 
-    In a game development context, an ECS allows for:
+
+In a game development context, an ECS allows for:
         
 - Flexibility in development. Separation between pieces of functionality so a developer can easily modify function of an entity a more granular level. As a game object usually touches several game systems, being able to modify how a game object interacts with a particular system while retaining other functionality is an advantage.
         
@@ -58,43 +59,54 @@ As of 7/6/25, the program:
 - Has an endpoint, the player runs out of hp and dies.
 
 Taking these points as existing functionality, further development should focus on expanding or creating the following systems. Many of these concepts have been partially implemented and already are attatched to the game actors.
+
     Overview of development goals:
+
         The player and their home island should seek to achieve victory over the other islands in the archipelago. What victory entails is not yet determined. Through several branching gameplans of accruing economic might, martial prowess, or diplomatic strength, the player should seek to build an advantage over the npcs that are also attempting to achieve their similar goals through one of the delineated paths. 
         As this game seeks to be procedurally generated and replayable, these systems and goals should be generated during game creation. 
-    Granular Development points:
-        1. Combat
+
+## Granular Development points:
+
+1. Combat
             
 - Player should be able to engage in combat with npc ships.
             
 - This should use the Weapon Component to modify hp damage done.
             
 - There should be a reward garnered from defeating an npc ship. 
-        2. Economy
+
+2. Economy
             
 - Currently the Player can buy food in exchange for money.
             
 - Implement selling resources at islands.
             
 - Implement the purchase of the remaining resources, Wood and Metal, and the weapon components from the islands.
-        3. Player should be associated with an island and be able to garner resources when docking with home island.
+
+3. Player should be associated with an island and be able to garner resources when docking with home island.
             
 - Create an island development system where money, wood, and metal can be spent to modify the home island to increase the amount of resources the player receives from docking with their home island.
-        4. Player functions.
+
+4. Player functions.
             
 - A level up system where permanent upgrades can be applied to the player.
             
 - An inventory system where more than 1 item may be stored, for example a ship should be able to hold more than 1 weapon and switch between them.
-        5. Actor systems.
+
+5. Actor systems.
             
 - Ships should be able to permanently improve
             
 - Islands should be able to improve or decline
-        6. Ai systems
-            The npc ships are currently generated only once and slowly run out of hp and die. This is fine for a proof of concept, but is a poor gameloop for an actual game.
-            AI Ships
+
+6. Ai systems
+
+The npc ships are currently generated only once and slowly run out of hp and die. This is fine for a proof of concept, but is a poor gameloop for an actual game.
+
+AI Ships
+
                 
-- AI controlled ships(AICS) should be generated as the game progresses from non
--player associated islands
+- AI controlled ships(AICS) should be generated as the game progresses from non-player associated islands
                 
 - AICS should have a power level associated with them based on their strength.
                 
@@ -118,42 +130,34 @@ Taking these points as existing functionality, further development should focus 
 
 ## Areas for Development
 Actors
-    Islands
-        Islands.rs
-            
+
 - implement population sizing
-        Island_setup.rs
-            
+
 - Refactoring hacky loops
-        on_turn_system.rs
             
 - Refactor inefficient file reading
-    population
-        population.rs
             
 - implement population function on island creation
             
 - implement population changing
-    ships
-        mod.rs
             
 - implement changing/mutable resources
-                not sure why this isn't working
             
 - implement ship interaction
+
 console:
     
 - fix functionality
+
 entity_builder:
     
 - move entity assembly of spawned ships here
     player.rs:
         
 - file ready for implementation of proposed systems
-generators:
-    terrain_generators.rs
-        
+
 - remove testing console outputs
+
 renderer:
     rendering_system.rs
         
@@ -163,9 +167,11 @@ renderer:
     tcod_renderer.rs    
         
 - fix invalid rendering. Currently edge case spawns player outside map, not sure what edge case is.
+
 resources:
     
 - refactor naming, confusing with in game resources sharing naming
+
 systems:
     
 - many systems unimplemented satisfactorily
@@ -175,6 +181,7 @@ systems:
     food_system.rs:
     interaction_system.rs:
     mod.rs:
+
 ui:
     
 - follows different pattern from rest of project
@@ -194,11 +201,13 @@ main.rs:
 - some todos to address, generally pretty good
     
 - add overview
+
 file_io.rs:
     
 - some dead code to remove
     
 - generally don't mess with it
+
 High Level Refactoring 
     
 - map placement logic repeated in many places
