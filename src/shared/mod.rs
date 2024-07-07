@@ -1,3 +1,5 @@
+// shared module contains custom functions and data types used throughout project
+
 mod application_root_dir;
 mod vector2;
 pub mod random;

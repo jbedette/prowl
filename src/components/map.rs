@@ -1,3 +1,5 @@
+//Map 
+
 use crate::components::CharRenderer;
 use specs::{
     Entity,

@@ -1,3 +1,6 @@
+// Dispatcher works with the specs crate
+// - mangages creation, assignemnt, and deletion of entities
+
 use crate::systems::{
     AISystem,
     DeathSystem,

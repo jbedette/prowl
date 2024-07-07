@@ -1,8 +1,14 @@
+// Menu panel
+//  - opens a panel 
+//  - takes menu title from object interacted with
+//  - manages text displays with a widget system
+
 use crate::{components::CharRenderer, shared::Vector2};
 use specs::{Component, VecStorage};
 use specs_derive::Component;
 
-/// Panel Component
+
+// Panel Component
 #[derive(Component, Debug)]
 #[storage(VecStorage)]
 pub struct Panel {
@@ -43,6 +49,7 @@ pub enum Widget {
     TextBox { text: String },
 }
 
+// Panel widget takes passed in options vec of strings
 impl Widget {
     // Single line, full line
     pub fn label(text: &str) -> Self {

@@ -1,4 +1,6 @@
-/// Contains all "marker" (empty) components used for the UI system.
+// Contains all "marker" (empty) components used for the UI system.
+// having these ready and empty allows creating and then modification to need
+
 use specs::{
     Component,
     NullStorage

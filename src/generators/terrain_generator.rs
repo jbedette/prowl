@@ -1,6 +1,5 @@
 use noise::{
     NoiseFn,
-    // Perlin, // acting funny?
     OpenSimplex,
     Seedable,
 };
@@ -10,12 +9,14 @@ use crate::shared::{
     normalize_vec,
 };
 
+// generate_heightmap
+// uses OpenSimplex to set bounds of height,
+// goes through map assigning values to tiles,
+// used later in determining map tile properties
+
 pub fn generate_heightmap(bounds: Vector2, seed: u32) -> Vec<f64> {
-    // let perlin = Perlin::new();
-    let perlin = OpenSimplex::new().set_seed(seed);
+    let perlin = OpenSimplex::new(seed).set_seed(seed);
     let (width, height) = bounds.to_tuple();
-    // perlin::get([4.0, 4.0])
-    // println!("size: [{},{}]", width, height);
     let mut heightmap = vec![];
     let mut max = 0.0;
     let mut min = 1000.0;
@@ -48,15 +49,11 @@ pub fn generate_heightmap(bounds: Vector2, seed: u32) -> Vec<f64> {
             let x = x * 1.2;
             let y = y * 1.2;
             height += (perlin.get([x, y, 7000.0])) * 0.1;
-            // height /= 2.0;
-            // height += 0.5;
-            // println!("noise: [{},{}]: {:?}", x, y, height);
             if height > max { max = height; }
             if height < min { min = height; }
             heightmap.push(height);
         }
     }
     println!("MAX: {}, MIN: {}", max, min);
-    // println!("{:?}", heightmap);
     normalize_vec(heightmap, min, max)
 }

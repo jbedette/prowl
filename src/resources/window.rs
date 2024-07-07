@@ -36,7 +36,7 @@ impl TCODWindow {
     }
 
     // Draws a TCOD console to the screen.
-    pub fn blit(&mut self, console: &Console) {
+    pub fn blit(&mut self, console: &dyn Console) {
         tcod::console::blit(
             &console,
             (0, 0),

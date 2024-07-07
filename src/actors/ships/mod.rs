@@ -1,4 +1,6 @@
-/// Builds other ships.
+// Builds other ships.
+// todo:
+//  - ship interaction
 use crate::components::{
     ai::{Goal, AI},
     markers::Ship,
@@ -103,7 +105,9 @@ impl<'a> System<'a> for ShipSpawnerSystem {
             woods.insert(ship, wood);
             let metal = GameResource::<Metal>::new(random_range(0,80) as u32);
             metals.insert(ship, metal);
+
             /*
+            todo: implement 
             let mut water = GameResource::<Water>::new();
             water.set_count(random_range(0, 80) as u32);
             waters.insert(ship, water);

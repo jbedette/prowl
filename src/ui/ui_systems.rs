@@ -1,3 +1,7 @@
+// this file contains the logic for managing the ui and interaction system
+// depending on the type of ui interaction, this will run differrent panel systems
+// Todo: refactor to generalize, too much repeated code
+
 use crate::components::{
     game_resources::{Food, GameResource, Metal, Water, Wood},
     Active, CharRenderer, Health, Money, Named, Player,
@@ -11,6 +15,8 @@ use crate::ui::{
 };
 use specs::prelude::*;
 
+
+//console debug tool
 use crate::console::resource::Console;
 pub struct ConsoleWindowSystem;
 impl<'a> System<'a> for ConsoleWindowSystem {
@@ -26,7 +32,6 @@ impl<'a> System<'a> for ConsoleWindowSystem {
             panel.widgets = vec![];
             let mut text = String::from("");
             let mut i = 0;
-            // TODO this is garbage af
             for log in &console.logs {
                 if i >= console.y_offset - panel.bounds.y + 3 {
                     if text.is_empty() {
@@ -42,6 +47,8 @@ impl<'a> System<'a> for ConsoleWindowSystem {
     }
 }
 
+// menu for seeing ship status
+// used when player wants to examine stats without other interaction event
 pub struct StatusWindowSystem;
 impl<'a> System<'a> for StatusWindowSystem {
     type SystemData = (
@@ -99,7 +106,6 @@ impl<'a> System<'a> for StatusWindowSystem {
                 }
             }
             // resource section
-            // oof gotta get this in a loop or something
             {
                 let food = foods.get(entity);
                 if let Some(food) = food {
@@ -126,6 +132,7 @@ impl<'a> System<'a> for StatusWindowSystem {
     }
 }
 
+// interaction system for managing interaction between two entitites
 use crate::input::tcod_input;
 use crate::resources::{game_data::StateChangeRequest, Window};
 pub struct InteractiveUISystem;
@@ -149,6 +156,7 @@ impl<'a> System<'a> for InteractiveUISystem {
         Entities<'a>,
     );
 
+    // run does the intraction
     #[allow(unused_must_use)]
     fn run(&mut self, data: Self::SystemData) {
         let (
@@ -171,11 +179,13 @@ impl<'a> System<'a> for InteractiveUISystem {
 
         let mut ui_opts = 0;
         let count = panels.join().count() as i32;
-        //println!("INTERACTIVE UI ACTIVE");
         let key = tcod_input::get(&mut window.root);
         use tcod_input::InputCode;
         use InputCode::*;
         game_data.state_change_request = Some(StateChangeRequest::WaitForUI);
+        // ui panel swith
+        // - up to 4 options and exit panel at 5
+        // - left vague as panels will have different functions in different contexts
         match key {
             One => {
                 ui_opts = 1;
@@ -199,11 +209,13 @@ impl<'a> System<'a> for InteractiveUISystem {
                 ui_opts = 5;
             }
         }
+        // if not exit panel, do interaction
         if ui_opts != 5 {
             while let Some(event) = event_channel.events.pop() {
                 let parties = (event.entities[0], event.entities[1]);
                 let mut flip = 1;
                 let code = event.menu_code;
+                // hardcoded demo examples
                 match code {
                     1 => {
                         let mut buy_sell = "Buy";
@@ -238,6 +250,7 @@ impl<'a> System<'a> for InteractiveUISystem {
                     }
                     _ => (),
                 };
+                // get resources of both entities
                 for (food, water, wood, metal, entity, _panel) in (
                     &mut foods,
                     &mut waters,
@@ -247,69 +260,67 @@ impl<'a> System<'a> for InteractiveUISystem {
                     &mut panels,
                 )
                     .join()
-                {
-                    let active = actives.get(entity).unwrap().yes;
-                    let is_player = _player.get(entity).is_some();
-                    let money = moneys.get_mut(entity).unwrap();
-                    match ui_opts {
-                        1 => {
-                            if active && is_player {
-                                food.transaction(25 * flip);
-                                money.transaction((-25 * flip) as i64);
-                            } else if active {
-                                food.transaction(-25 * flip);
+                    {
+                        let active = actives.get(entity).unwrap().yes;
+                        let is_player = _player.get(entity).is_some();
+                        let money = moneys.get_mut(entity).unwrap();
+                        // based on option selection, do transaction
+                        match ui_opts {
+                            1 => {
+                                if active && is_player {
+                                    food.transaction(25 * flip);
+                                    money.transaction((-25 * flip) as i64);
+                                } else if active {
+                                    food.transaction(-25 * flip);
+                                }
                             }
-                        }
-                        2 => {
-                            if active && is_player {
-                                water.transaction(25 * flip);
-                                money.transaction((-25 * flip) as i64);
-                            } else if active {
-                                water.transaction(-25 * flip);
+                            2 => {
+                                if active && is_player {
+                                    water.transaction(25 * flip);
+                                    money.transaction((-25 * flip) as i64);
+                                } else if active {
+                                    water.transaction(-25 * flip);
+                                }
                             }
-                        }
-                        3 => {
-                            if active && is_player {
-                                wood.transaction(25 * flip);
-                                money.transaction((-25 * flip) as i64);
-                            } else if active {
-                                wood.transaction(-25 * flip);
+                            3 => {
+                                if active && is_player {
+                                    wood.transaction(25 * flip);
+                                    money.transaction((-25 * flip) as i64);
+                                } else if active {
+                                    wood.transaction(-25 * flip);
+                                }
                             }
-                        }
-                        4 => {
-                            if active && is_player {
-                                metal.transaction(25 * flip);
-                                money.transaction((-25 * flip) as i64);
-                            } else if active {
-                                metal.transaction(-25 * flip);
+                            4 => {
+                                if active && is_player {
+                                    metal.transaction(25 * flip);
+                                    money.transaction((-25 * flip) as i64);
+                                } else if active {
+                                    metal.transaction(-25 * flip);
+                                }
                             }
-                        }
-                        _ => (),
-                    };
-                    ui_opts = 5;
-                }
-                /*
-                event_channel.events.push(InteractionEvent {
-                    entities: vec![parties.0, parties.1],
-                    menu_code: 0,
-                });
-                */
+                            _ => (),
+                        };
+                        ui_opts = 5;
+                    }
                 break;
             }
         }
+        // exit ui panel
         if ui_opts == 5 {
-            for (_panel, _interactive, entity) in
+            if let Some((_panel, _interactive, entity)) =
                 (&panels, &interactive_uis, &entities).join().last()
+            // for (_panel, _interactive, entity) in
+            //     (&panels, &interactive_uis, &entities).join().last()
             {
-                // println!("here{} ", count);
                 if count - 3 <= 0 {
                     for active in (&mut actives).join() {
                         active.yes = false;
                     }
-                    // TODO @john is this just to clear the event channel?
+                    // clear event channel
                     while let Some(_event) = event_channel.events.pop() {}
                     game_data.state_change_request = Option::None;
                 }
+                // specify panel entity to remove
                 let mut entities_to_remove = Vec::new();
                 entities_to_remove.push(entity);
                 for entity in entities_to_remove {

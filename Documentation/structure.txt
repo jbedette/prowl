@@ -1,0 +1,85 @@
+actors
+    islands
+        island_component.rs
+        island_setup.rs
+        mod.rs
+        on_turn_system.rs
+    player
+        mod.rs
+    populations
+        mod.rs
+        population_component.rs
+    ships
+        mod.rs
+    mod.rs
+
+components
+    active.rs
+    ai.rs
+    game_resources.rs
+    health.rs
+    map.rs
+    markers.rs
+    mod.rs
+    money.rs
+    name.rs
+    pending_actions.rs
+    position.rs
+    renderer.rs
+    weapon.rs
+
+console
+    mod.rs
+    on_turn.rs
+    resource.rs
+
+entity_builder
+    player.rs
+
+event_channel
+    mod.rs
+
+generators
+    mod.rs
+    terrain_generator.rs
+
+input
+    main_loop_system.rs
+    mod.rs
+    tcod_input.rs
+    ui_system.rs
+
+renderer
+    mod.rs
+    rendering_system.rs
+    tcod_renderer.rs
+
+resources
+    game_data.rs
+    mod.rs
+    window.rs
+
+shared
+    application_root_dir.rs
+    mod.rs
+    normalize.rs
+    random.rs
+    vector2.rs
+
+systems
+    ai.rs
+    death_system.rs
+    execute_actions.rs
+    food_system.rs
+    interaction_system.rs
+    mod.rs
+
+ui
+    init.rs
+    markers.rs
+    mod.rs
+    panel.rs
+    ui_systems.rs
+
+dispatch_builder.rs
+main.rs

@@ -1,0 +1,130 @@
+not really problems
+    main.rs
+        why:
+            fairly well commented
+            * could use some small work
+    dispatch_builder.rs
+        why:
+            well commented
+            only needs overview
+    resources folder
+        largely self explanatory
+        will be covered in a larger project definition
+    renderer
+        not so much our work, its a library
+        
+
+problems:
+    files:
+        actors:
+            islands:
+                island.rs:
+                    problems:
+                        fairly self explanatory, but needs some definition
+                        dead code
+                    did:
+                        - removed commented code lines 9-10, population defined in population/population.rs
+                        - added overview
+                island_setup.rs
+                    did: 
+                        - added overview
+                on_turn_system:
+                    did:
+                        - added overview
+            population:
+                population.rs:
+                    problems:
+                        created, not implemented
+                    did: 
+                        - added overview
+            mod.rs:  
+                did:
+                    - removed dead code line 9
+        components
+            problems:
+                no info on what these are for
+        console
+            problems:
+                don't know what this is doing
+        shared
+            random.rs:
+                problems:
+                    some bad code, range generation
+                did:
+                    changed syntax for low and high values taken into range func
+            vector2.rs
+                problems:
+                    uncommented
+                did:
+        generators
+            problems:
+                some bad code, perlin noise func
+            did:
+                - added overview
+                - fixed broken code, simplex needed seed value passed
+                - removed dead code 3,13,14-15,51-53,60, old testing commented code and dead design choices
+
+        systems folder:
+            - overviews for all
+            ai.rs:
+            death_system.rs:
+            execute_actions.rs:
+                problems:
+                    dead code
+                    inefficient code
+            food_system.rs:
+                problems:
+                    - where is this separate from death_system.rs
+            interaction_system.rs:
+                problems:
+                    - magic numbers unexplained
+                    - not enough comments
+
+
+        input folder:
+            problems:
+                failed implementations
+            interaction_system.rs:
+                did: 
+                    - added comments to run
+        ui folder
+            problems:
+                uncommented
+                unclear
+            init.rs:
+                did:
+                    - added overview
+
+            markers.rs:
+            mod.rs:
+            panel.rs:
+            ui_systems.rs:
+                did:
+                    - removed dead testing code
+    documentation:
+        readme
+            problems:
+                outdated
+                needs some fixing to compile places
+        entity builder player vs component player
+        overview:
+            we don't have any clear direction for progress stated
+            its unclear what is actually happening in this test build
+    other:
+        dead code:
+            what is relevant dead code and what is not
+            what is actually dead
+
+big things:
+    what point is the current version at?
+        this demo does things, what is it doing
+    where is this going?
+        there's todo's everywhere what are they working towards
+    dead code:
+        it appears there are several dead ends, player stuff
+        several places where "what is this even doing" is commented
+    overviews:
+        many things make sense in context, context should be easier to get
+
+todo:
+    vector2, add comments

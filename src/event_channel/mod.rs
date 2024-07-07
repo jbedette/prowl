@@ -1,5 +1,7 @@
 use specs::prelude::*;
 
+// Event Channel module manages game events and their ordering
+
 // Registers eveything with the world.
 #[allow(deprecated)]
 pub fn register(world: &mut World) {

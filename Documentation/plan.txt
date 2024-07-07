@@ -1,0 +1,26 @@
+1. make documentation for maintainers/future developers.
+    for both
+        - information on program flow
+        - overview of libraries
+        - overview of entity component system
+        - explain why we're doing what where
+        - design decisions
+    for developers
+        - what we want things to do in the future
+
+2. Program Flow
+    - trace from start to example action
+        * what functions in what files are being used
+
+3. documentation
+    A. identify areas for improvement
+        - what is unclear
+        - what is messy
+        - what is unused
+        - what will be used in future development
+    B. make improvement
+        - Write description of file contents at top of file
+        - remove dead code
+        - highlight code to be built upon
+        - where are variables coming from, where are they going
+    C. Describe what future work should be done

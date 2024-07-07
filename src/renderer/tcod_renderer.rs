@@ -13,12 +13,12 @@ use crate::ui::panel::{
 
 const TEXT_COLOR_DEFAULT : Color = Color::new(0xbb, 0xbb, 0xbb);
 
-pub fn init(r: &mut Console) {
+pub fn init(r: &mut dyn Console) {
     r.set_default_foreground(colors::WHITE);
     r.clear();
 }
 
-pub fn in_bounds(r: &mut Console, screen_position: Vector2) -> bool {
+pub fn in_bounds(r: &mut dyn Console, screen_position: Vector2) -> bool {
     let (x, y) = screen_position.to_tuple();
     if y >= r.height() || x >= r.width() || x < 0 || y < 0 {
         false
@@ -26,7 +26,7 @@ pub fn in_bounds(r: &mut Console, screen_position: Vector2) -> bool {
 }
 
 pub fn put_char(
-    r: &mut Console,
+    r: &mut dyn Console,
     screen_position: Vector2,
     character: &CharRenderer
 ) {

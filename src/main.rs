@@ -49,7 +49,7 @@ fn main() {
     // create an ECS "world"
     let mut world = World::new();
     // register all the resources in the world
-    resources::add_all(&mut world);
+    resources::register(&mut world);
     // register all the components in the world
     components::register(&mut world);
     ui::register(&mut world);

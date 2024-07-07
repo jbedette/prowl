@@ -5,9 +5,16 @@ use crate::shared::Vector2;
 #[derive(Component, Debug)]
 #[storage(VecStorage)]
 
+// island entities, 
+// Islands generate ships
+// They have coast tiles that block ship traversal surrounding
+// coast tiles open a menu prompt to interact with it
+//     - interactions right now are limited to buying/selling resources
+// future: 
+// islands are use population to determine size on creation
+
+
 pub struct Island{
-    // pub size: i32,  //affect island size on map
-    // pub arable: i32,//affect max pop
     pub tile_positions: Vec<Vector2>, // positions of island on map
     pub coast_tile_positions: Vec<Vector2>,
     pub ship_spawn_timer: i32,

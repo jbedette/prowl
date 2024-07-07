@@ -1,5 +1,4 @@
-/// This is the input when a UI element is up blocking the rest of the game.
-/// TODO Still not really sure how it will work
+// This is the input when a UI element is up blocking the rest of the game.
 
 use specs::{
     Join,

@@ -1,3 +1,6 @@
+// Simple demo ai
+// moves npc ships around randomly
+
 use specs::{Join, System, WriteStorage};
 
 use crate::components::{
@@ -10,6 +13,7 @@ use rand;
 use crate::shared::Vector2;
 
 pub struct AISystem;
+
 
 impl<'a> System<'a> for AISystem {
     type SystemData = (

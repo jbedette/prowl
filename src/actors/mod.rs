@@ -1,14 +1,15 @@
+//  The actors modules contains definintions for all
+//  entities that have enough agency in the game to 
+//  affect the systems and resources 
+
 pub mod islands;
 pub mod populations;
 pub mod ships;
 pub mod player;
+pub mod init;
 
-use specs::prelude::*;
+
 pub use islands::island_component::Island;
-pub use populations::population_component::Population;
-// pub use ships::make_ship;
+// pub use populations::population_component::Population;
+pub use init::register;
 
-pub fn register(world: &mut World) {
-    world.register::<Island>();
-    world.register::<Population>();
-}

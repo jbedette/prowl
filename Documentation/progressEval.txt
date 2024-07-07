@@ -1,0 +1,35 @@
+general
+    1. commenting
+        a. matt's stuff
+            - overviews mostly done, comments mostly made
+        b. john's stuff
+            - haven't done the stuff
+    2. dead code
+        - trimmed most of the dead code that doesn't have a use for development
+plan
+    1. write readme's
+        - in progress
+    2. unravel menu system
+        - todo
+    3. menu system comments
+        - todo
+    4. comment procedual gen
+        - todo 
+    5. comment movement/inputs
+        - todo 
+    6. trim dead
+        - in progress
+        - find out stuff
+
+plan 2
+
+1. i've commented things
+2. need development guide
+3. need to be able to compile and refactor
+    - refactor
+        components contain dumb stuff
+            map should be in generators
+        many components 
+        actor/islands/island system should be in systems
+
+

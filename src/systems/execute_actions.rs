@@ -1,3 +1,5 @@
+// When a user input does something, this manages what it does
+
 use specs::{Entities, Join, System, ReadStorage, WriteStorage, Write};
 
 use crate::components::{

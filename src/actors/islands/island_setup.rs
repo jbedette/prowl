@@ -1,6 +1,12 @@
 use specs::prelude::*;
 use crate::file_io;
 
+// Island initializtion functions
+// puts islands on map
+// future:
+//      refactor: several hacky workarounds
+//      implement: island interaction system
+
 use crate::{
     components::{
         map::TileMap,
@@ -74,7 +80,7 @@ impl<'a> System<'a> for IslandSetupSystem {
                         // if island is above water,
                         // add island to tile
                         let island_entity = entities.create();
-                        let name = &(island_names[(random_range(0, island_names.len()))]);
+                        let name = &(island_names[random_range(0, island_names.len())]);
                         names.insert(island_entity, Named::new(name));
                         let island_positions = map.add_island(position, island_entity);
                         // Add resources in clusters.

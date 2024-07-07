@@ -1,0 +1,33 @@
+For my project, I am going to revisit an old project I made with a friend and classmate for PSU's Rust course.
+
+https://github.com/jbedette/prowl/tree/master
+
+I will be working alone, as I am expecting a child in late november and would feel uncomfortable putting the pressure of a groupmate who could possibly dissappear with an incomplete.
+
+The project in question is called Prowl. It's a game demo/proof of concept for a procedurally generated map with a small menu. My partner for this project Matt O'Tousa, was considerably more advanced than I was at the time. Probably still is. He went and blazed ahead writing mountains of rust code and included several libraries that I had never seen before. I was totally lost.
+
+I think this is a good candidate for a codebase and course project for three reasons.
+
+    1. The commenting is not explicit enough on two fronts.
+
+        A. The work Matt did was organized fairly well and most functions were commented. However, comments usually were usually not explicit enough about function guts, variables are mysteriously named, and modules did not have readme's explaining flow.
+
+        B. The work I did is a pile of uncommented spaghetti. Huge uncommented files everywhere.
+
+    2. There's a fair amount of dead code to trim.
+
+    3. It was a cool project and I'd like to revisit it.
+
+My plan for improving this project, in order of importance and chronological steps to complete:
+
+    1. Write readme's for each module. This will involve diving into the code and determining flow.
+
+    2. Unravel my spaghetti in the menu system.
+
+    3. Write more explicit comments for my menu system and improve menu variables to be more explicit.
+
+    4. Write more explicit comments for Matt's procedural generation. Descriptors of where variables are coming from and Improve variable clarity in the procedural generation.
+
+    5. Write more explicit comments for movement modules and improve variable clarity.
+
+    6. Trim dead code.

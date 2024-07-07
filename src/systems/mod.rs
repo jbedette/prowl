@@ -1,3 +1,6 @@
+// systems module contains the logic for game systems
+// many of the commented out lines here represent goals for future development
+
 mod death_system;
 // mod rival_system;
 // mod print_entity_system;

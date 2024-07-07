@@ -31,7 +31,7 @@ version = "*"
 features = ["dynlib"]
 ```
 
-### Building on Windows (with MSVC)
+### Building on Windows (with MSVC) [DEPRECATED]
 
 Make sure you have Visual Studio 2013 or later **with the C++ tools
 option** installed. You also need the "MSVC ABI" version of the Rust
@@ -49,7 +49,7 @@ cargo run --release
 ```
 
 
-### Building on Windows (with MinGW)
+### Building on Windows (with MinGW) [DEPRECATED]
 
 You have to [download and install MinGW](http://www.mingw.org/). Then,
 add Rust's and MinGW's bin directories to your path and compile your
@@ -63,7 +63,7 @@ cargo run --release
 ```
 
 
-### Building on Mac OS X
+### Building on Mac OS X 32 or 64 bit architecture
 
 1. [Install Homebrew](http://brew.sh/)
 2. Run:
@@ -88,6 +88,17 @@ Rust wrapper [tcod-rs](https://github.com/tomassedovic/tcod-rs). It only uses
 this library for input and rendering, and uses Rust solutions for random number
 and noise generation instead of the `tcod` built-ins because we would like to
 migrate everything to a pure Rust renderer at some point.
+
+## Documentation
+
+[Overview of Design](./Documentation/flow.md)
+
+[Development Roadmap](./Documentation/Roadmap.md)
+
+[Developer Readme](./Documentation/README_DEVELOPERS.md)
+
+[Maintainer Readme](./Documentation/README_MAINTAINERS.md)
+
 
 ## Notes
 
