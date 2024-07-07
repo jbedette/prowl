@@ -89,9 +89,9 @@ this library for input and rendering, and uses Rust solutions for random number
 and noise generation instead of the `tcod` built-ins because we would like to
 migrate everything to a pure Rust renderer at some point.
 
-## Documentation
+## Documentation for Future Development
 
-[Overview of Design](./Documentation/flow.md)
+[Overview of Design](./Documentation/DESIGN_OVERVIEW.md)
 
 [Development Roadmap](./Documentation/Roadmap.md)
 
