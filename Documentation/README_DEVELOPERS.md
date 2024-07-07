@@ -60,10 +60,11 @@ As of 7/6/25, the program:
 
 Taking these points as existing functionality, further development should focus on expanding or creating the following systems. Many of these concepts have been partially implemented and already are attatched to the game actors.
 
-    Overview of development goals:
+Overview of development goals:
 
-        The player and their home island should seek to achieve victory over the other islands in the archipelago. What victory entails is not yet determined. Through several branching gameplans of accruing economic might, martial prowess, or diplomatic strength, the player should seek to build an advantage over the npcs that are also attempting to achieve their similar goals through one of the delineated paths. 
-        As this game seeks to be procedurally generated and replayable, these systems and goals should be generated during game creation. 
+The player and their home island should seek to achieve victory over the other islands in the archipelago. What victory entails is not yet determined. Through several branching gameplans of accruing economic might, martial prowess, or diplomatic strength, the player should seek to build an advantage over the npcs that are also attempting to achieve their similar goals through one of the delineated paths. 
+
+As this game seeks to be procedurally generated and replayable, these systems and goals should be generated during game creation. 
 
 ## Granular Development points:
 
