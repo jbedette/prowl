@@ -1,10 +1,3 @@
-use specs::{Component, VecStorage};
-use specs_derive::Component;
-use crate::shared::Vector2;
-
-#[derive(Component, Debug)]
-#[storage(VecStorage)]
-
 // island entities, 
 // Islands generate ships
 // They have coast tiles that block ship traversal surrounding
@@ -12,6 +5,14 @@ use crate::shared::Vector2;
 //     - interactions right now are limited to buying/selling resources
 // future: 
 // islands are use population to determine size on creation
+
+use specs::{Component, VecStorage};
+use specs_derive::Component;
+use crate::shared::Vector2;
+
+#[derive(Component, Debug)]
+#[storage(VecStorage)]
+
 
 
 pub struct Island{

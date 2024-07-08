@@ -44,13 +44,6 @@ where
     }
 
     pub fn adjust_count(&mut self, delta_count: i32) {
-        /*
-        if self.count > delta_count {
-            self.count += delta_count;
-        } else {
-            self.count = 0;
-        }
-        */
         if delta_count >= 0 {
             self.count += delta_count as u32;
         } else {

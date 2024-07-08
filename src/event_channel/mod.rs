@@ -1,8 +1,8 @@
-use specs::prelude::*;
-
 // Event Channel module manages game events and their ordering
 
-// Registers eveything with the world.
+use specs::prelude::*;
+
+
 #[allow(deprecated)]
 pub fn register(world: &mut World) {
     world.add_resource(EventChannel::<InteractionEvent>::default());

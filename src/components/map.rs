@@ -1,4 +1,4 @@
-//Map 
+//Map generation
 
 use crate::components::CharRenderer;
 use specs::{
@@ -23,13 +23,11 @@ pub struct TileMap {
     vec_size: usize,
     water_level: f64,
 }
-// use crate::actors::Island;
 
 impl TileMap {
     #[allow(dead_code)]
     pub fn new(size: Vector2, water_level: f64) -> Self {
         let vec_size: usize = (size.x * size.y) as usize;
-        // let tile = Tile::ocean();
         let seed = random_range(0, 1000) as u32;
         println!("MAP SEED: {}", seed);
         let heightmap = generate_heightmap(size, seed);
@@ -143,11 +141,6 @@ impl TileMap {
         }
     }
 
-    /*
-    pub fn clear_dynamic(&mut self) {
-        self.dynamic_map = vec![None; self.vec_size];
-    }
-    */
 
     // TODO MAKE GENERIC SOMEHOW DANGIT
     pub fn add_wood(&mut self, position: Vector2) -> Result<(), ()> {
@@ -351,12 +344,4 @@ impl Tile {
             passable: false,
         }
     }
-    /*
-    pub fn new(tile_type: TileType) -> Tile {
-        match tile_type {
-            TileType::Ocean => Tile::ocean(),
-            TileType::Land => Tile::land(),
-        }
-    }
-    */
 }

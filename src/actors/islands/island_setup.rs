@@ -1,11 +1,12 @@
-use specs::prelude::*;
-use crate::file_io;
-
 // Island initializtion functions
 // puts islands on map
 // future:
 //      refactor: several hacky workarounds
 //      implement: island interaction system
+
+use specs::prelude::*;
+use crate::file_io;
+
 
 use crate::{
     components::{
@@ -17,7 +18,6 @@ use crate::{
             Food,
             Water,
             GameResource,
-            // GameResourceType,
         },
         Active
     },

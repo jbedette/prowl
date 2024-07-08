@@ -1,3 +1,9 @@
+// System for managing island entity's interaction with turn system
+// right now they spawn ships at set intervals
+// future:
+//      refactor: inefficient file loading and usage
+//      future: add resource generation and resoure usage
+
 use specs::prelude::*;
 use crate::event_channel::{EventChannel, SpawnShipEvent};
 use crate::actors::Island;
@@ -7,11 +13,6 @@ use crate::file_io::read_file;
 
 pub struct IslandOnTurnSystem;
 
-// System for managing island entity's interaction with turn system
-// right now they spawn ships at set intervals
-// future:
-//      refactor: inefficient file loading and usage
-//      future: add resource generation and resoure usage
 
 impl<'a> System<'a> for IslandOnTurnSystem {
     type SystemData = (

@@ -11,13 +11,6 @@ impl<'a> System<'a> for OnTurnSystem {
 
     fn run(&mut self, data: Self::SystemData) {
         let mut console = data;
-        /*
-        console.log(Log::new(
-                LogLevel::Game,
-                "."
-                ));
-                */
-        // puts most recent console log at bottom of window.
         console.scroll_to_bottom();
     }
 }

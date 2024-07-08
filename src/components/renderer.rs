@@ -1,10 +1,7 @@
 use specs::{Component, VecStorage};
 use specs_derive::Component;
-// use termion::color;
 use tcod::colors::Color;
-// use std::io::Write;
 
-// use crate::components::position::Position;
 
 #[derive(Component, Debug, Clone)]
 #[storage(VecStorage)]

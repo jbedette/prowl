@@ -1,4 +1,4 @@
-// Builds other ships.
+// Builds npc ships.
 // todo:
 //  - ship interaction
 use crate::components::{

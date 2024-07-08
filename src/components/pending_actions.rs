@@ -17,18 +17,6 @@ pub enum Action {
         // delta: (i32, i32),
         delta: Vector2,
     },
-    /*
-    Spawn {
-        object: SpawnableObject,
-    },
-    */
     Buy,
     Die,
 }
-
-/*
-#[derive(Debug)]
-pub enum SpawnableObject {
-    Ship,
-}
-*/

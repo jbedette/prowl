@@ -1,5 +1,5 @@
 /// Polls TCOD for keyboard input. Blocks.
-// TODO wtf Non-blocking input keeps repeating after key release.
+
 use tcod::{
     console::*,
     input::{Key, KeyCode::*},

@@ -1,4 +1,4 @@
-/// Builds main character's ship
+// Builds main character's ship
 use crate::components::{
     markers::Ship,
     pending_actions::PendingActions,
@@ -9,12 +9,9 @@ use crate::components::{
         Food,
         Water,
         GameResource,
-        
-        // GameResourceType,
     },
     Active,
 };
-// use crate::file_io::read_file;
 use crate::shared::{Vector2, random::random_range};
 use specs::prelude::*;
 use tcod::colors::*;
@@ -48,7 +45,6 @@ impl<'a> System<'a> for PlayerSetupSystem {
         );
 
     fn run(&mut self, data: Self::SystemData) {
-        // use specs::Join;
         let (
             mut players,
             mut names,
