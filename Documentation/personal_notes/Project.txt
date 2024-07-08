@@ -19,12 +19,11 @@ Project Branch URL:
     	Unfortunately in the time that has passed since this project was made, the TCOD library has
 	been abandoned and results in build conflicts on every architecture I have tested except for
 	Debian. This led to some serious issues with testing some refactors I would like to make.
-	On top of that, I haven't touched the Rust language in a meaningful way since working on this
-	project. It has been a struggle, but Rust is just so great. Wonderful language.
     	As a result, I spent the majority of my time writing comments about how each file works and
-	how it is used. Refactoring proved difficult as I do not have easy access to an ubuntu machine
-	on a 32 bit architecture. I did manage to identify some structural problems that could be
-	sorted quickly and refactored the code to solve these issues.
+	how it is used and writing documentation resources. Refactoring proved difficult, Rust is picky
+	and many refactoring goals proved to be so large that they exceeded the scope of the project.
+	I did do some small refactoring, I found some areas where easy modifications could be made to 
+	better fit the codebase to best practices without excessive borking of the project.
     
  Analysis of Project Proposal, Plan, and Adaptation of the Plan to Reality of Codebase:
 	Initially Identified Problems:
@@ -58,6 +57,7 @@ Project Branch URL:
             	just unimplemented. As future development would be expanding on these sections and
             	they generally are functioning as placeholders, it would not be correct to remove
             	them.
+			4. There was no guiding documentation about how the codebase should be interacted with.
     
 	Plan V2:
     	Problems to solve:
